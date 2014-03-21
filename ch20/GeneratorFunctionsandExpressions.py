@@ -32,6 +32,7 @@ print(next(G))
 # throw exception: StopIteration
 # print(next(G))
 
+# Generator expression
 for x in (x**2 for x in range(4)):
     print('%s, %s' % (x, x / 2.0))
 
@@ -44,3 +45,36 @@ print(a, c)
 print(sum(x**2 for x in range(4)))
 print(sorted(x**2 for x in range(4)))
 print(sorted((x**2 for x in range(4)), reverse=True))
+
+print(list(map(abs, [-1, -2, 3, 4])))
+print(list(abs(x) for x in [-1, -2, 3, 4]))
+
+print(list(map(lambda x: x * 2, (1, 2, 3, 4))))
+print(list(x * 2 for x in (1, 2, 3, 4)))
+
+# Compare between generator expression, list comprehension and map
+
+line = "aaa,bbb,ccc"
+print(''.join([x.upper() for x in line.split(',')]))
+print(''.join(x.upper() for x in line.split(',')))
+print(''.join(map(str.upper, line.split(','))))
+
+print(''.join(x*2 for x in line.split(',')))
+print(''.join(map(lambda x: x * 2, line.split(','))))
+
+# filter v.s. generator expression
+line = "aa bbb c"
+print(''.join(x for x in line.split(' ') if len(x) > 1))
+print(''.join(filter(lambda x: len(x) > 1, line.split(' '))))
+
+
+print(''.join(x.upper() for x in line.split(' ') if len(x) > 1))
+print(''.join(map(lambda x: x.upper(), filter(lambda x: len(x) > 1, line.split(' ')))))
+
+res = ''
+for x in line.split():
+    if len(x) > 1:
+        res += x.upper()
+print(res)
+
+# Generator functions Versus Generator expressions
