@@ -78,3 +78,39 @@ for x in line.split():
 print(res)
 
 # Generator functions Versus Generator expressions
+G = (c * 4 for c in 'SPAM')
+print(list(G))
+
+def fourtimes(s):
+    for c in s:
+        yield c * 4
+
+G = fourtimes('spam')
+print(list(G))
+
+G = (c * 4 for c in 'SPAM')
+I = iter(G)
+print(next(I))
+print(next(I))
+
+G = fourtimes('spam')
+I = iter(G)
+print(next(I))
+print(next(I))
+
+print(iter(G) is G)
+
+G = (c * 4 for c in 'SPAM')
+I = iter(G)
+print(next(I))
+print(next(I))
+
+I2 = iter(G)
+print(next(I2))
+
+def both(N):
+    yield from range(N)
+    yield from (x ** 2 for x in range(N))
+
+print(list(both(5)))
+print(" : ".join(str(i) for i in both(5)))
