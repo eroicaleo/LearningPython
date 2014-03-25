@@ -114,3 +114,23 @@ def both(N):
 
 print(list(both(5)))
 print(" : ".join(str(i) for i in both(5)))
+
+# Generators in Build-in types, tools and classes
+import os
+for (root, subs, files) in os.walk('.'):
+    for name in files:
+        print(name)
+
+def f(a, b, c): print("%s, %s, %s" % (a, b, c))
+
+f(1, 2, 3)
+
+f(*range(3))
+
+f(*(i for i in range(2)), c=5)
+
+D = {'a': 'Bob', 'b': 'dev', 'c': 40.5}
+print(D)
+f(**D)
+f(*D)
+f(*D.values())
