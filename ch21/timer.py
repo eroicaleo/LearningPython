@@ -31,11 +31,11 @@ def bestof(reps, func, *pargs, **kargs):
         start = timer()
         ret = func(*pargs, **kargs)
         elapsed = timer() - start
-        if elapsed > best: best = elapsed
+        if elapsed < best: best = elapsed
     return (best, ret)
 
 def bestoftotal(reps1, reps2, func, *pargs, **kargs):
     """
     Best of totals
     """
-    return bestoftotal(reps1, total, reps2, func, *pargs, **kargs)
+    return bestof(reps1, total, reps2, func, *pargs, **kargs)
