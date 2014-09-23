@@ -5,3 +5,6 @@ def tester():
 
 if __name__ == '__main__':
     tester()
+
+
+import minmax2
