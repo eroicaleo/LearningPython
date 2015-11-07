@@ -1,4 +1,8 @@
+<!-- TOC depth:6 withLinks:1 updateOnSave:1 orderedList:0 -->
 
+- [Chapter 27 Class Coding Basics](#chapter-27-class-coding-basics)
+	- [Simple Python Class](#simple-python-class)
+<!-- /TOC -->
 
 # Chapter 27 Class Coding Basics
 
