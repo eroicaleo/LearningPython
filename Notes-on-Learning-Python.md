@@ -46,3 +46,31 @@ the objects in the tree.
 We could even define methods outside the class.
 
 # Chapter 28 A More Realistic Example
+
+## Step 1: Making Instances
+
+`bob`'s name is not `sue`'s name. Technically, `bob` and `sue` are both namespace
+objects like all
+class instances, they each have their own independent copy of the state information
+created by the class. Because each instance of a class has its own set of `self` attributes,
+classes are a natural for recording information for multiple objects this way; just like
+built-in types such as lists and dictionaries, classes serve as a sort of object factory.
+
+To do unit test, we would do:
+
+```python
+if __name__ == '__main__':
+	# blablabla
+```
+
+## Step 2: Adding Behavior Methods
+
+The preceding code works as planned, but if you show it to a veteran software developer
+he or she will probably tell you that its general approach is not a great idea in practice.
+Hardcoding operations like these outside of the class can lead to maintenance problems
+in the future.
+
+We want to code operations on objects in a class's methods. *factoring* code to
+remove *redundancy* and thus optimizing maintainability.
+
+## Step 3: Operator Overloading
