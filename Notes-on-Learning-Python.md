@@ -147,3 +147,16 @@ managers: neither `__getattr__` (run for undefined attributes) nor its cousin
 routed to the embedded Person object in 3.X.
 
 ## Step 6: Using Introspection Tools
+
+Two problems with the above `__repr__` method.
+1. `Manager` dose not print 'manager' title
+2. If we have new attribute in the future, we have to modify the `__repr__` again.
+
+Introspection tool:
+* `__class__`: a link from instance to it's class
+		* class has a attribute: `__name__`
+* `__bases__`: provides access to its superclass
+* `__dict__`: gives the attribute
+
+To get the attribute from a class instance, we can do `getattr(instance, attribute_name)`.
+Note that the `attribute_name` is a string.

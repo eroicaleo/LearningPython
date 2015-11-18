@@ -42,3 +42,12 @@ if __name__ == '__main__':
     for obj in (bob, sue, tom):
         obj.give_raise(0.1)
         print(obj)
+
+    print(bob.__class__.__name__)
+    print(list(bob.__dict__.keys()))
+
+    for key in bob.__dict__:
+        print(key, '=>', bob.__dict__[key])
+
+    for key in bob.__dict__:
+        print(key, '=>', getattr(bob, key))
