@@ -1,7 +1,9 @@
 #!/usr/bin/env python3
 
+from classtools import AttrDisplay
 
-class Person:
+
+class Person(AttrDisplay):
     def __init__(self, name, job=None, pay=0):
         self.name = name
         self.job = job
@@ -12,9 +14,6 @@ class Person:
 
     def give_raise(self, percent):
         self.pay = int(self.pay * (1+percent))
-
-    def __repr__(self):
-        return '[Person: %s, %s]' % (self.name, self.pay)
 
 
 class Manager(Person):
@@ -51,3 +50,6 @@ if __name__ == '__main__':
 
     for key in bob.__dict__:
         print(key, '=>', getattr(bob, key))
+
+    print(len(dir(bob)))
+    print(list(name for name in dir(bob) if not name.startswith('__')))

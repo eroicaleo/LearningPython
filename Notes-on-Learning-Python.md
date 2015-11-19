@@ -160,3 +160,40 @@ Introspection tool:
 
 To get the attribute from a class instance, we can do `getattr(instance, attribute_name)`.
 Note that the `attribute_name` is a string.
+
+**Instance Versus Class Attibutes**
+
+Note that if you do `__dict__` on a instance, you only get the instance attributes.
+If we want to show the class attribute, we need to first use `__class__`. If we
+really want all the attributes, we could use `dir` function.
+
+**Name Considerations in Tool Classes**
+
+To prevent subclass accidentally define method with the same name, author usually
+put an `_` in front of the method which they don't want others to use externally.
+
+**Our Class's Final Form**
+
+Now we make the `Person` class a subclass of `AttrDisplay`, and remove the `__repr__`
+method defined in `Person`. It will give the correct title for `Manager`, like:
+```python
+class Person(AttrDisplay):
+	  # blablabla
+
+[Person: job=None, name=Bob Smith, pay=0]
+[Person: job=dev, name=Sue Jones, pay=121000]
+[Manager: job=mgr, name=Tom Jones, pay=720000]
+```
+
+## Step 7: Storing Objects in a Database
+
+We can use three modules to make instance objects permanent: `pickle`, `dbm` and `shelve`.
+
+`pickle`
+
+Converts a python object in memory to a string of bytes.
+
+`shelve`
+
+Provides an extra layer of structure that allows you to store pickled objects by
+key.

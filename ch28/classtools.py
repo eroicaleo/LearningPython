@@ -32,6 +32,10 @@ if __name__ == '__main__':
             self.attr2 = TopTest.count + 1
             TopTest.count += 2
 
+        # We will hide the base class method if we redefine it.
+        # def gather_attrs(self):
+        #     return 'Spam'
+
     class SubTest(TopTest):
         pass
 
