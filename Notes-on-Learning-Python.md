@@ -197,3 +197,46 @@ Converts a python object in memory to a string of bytes.
 
 Provides an extra layer of structure that allows you to store pickled objects by
 key.
+
+**Storing Objects on a Shelve Database**
+
+Here is an example:
+
+```python
+db = shelve.open('persondb')
+for obj in (bob, sue, tom):
+    db[obj.name] = obj
+db.close()
+```
+
+**Exploring Shelve Interactively**
+
+Here are some examples. Notice we don't have to `import Person` or `Manager` again.
+
+```python
+print(open('persondb.dir').read())
+print(open('persondb.dat', 'rb').read())
+
+db = shelve.open('persondb')
+print(len(db))
+print(list(db.keys()))
+
+bob = db['Bob Smith']
+print(bob)
+
+print(bob.last_name())
+
+for key in db:
+    print(key, '=>', db[key])
+
+for key in sorted(db):
+    print(key, '=>', db[key])
+
+```
+
+* Cons: The classes and their module files must be importable when an instance
+	is later loaded. More formally, pickleable classes must be coded at the top
+	level of a module file accessible from a directory listed on the `sys.path`
+	module search path.
+* Pros: that changes in a class’s source code file are automatically picked up
+	when instances of the class are loaded again.
