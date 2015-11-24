@@ -9,6 +9,10 @@
 	- [Step 4: Customizing Behavior by Subclassing](#step-4-customizing-behavior-by-subclassing)
 	- [Step 5: Customizing Constructors](#step-5-customizing-constructors)
 	- [Step 6: Using Introspection Tools](#step-6-using-introspection-tools)
+	- [Step 7: Storing Objects in a Database](#step-7-storing-objects-in-a-database)
+- [Chapter 29 Class Coding Details](#chapter-29-class-coding-details)
+	- [The Class Statement](#the-class-statement)
+	- [Methods](#methods)
 <!-- /TOC -->
 
 # Chapter 27 Class Coding Basics
@@ -240,3 +244,63 @@ for key in sorted(db):
 	module search path.
 * Pros: that changes in a class’s source code file are automatically picked up
 	when instances of the class are loaded again.
+
+# Chapter 29 Class Coding Details
+
+## The Class Statement
+
+The `class` statement is not a declaration, but is an object builder and implicit
+assignment - when run, it generates a class object and stores a reference to it in
+the name used in the header.
+
+Within the `class` statement, any assignment generate class attributes.
+
+Assignments of simple non-function objects to class attributes produce
+data attributes, shared by all instances.
+
+Assignments to instance attributes create or change the names in the instance, rather
+than in the shared class. More generally, inheritance searches occur only on attribute
+references, not on assignment: assigning to an object’s attribute always changes that
+object, and no other. For example, `y.spam` is looked up in the class by inheritance, but
+the assignment to `x.spam` attaches a name to x itself.
+
+Consider the following code:
+
+```python
+class MixedNames:
+    data = 'spam'
+
+    def __init__(self, value):
+        self.data = value
+
+    def display(self):
+        print(self.data, MixedNames.data)
+
+x = MixedNames(1)
+y = MixedNames(2)
+x.display()
+y.display()
+ # The outut is like:
+ # 1 spam
+ # 2 spam
+```
+
+By using these techniques to store attributes in different objects, we determine their
+scope of visibility. When attached to classes, names are shared; in instances, names
+record per-instance data, not shared behavior or data. Although inheritance searches
+look up names for us, we can always get to an attribute anywhere in a tree by accessing
+the desired object directly.
+
+## Methods
+
+In other words, Python automatically maps instance method calls to a class’s method
+functions as follows. Method calls made through an instance, like this:
+
+```python
+instance.method(args...)
+```
+are automatically translated to class method function calls of this form:
+
+```python
+class.method(instance, args...)
+```
