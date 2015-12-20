@@ -304,3 +304,46 @@ are automatically translated to class method function calls of this form:
 ```python
 class.method(instance, args...)
 ```
+
+## Inheritance
+
+**Class Interface Techniques**
+
+* Super: Defines a method function and a delegate that expects an action in a subclass.
+* Inheritor: Doesn’t provide any new names, so it gets everything defined in Super.
+* Replacer: Overrides Super’s method with a version of its own.
+* Extender: Customizes Super’s method by overriding and calling back to run the default.
+* Provider: Implements the action method expected by Super’s delegate method.
+
+The most crucial technique is `Provider`. Python first finds `delegate` method in
+`Super` class. Then in the `delegate` method, `self.action` invokes a new, independent
+inheritance search, the `action` located in the `Provider` subclass.
+
+```python
+class Super:
+    def method(self):
+        print('in Super.method')
+
+    def delegate(self):
+        self.action()
+
+		def action(self):
+        assert False, 'action must be defined!'
+
+class Provider(Super):
+    def action(self):
+        print('in Provider.action')
+
+x = Provider()
+x.delegate()
+
+X = Super()
+X.delegate() # AssertionError: action must be defined!
+```
+
+With `function decorator` and `metaclass`, we can make a class not instantiable
+if the any abstract methods are not defined.
+
+## Namespaces: The conclusion
+
+  
