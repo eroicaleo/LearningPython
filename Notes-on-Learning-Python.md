@@ -13,6 +13,8 @@
 - [Chapter 29 Class Coding Details](#chapter-29-class-coding-details)
 	- [The Class Statement](#the-class-statement)
 	- [Methods](#methods)
+	- [Inheritance](#inheritance)
+	- [Namespaces: The conclusion](#namespaces-the-conclusion)
 <!-- /TOC -->
 
 # Chapter 27 Class Coding Basics
@@ -346,4 +348,23 @@ if the any abstract methods are not defined.
 
 ## Namespaces: The conclusion
 
-  
+* Unqualified names (e.g. `X`) deal with scopes
+* Qualified attribute names (e.g. `object.X`) use object namespaces.
+
+Attribute Names: Object Namespaces.
+
+*Assignment (`object.X = Value`)*: Creates or alters the attribute name `X` in the
+namespace of the `object` being qualified,
+and none other. Inheritance-tree climbing happens only on attribute reference,
+not on attribute assignment.
+
+*Reference (`object.X`)*: For class-based objects, searches for the attribute
+name `X` in `object`, then in all
+accessible classes above it, using the inheritance search procedure. For nonclass
+objects such as modules, fetches `X` from `object` directly.
+
+We can fetch the class attributes, e.g. `C.X`, but we can never fetch local variables
+in functions or methods from outside their `def` statements.
+
+Scopes are always determined by the position of assignments in your source code,
+and are never influenced by what imports what or who imports whom.
