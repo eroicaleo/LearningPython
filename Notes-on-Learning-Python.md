@@ -368,3 +368,23 @@ in functions or methods from outside their `def` statements.
 
 Scopes are always determined by the position of assignments in your source code,
 and are never influenced by what imports what or who imports whom.
+
+**Nested Classes: The LEBT Scopes Rule Revisited**
+
+The `LEBT` rule never search enclosing `class`, just `def`s, modules and built-ins.
+It's `LEBT` not `CLEBT`. In the following example, the first `print` in `method1`
+will print out 2, not 3. If we want to print 3, we have to use `self.X`.
+
+```python
+def nester():
+    X = 2
+    print(X)
+
+    class C:
+        X = 3
+        print(X)
+
+        def method1(self):
+            print(X)
+            print(self.X)
+```
