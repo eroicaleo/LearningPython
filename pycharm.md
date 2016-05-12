@@ -15,6 +15,13 @@
 * `Alt+Slash, Alt+Slash`: complete the name of a class, and import it for you if
   not yet imported.
 * `Shift+F6`: Rename classes, methods and variables across the whole project.
+* `Ctrl+Alt+V`: Extract variable refactoring. Here is an example:
+  ```python
+  print(complex_number.real_part())
+  # Highlight the code inside braket and Refractor to
+  complex_number_real_part = complex_number.real_part()
+  print(complex_number_real_part)
+  ```
 
 ## Compile and Debug
 * `Ctrl+Shift+10`: run the code.

@@ -388,3 +388,17 @@ def nester():
             print(X)
             print(self.X)
 ```
+
+## Namespace Dictionaries: Review
+
+Because attributes are actually dictionary keys inside Python, there are really
+two ways to fetch and assign their values—by qualification, or by key indexing:
+
+```python
+print(X.data1, X.__dict__['data1'])
+```
+
+This equivalence applies only to attributes actually attached to the instance, though.
+Because attribute fetch qualification also performs an inheritance search, it can access
+inherited attributes that namespace dictionary indexing cannot. The inherited attribute
+`X.hello`, for instance, cannot be accessed by `X.__dict__['hello']`.
