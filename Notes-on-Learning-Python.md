@@ -402,3 +402,11 @@ This equivalence applies only to attributes actually attached to the instance, t
 Because attribute fetch qualification also performs an inheritance search, it can access
 inherited attributes that namespace dictionary indexing cannot. The inherited attribute
 `X.hello`, for instance, cannot be accessed by `X.__dict__['hello']`.
+
+## Namespace links: A Tree Climber
+
+We use `__bases__` to get the base classes for a class.
+```python
+class A: pass
+A.__bases__
+```

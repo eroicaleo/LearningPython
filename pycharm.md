@@ -22,6 +22,8 @@
   complex_number_real_part = complex_number.real_part()
   print(complex_number_real_part)
   ```
+* `Alt+Shift+P`: If the cursor is between the parentheses of a method call,
+  brings up a list of valid parameters. Can be used in code completion pop-up list.
 
 ## Compile and Debug
 * `Ctrl+Shift+10`: run the code.
@@ -33,6 +35,7 @@
   or field) in any view.
 * `Ctrl+Shift+Backspace`: brings you back to last edited position.
   Navigation | Last Edit Location
+* `Alt+Up`, `Alt+Down`: Move between methods.
 
 ## View and Windows
 * `Alt+0`: show messages.
@@ -40,3 +43,13 @@
 * `Alt+7`：file Structure, like `Ctrl+F12`, but in the left pane.
 * `Shift+left-click` or `mid-click` or `Ctrl+F4`: close tabs in the editor and the tool
   windows of IntelliJ.
+
+## Edit
+* `Ctrl+Shift+Down`, `Ctrl+Shift+Up`: move a block of codes up and down.
+* `Ctrl+Shift+J`: Join two lines.
+* `Ctrl+Shift+F7`: quickly highlight the usage of some variables in the current
+  file, `F3` and `Shift+F3` to navigate the highlighted usages. `Escape, Escape`
+  to remove highlighting. This can highlight multiple variables.
+    * place the carat at the `implements` keyword in the class definition, and
+      press the combination, and select the desired interface from the list.
+* `Alt+Y`: cycle through the clipboard to paste. 
