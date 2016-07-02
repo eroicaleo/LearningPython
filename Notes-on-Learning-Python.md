@@ -15,6 +15,8 @@
 	- [Methods](#methods)
 	- [Inheritance](#inheritance)
 	- [Namespaces: The conclusion](#namespaces-the-conclusion)
+	- [Namespace Dictionaries: Review](#namespace-dictionaries-review)
+	- [Namespace links: A Tree Climber](#namespace-links-a-tree-climber)
 <!-- /TOC -->
 
 # Chapter 27 Class Coding Basics
