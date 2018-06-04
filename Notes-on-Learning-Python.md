@@ -414,3 +414,93 @@ A.__bases__
 ```
 
 # Chapter 30 Operator Overloading
+
+## The basics
+
+* Table 30.1 summarize the operators.
+* All overloading methods start and end with '__'
+* The mapping from special methods to expressions are predefined by python
+  language
+
+## Indexing and slicing
+
+* `__getitem__` also works for slicing
+* `__index__` is not indexing
+
+## Index iteration
+
+* In the absence of a specific iteration method, the `for` statement works by repeatedly
+  indexing a sequence from 0 to higher index.
+* Then __getitem__ is one way to overload iteration
+* Then `in`, list comprehension, `map`/`filter`, list and tuple assignment all work in this case.
+
+## Iterable objects
+
+* Iteration context will first try __iter__, and then __getitem__
+* iteration context pass an Iterable object to `iter()` which invokes the `__iter__` and expects to
+  get an iterator object. If this succeed, the the context continues to call the `__next__` method,
+  until `StopIteration` is raised.
+* The `Square` example's `__iter__` just return itself because `__next__` is part of the class. But
+  in more complex context, the iterator object maybe a separate class and object to support multiple
+  active iterations.
+* The design of it is to return itself, so it's one shot iteration. Once iterate over, it's empty.
+
+### Multiple iterators on one object
+
+* generator functions and expressions, as well as built-ins like map and zip are single iterator objects.
+* The `range` and `list` support multiple iterations.
+* To support multiple iteration, `__iter__` just need to define a new stateful object for the iterator, see `skipper.py`
+* Another approach, combine `__iter__` with generator, i.e. in the `__iter__` return a generator object.
+  This is because a generator is an iterator object, if you do `iter(G) == G`, the result is true
+    * This approach also supports multiple active iterations, and code is more concise.
+    * However, the regular version is more explicit and easy to understand.
+
+## Membership: `__contains__`, `__getitem__`, `__iter__`
+
+* priority: `__contains__` > `__getitem__` > `__iter__`
+
+## Attribute Access:
+
+* `__getattr__`: it's called when python cannot find the attribute name in the inheritance tree.
+* `__setattr__`: if this function is defined or inherited, `self.attr = value` becomes `self.__setattr__('attr', value)`
+    * Need to use like this: `self.__dict__['name'] = x`, otherwise will cause infinite loop
+    * Another method is to route the assignment to a higher superclass: `object.__setattr__(self, attr, value + 10)`
+    * We use this method to mimic the private attribute that cannot be changed outside a class. A better way will be
+      presented in chapter 38.
+
+## String represntation: `__repr__` and `__str__`
+
+* `__str__` is first tried for `print` nad `str`. User friendly display.
+* `__repr__` is used in other cases: interactive echos, `repr`, and etc. Detailed display for developers.
+* They both must return strings
+* `__str__` only applys when print top level object, if one object is nested in another larger object, need to use `__repr__`
+* They are 2nd most commonly used methods, just behind `__init__`
+
+## `__radd__` and `__iadd__`
+
+* If truely symmetric operations, 3 ways to do `__radd__`
+    * call `self.__add__` inside `__radd__`
+    * switch the operands order inside `self.__radd__`
+    * do: `__radd__ = __add__`
+* inplace addition `+=`: `__iadd__`
+* right side is advanced and fairly uncommon
+
+## Call operations
+
+* `__call__` becomes useful with API that expects functions, it allows us to code object
+  that conforms an expected function call interface, and also retain state information.
+* similar implementation:
+    * closure
+    * lambda functions
+    * bound functions
+
+## Boolean tests
+
+* python prefer `__bool__` over `__len__` if both defined.
+* if none of them defined, then boolean test is always true.
+
+## Object deletion: `__del__`
+
+* Destructors are not as commonly used as in other languages.
+* Better to code termination code in some explicit function like `shutdown`
+
