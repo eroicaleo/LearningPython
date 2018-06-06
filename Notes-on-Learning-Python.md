@@ -162,7 +162,7 @@ Two problems with the above `__repr__` method.
 
 Introspection tool:
 * `__class__`: a link from instance to it's class
-		* class has a attribute: `__name__`
+    * class has a attribute: `__name__`
 * `__bases__`: provides access to its superclass
 * `__dict__`: gives the attribute
 
@@ -504,3 +504,73 @@ A.__bases__
 * Destructors are not as commonly used as in other languages.
 * Better to code termination code in some explicit function like `shutdown`
 
+# Chapter 31 Designing with Classes
+
+## Python and OOP
+
+* Inheritance
+* Polymorphism: attributes are resolved @ runtime, so objects with same interface are interchangable.
+    * There can be only one definition of a method name in Python.
+    * You should write the python code to expect an object interface, not a specific data type.
+* Encapsulation
+
+## OOP and Inheritance: is-a relation
+
+## OOP and Composition: has-a relation
+
+* Composition refers a collection of embedded objects.
+* The processing code only cares that writers have a `write` method and a method named `convert` is defined.
+* Inheritance and composition are often complementary and sometimes alternative techniques.
+
+## OOP and delegation: "Wrapper" proxy objects
+
+* sample code: `trace.py`
+* delegation is a special form of composition, with a single embedded object managed by a wrapper (proxy)
+  that retains most or all of the embedded object's interface.
+* delegation is often implementated with the `__getattr__`.
+* A wrapper class can use `__getattr__` to route arbitrary accesses to a wrapped object. 
+* The net effect is to augment the interface of the wrapped object.
+* See also ch.32 and ch39, function decorators.
+
+## Pseudoprivate Class Attributes
+
+* Python programmers code internal names with a single underscore `_X` to let you know a name should not
+  be changed.
+* `__X` will be expanded to `_spam__X`, assume the class is called `spam`.
+* If care about privacy, should review `__getattr__` and `__setattr__` in last chapter or `Private` class
+  decorator.
+
+## Methods are objects: Bound or Unbound
+
+* `class.function_attribute` returns an Unbound method object. Must provide instance as the explicitly
+  as the 1st argument.
+* `instance.function_attribute` is bound method object
+* python supports 3 kinds of class level methods: instance, static and class
+* Python 3 allows to call a method without an instance, as long as the method doesn't expect one.
+  This doesn't work for python 2.x
+    * Because of this, the `staticmethod` built-in function and decorator in not needed in 3.X if 
+      a method doesn't have `self`
+* bound methods have introspection of their own
+    * `__self__` points to instance
+    * `__func__` points to the function
+* other callables:
+    * functions: `lambda` and `def`
+    * instance that inherites a `__call__`
+    * bound method
+
+## Classes are objects: generic object factories
+
+* A factory might allow code to be insulated from the details of dynamically configured object construction.
+
+## Multiple Inheritance: "Mix-in" classes
+
+* Attribute search order: from left to right in the headline
+* Resolve name conflict, (not very common)
+    * `self.method()` choose the lowest and lefmost
+    * `superclass.method()` Overrides the default
+* `id` to find the address of an instance.
+* See `testmixin.py` for the example
+* `__dict__` to get instance attributes, `dir` to get all attributes.
+* a little trick: s1 = '%%s'; res = 'lala'; s2 = s1 % res
+* in `listtree.py`, the class object is used as key to the `__visited` directory. Since they are hashable objects.
+* `collector` module combines them in a single namespace.
