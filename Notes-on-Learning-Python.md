@@ -574,3 +574,62 @@ A.__bases__
 * a little trick: s1 = '%%s'; res = 'lala'; s2 = s1 % res
 * in `listtree.py`, the class object is used as key to the `__visited` directory. Since they are hashable objects.
 * `collector` module combines them in a single namespace.
+
+# Chapter 32 Advanced class topics
+
+## Extending built-in types
+
+### Extending by embedding
+
+* `setwrapper.py`
+
+### Extending by subclassing
+
+* `setsubclass.py`, `typesubclass.py`
+
+## The "New Style" Class Model
+
+* Python 3.X, all classes are new style whether they inherited from `object`
+* Python 2.X, classes must explicitly inherite from `object` or other built-in class to be considered as new style.
+
+## New Style class changes
+
+* Classes and types merged. `type(I)` returns a class and is normally same as `I.__class__`.
+  classes are instances of the `type` class.
+* All classes inherited from `object`
+* Attribute search order: MRO and diamonds
+* Inheritance algorithm is different.
+* New class tools: slots, properties, descriptors, super and `__getattribute__`
+
+### Attribute fetch for built-ins skip instance 
+
+* In 2.X, for built-in operations, like `X[0]`, i.e. `__getitem__`, if the class of `X` doesn't define
+  `__getitem__`, it will be routed to the instance's `__getattr__`. Why instance? Because a instance
+  can define it's own `__getattr__` after its instantiation.
+* In 3.X, `X.__add__` and `X.normal` will be routed to `X.__getattr__`, but `X + 1` won't
+  and `type(X).__add__(X, 1)` also won't and will raise exception.
+
+### Type Model Changes
+
+* type object generate classes as its instances, classes generate instances of themselves.
+* The type of a class instance is the class, the type of a user-defined class is the same as
+  the type of a built-in object type.
+    * `print(type(C), C.__class__, int.__class__, type(str))` are the same
+* Generally, type checking is the wrong thing to do in Python, we code to the object interfaces,
+  not object types. `isinstance` should be used for class type quering which is rare.
+
+### All classes derive from `object`
+
+* The following results are all `True`
+    * `isinstance(type, object)`: All classes derive from `object`. 
+    * `isinstance(object, type)`: `type` makes classes.
+
+### Diamond inheritance change
+
+* 2.X, DFLR (depth first left to right).
+* 3.X, MRO (method resolution order), not just for method but also for all attributes
+  looks in any super classes to the right of the one just searched before ascending to
+  the common superclass at the top.
+* Can use explicit conflict resolution: your code won't vary per Python version (portability technique).
+* `object` class defines `__str__`, `__repr__`, so if we don't have MRO, multiple inheritence
+  will probably go to this method first.
