@@ -46,5 +46,16 @@
 ## Tuples are not just immutable lists
 
 * The position in tuple is also important
-* tuple unpacking:
-    * 
+* tuple unpacking (`tupleunpacking.py`):
+    * works for Iterable object 
+    * parallel assignment, can do swapping value elegently, i.e. `a, b = b, a`
+	* When don't care a variable, use `_`
+    * prefix an argument with a star when calling a function.
+    * `*` can be used to grab excess items
+    * but in parallel assignment, it can appear only once, but can be anywhere
+* assignment can have nested tuples.
+* `namedtuple`
+    * Accept 2 arguments, 1st is the class name, second can be a list of string or a string with single
+      space delimit
+    * The instantiation must take positional arguments not iterables.
+    * The elements can be accessed by name or position
