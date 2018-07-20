@@ -30,3 +30,13 @@ import statsmodels as sm
 * `%run -i` to run scripts and it can access the variable already defined
 * `%paste` and `%cpaste` to run the code from clipboard, cpaste looks more flexible
 * Shortcuts: search `Ctrl-P`, `Ctrl-N`, `Ctrl-R`, delete current line `Ctrl-U`
+* Magic commands (table 2-2 on page 47):
+    * `%timeit`
+    * `%debug`
+    * `%pwd`
+    * `%automagic`
+    * `%magic`
+* matplotlib integration
+    * `%matplotlib` in Ipython
+    * `%matplotlib inline` in Jupyter
+
