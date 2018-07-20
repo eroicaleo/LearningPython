@@ -29,3 +29,25 @@
 * unsupervised method: clustering, visulization and dimension reduction (PCA, kernel PCA etc.)
     * visualization, input unlabeled data and output 2-D or 3-D easy to plot, easy to understand how data organized and
       identify suspicious patterns
+* dimension reduction: often good to use before sending to another ML algorithm. Run faster, less disk/memory, sometimes better results
+* anomaly detection, also unsupervised
+* association rule learning: customer buy barbecue source and potato chips tend to by steak
+* semisupervised learning, a lot of unlabeled data + some labeled data. 
+    * photo service: unsupervised part, identify which person in which photos. supervised part, ask you to label them.
+    * deep belief network + restricted boltzmann network
+* reinforcement learning:
+    * Observe environment, perform actions, get rewards (AlphaGo)
+
+### Batch learning and online learning
+
+* batch learning
+    * unable to learn incrementally, if retrain, take long time and lots of computing resources
+* online learning
+    * still done offline, use mini-batch data
+    * Learning rate, how fast it adapts to new data
+    * bad data feed into system, then performance degrades  
+
+### Instance based and Model based
+
+* Instance based: remember the instance and use the most similar instance to make prediction
+* Model based: like linear regression.
