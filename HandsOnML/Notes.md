@@ -51,3 +51,68 @@
 
 * Instance based: remember the instance and use the most similar instance to make prediction
 * Model based: like linear regression.
+
+# Chapter 9 Up and Running with TF 
+
+* First define a python graph of computation to perform
+* Possible to run them in different CPU and GPUs
+* Millions of parameters + Billions of training data + Millions of features
+* clean, scalable, flexible, production-ready
+* Big commnunity:
+    * Great projects on top of it: https://www.tensorflow.org/ , https://github.com/jtoy/awesome-tensorflow
+    * Question: http://stackoverflow.com/ with tag tensorflow
+    * bugs and features: github
+    * General discussion: google group
+* First example (`firstex.py`):
+    * build the graph
+    * open a tensorflow session, `sess = tf.Session()`, which place operations on devices like CPU/GPU
+    * Initialize `x, y`, run the graph `f`.
+    * Can also use `with tf.Session() as sess`
+    * To Initialize, define a init node `init = tf.global_variables_initializer()`
+    * In Ipython or Jupyter, you can do `tf.InteractiveSession()`
+* Two phases:
+    * Construction phase builds computation graph
+    * Execution phase
+
+## Managing Graph
+
+* create graph `graph = Graph()`
+* Set graph as default graph: `with graph.as_default()`, `tf.get_default_graph()`
+* `tf.reset_default_graph()`
+
+## Lifecycle
+
+* All nodes value dropped between different graph run
+* if want to save the common computation, needs to run 2 graphs at the sanme time: `y_val, z_val = sess.run([y, z])`
+
+## LR with TF
+
+* TF operations (ops)
+* Variable and constants without inputs : source op
+* Inputs/outputs multi-dimension: tensors
+
+## Implementing gradient descent
+
+* The key step in manual updating is to update theta: `training_op = tf.assign(theta, theta - learning_rate * gradients)`
+* If use autodiff, then gradient becomes `gradients = tf.gradients(mse, [theta])[0]`
+* If use optimizer:
+    * `optimizer = tf.train.GradientDescentOptimizer(learning_rate=learning_rate)`
+    * `training_op = optimizer.minimize(mse)`
+
+## Feeding data to training algorithm
+
+* If we need to create a placeholder node, we need to call `tf.placehoder(type, shape)`, ``
+* can be used for mini batch `house_gd_minibatch.py`
+    * `X = tf.placeholder(dtype=tf.float32, shape=(None, n+1), name='X')`
+    * `y = tf.placeholder(dtype=tf.float32, shape=(None, 1), name='y')`
+    * `X_batch, y_batch = fetch_batch(epoch, batch_index, batch_size)`
+    * `sess.run(training_op, feed_dict={X: X_batch, y: y_batch})`
+
+## Saving and restoring Models
+
+* use it in another program
+* save it every other iterations in case computer crashes
+* create a node: `saver = tf.train.Saver()`
+* save the model: `save_path = saver.save(sess, "/tmp/my_model_final.ckpt")`
+* restore it: `saver.restore(sess, "/tmp/my_model_final.ckpt")`
+* only save one variable: `saver = tf.train.Saver({"weights": theta})`
