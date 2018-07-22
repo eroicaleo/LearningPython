@@ -116,3 +116,15 @@
 * save the model: `save_path = saver.save(sess, "/tmp/my_model_final.ckpt")`
 * restore it: `saver.restore(sess, "/tmp/my_model_final.ckpt")`
 * only save one variable: `saver = tf.train.Saver({"weights": theta})`
+
+## Visualization
+
+* `house_gd_tensorboard.py`
+* only safari shows the graph
+* At the end Construction phase
+    * `mse_summary = tf.summary.scalar('MSE', mse)`
+    * `file_writer = tf.summary.FileWriter(log_dir, tf.get_default_graph())`, creates the dir/writes the graph definition
+* When you need to dump the data
+    * `summary_str = mse_summary.eval()`
+    * `file_writer.add_summary(summary_str, epoch)`
+* In Jupyter, you can also do `show_graph()`
