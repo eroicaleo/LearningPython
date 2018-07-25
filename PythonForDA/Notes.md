@@ -39,4 +39,17 @@ import statsmodels as sm
 * matplotlib integration
     * `%matplotlib` in Ipython
     * `%matplotlib inline` in Jupyter
+* Python Basics
+    * skip the bytes and unicode but may need to come back
+    * skip the datetime but may need to come back
+
+# Chapter 03 Built-in Data Types (skip for now)
+
+# Chapter 04 Numpy basics
+
+* `ndarray`, math functions, linear algebra, random generation, C API
+* The reason `numpy` is fast `speed_test.py`:
+    * store numbers in contiguous memory
+    * operation on entire arrays without for loop
+
 
