@@ -127,4 +127,21 @@
 * When you need to dump the data
     * `summary_str = mse_summary.eval()`
     * `file_writer.add_summary(summary_str, epoch)`
-* In Jupyter, you can also do `show_graph()`
+* Then in the terminal, do `tensorboard --logdir tf_logs`
+* In Jupyter, you can also do `show_graph()` to show the graph structure
+
+##  Name scopes
+
+* `house_gd_namescope.py`
+* `with tf.name_scope('loss') as scope:`
+* `print(error.op.name)`
+* `print(mse.op.name)`
+* Then in the tensorboard, we can see the nodes of error and mse are grouped together.
+
+## Modularity
+
+* `relu_mod.py` 
+* We can define the function
+* `tf.add_n` is useful
+* When creating a node, tensorflow will add `_1`, `_2` if a variable name is already there.
+* So can be combined with name_scope to make graph much clearer.
