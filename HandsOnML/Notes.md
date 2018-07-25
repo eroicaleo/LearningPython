@@ -142,6 +142,13 @@
 
 * `relu_mod.py` 
 * We can define the function
-* `tf.add_n` is useful
+* `tf.add_n` is useful to add a list of nodes
 * When creating a node, tensorflow will add `_1`, `_2` if a variable name is already there.
 * So can be combined with name_scope to make graph much clearer.
+
+## Sharing Variables
+
+* Approach 1: Add the variable as an argument for the function (`sharing_func.py`)
+    * Note if you need to change the variable threshold, you need to do `assign_op = threshold.assign(5)`
+    * https://stackoverflow.com/questions/34220532/how-to-assign-a-value-to-a-tensorflow-variable
+* Similar approach, python dictionary and class
