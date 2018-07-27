@@ -51,5 +51,22 @@ import statsmodels as sm
 * The reason `numpy` is fast `speed_test.py`:
     * store numbers in contiguous memory
     * operation on entire arrays without for loop
+* It's generic multi-d for homogeneous data
 
+### Creating ndarrays
 
+* `np.array()`, accepts iterables
+    * `arr1.ndim`
+    * `arr1.shape`
+    * `arr1.dtype`
+* `ones, zeros, empty, full`, when create 2-d or higher, use tuple as the size.
+   * The above 3 has `_like` version to create same size
+* `arange` array version of `range`
+* `asarray`: don't do anything, if input is already an array
+
+### Data types
+
+* When creating, do `dtype=float64` or `dtype=int32` 
+* page 91, table 4-2 to summarize
+* `astype` to convert type
+    * always create a new ndarray
