@@ -152,3 +152,10 @@
     * Note if you need to change the variable threshold, you need to do `assign_op = threshold.assign(5)`
     * https://stackoverflow.com/questions/34220532/how-to-assign-a-value-to-a-tensorflow-variable
 * Similar approach, python dictionary and class
+* Tensorflow's approach: `sharing_get_variable.py`, `sharing_get_variable_2.py`
+    * create a threshold variable with `tf.get_variable()` within `with tf.variable_scope()`
+    * get the variable again with `tf.get_variable('threshold')` in the `relu` function
+    * The reason I cannot get this code work because I defined the `threshold` too late in the script
+      after the `add_n`
+    * A similar way to define threshold inside `relu` function can be found in `sharing_get_variable_2.py`.
+
