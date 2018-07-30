@@ -67,6 +67,34 @@ import statsmodels as sm
 ### Data types
 
 * When creating, do `dtype=float64` or `dtype=int32` 
-* page 91, table 4-2 to summarize
+* page 91, table 4-2 to summarize the data type
 * `astype` to convert type
     * always create a new ndarray
+
+### Arithmethic with numpy arrays
+
+* The Arithmethic operations are element-wise
+
+### Basic indexing
+
+* 1-d is simple, pretty much like the python list. `basic_indexing.py`
+* 1st distiction from python list, data is not copied, any modification goes to original array
+    * Performance and memory consideration
+    * If you need to get a copy, do `arr.copy()`
+* 2-d can be indexed by
+    * `arr2d[0, 2]`
+    * `arr2d[0][2]`
+* array can be indexing by slicing: `arr2d[2, :1], arr2d[:, :1]`
+
+### Boolean indexing
+
+* `bool_indexing.py`
+* `data[names == 'Bob']`
+* Select the inverse: `data[~(names == 'Bob')], data[np.logical_not(names == 'Bob')]`
+* use `&` and `|` for and or
+* Can also do `data[data < 0] = 0`
+
+### Fancy indexing
+
+* `fancy_indexing.py`
+* Not like the slicing, always return a new array.
