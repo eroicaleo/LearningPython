@@ -99,8 +99,8 @@ import statsmodels as sm
 * `fancy_indexing.py`
 * Not like the slicing, always return a new array.
 * Suprisingly, the following 2 are different:
-    * `arr[[1, 5, 7, 2], [0, 3, 1, 2]]`
-    * `arr[[1, 5, 7, 2]][:, [0, 3, 1, 2]]`
+    * `arr[[1, 5, 7, 2], [0, 3, 1, 2]]`, this one is [arr[1, 0], arr[5, 3], arr[7, 1], arr[2, 2]]
+    * `arr[[1, 5, 7, 2]][:, [0, 3, 1, 2]]`, this one is 4x4 array
 
 ### Transposing and Swapping
 
@@ -214,3 +214,36 @@ import statsmodels as sm
 * `dropping.py`
 * To drop a column in data frame, use `axis=1` or `axis='columns'`
 * drop can be inplace, but the original data is destroyed.
+
+### Indexing, Selection, and Filtering
+
+* `indexing.py`
+* Can use Series's index/label or number
+* slicing with label include the end label
+* `loc` and `iloc` to select rows
+    * Also works with slicing
+* Table 5-4 to summary the indexing options
+
+### Integer Indexing
+
+* `integer_indexing.py`
+* Using `ser[-1]` with `ser = pd.Series(np.arange(3.))` raise an exception
+* Using `ser2[-1]` with `ser2 = pd.Series(np.arange(3.), index=list('abc'))` raise an exception
+* This is because when labels are all integers, it will cause confusion. But if labels are
+  non integers, there is no confusion.
+* In the first case, we need to use `ser.iloc[-1]`
+
+### Arithmetic and Data Alignment
+
+* `align.py`
+* Adding up objects, the index in the results will be the union of the index pairs
+    * If one index is missing in another, it will be `NaN`
+* For data frame, the alignment happens for both columns and indexes
+* Because by default, the missing value will be `np.nan`. If we want to a default value,
+  we need to use `df1.add(df2, fill_value = 0)`
+* In addtion to `add`, we also have `radd`. Table 5-5 summarize the methods.
+* `reindex` also has a `fill_value` argument.
+* For `np.arrary`, there is broadcasting. `DataFrame` and `Series` works similarly.
+    * By default, arithmetic between DataFrame and Series matches the index of the Series on the DataFrame’s columns, broadcasting down the rows.
+    * If an index value is not found in either the DataFrame’s columns or the Series’s index, the objects will be reindexed to form the union
+    * If we want to do broadcast over columns, we have to use method and do `axis=0` or `axis='index'`
