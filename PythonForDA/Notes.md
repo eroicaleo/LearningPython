@@ -247,3 +247,58 @@ import statsmodels as sm
     * By default, arithmetic between DataFrame and Series matches the index of the Series on the DataFrame’s columns, broadcasting down the rows.
     * If an index value is not found in either the DataFrame’s columns or the Series’s index, the objects will be reindexed to form the union
     * If we want to do broadcast over columns, we have to use method and do `axis=0` or `axis='index'`
+
+### Function Application and Mapping
+
+* `func_app_map.py`
+* Universal functions for `np.array` also works for `Series` and `DataFrame`.
+* Another frequent operation is applying a function on 1-d arrays to each row or column: `apply` 
+    * Default is applying the function on each columns
+    * For row, we need to do `DataFrame.apply(f, axis='columns')`
+* Many `np.array` functions are also `DataFrame` functions, e.g. `mean` and `sum` so no need to call `apply`
+* The applied function doesn't have to return a scalar value, it can return a `pd.Series`
+* Element-wise function needs to use `applymap`, which is similar to `pd.Series.map`
+
+### Sorting and Ranking
+
+* `sort.py`
+* sort based on index: `pd.Serie.sort_index()` or `pd.Series.sort_index()`, `axis=1` for `columns`
+    * `ascending=False`
+* sort by values: `sort_value()`
+    * Missing values are at the end
+* sort by values for `DataFrame`, we can use the values in one or more columns: `frame.sort_index(axis=1).sort_values(by=['a', 'b'])` .
+* `rank` function assign the ranks, by default, for tie, it assigns the mean value.
+    * For tie, can also based the appreance first `method='first'`
+    * For tie, can also have `method='max'`
+    * Table 5-6 summarize tie-breaking
+
+### Axis Indexes with Duplicate Labels
+
+* `dup_index.py`
+* `pd.Index.is_unique` tells if the index is unique, its an attribute
+* The duplication makes code more complicated
+
+## 5.3 Summarizing and Computing Descriptive Statistics
+
+* `summ_stat.py`
+* across columns: `pd.DataFrame.sum(axis='columns')`
+* By default, NaN is skipped. Don't skip NaN: `pd.DataFrame.sum(axis='columns', skipna=False)`
+* Table 5-7 summarize options for reduction methods
+* Non-reduction methods: `idxmax/idxmin`, `cumsum`, `describe`
+* Table 5-8. Descriptive and summary statistics
+
+### Correlation and Covariance (skip for now due to don't have dataset)
+
+### Unique Values, Value Counts, and Membership
+
+* `uniq_count_mem.py`
+* `unique()`
+* `obj.value_counts()` and `pd.value_counts(obj.values)`
+* `obj.isin(['b', 'c'])`
+* related: `Index.get_indexer`, see the sample code
+* Table 5-9 summarize these methods
+* `pd.DataFrame.fillna(0.0)` will fill the `NaN` with 0.0
+
+# Chapter 06 Data Loading, Storage, and File Formats (skip for now) 
+
+# Chapter 07 Data Cleaning and Preparation
