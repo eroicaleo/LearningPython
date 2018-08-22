@@ -228,7 +228,7 @@ import statsmodels as sm
 
 * `integer_indexing.py`
 * Using `ser[-1]` with `ser = pd.Series(np.arange(3.))` raise an exception
-* Using `ser2[-1]` with `ser2 = pd.Series(np.arange(3.), index=list('abc'))` raise an exception
+* Using `ser2[-1]` with `ser2 = pd.Series(np.arange(3.), index=list('abc'))` won't raise an exception
 * This is because when labels are all integers, it will cause confusion. But if labels are
   non integers, there is no confusion.
 * In the first case, we need to use `ser.iloc[-1]`
@@ -302,3 +302,34 @@ import statsmodels as sm
 # Chapter 06 Data Loading, Storage, and File Formats (skip for now) 
 
 # Chapter 07 Data Cleaning and Preparation
+
+## 7.1 Handling Missing Data
+
+* `np.nan` is a `float` type, it's a sentinal value.
+* `isnull()` to tell if it's `nan`
+* `None` is also treated as `nan`
+* Table 7-1, NA Handling methods: `dropna/fillna/isnull/notnull`
+
+### Filtering Out Missing Data
+
+* `filter_out.py`
+* By default, `dropna` for `DataFrame` will drop the any rows containing `NA` 
+* Need to do: `data.dropna(how='all')`
+* To drop column, `data.dropna(axis=1)`
+* Use `df.dropna(thresh=2)` to drop only some of the `NA`
+
+### Filling in Missing Data
+
+* `fill_in.py`
+* df.fillna(0), can accept a `dict`
+* If want to inplace, then `_ = df.fillna(0, inplace=True)`
+* Can use the method for reindexing, `df.fillna(method='ffill', limit=2)`
+* Table 7-2. fillna function arguments
+
+## 7.2 Data Transformation
+
+### Removing Duplicates
+
+* `remove_duplicates.py`
+* `data.duplicated()` tells if a row is a duplication of one of previous rows
+* `data.drop_duplicates()` to drop them
