@@ -101,7 +101,7 @@
 
 ## Feeding data to training algorithm
 
-* If we need to create a placeholder node, we need to call `tf.placehoder(type, shape)`, ``
+* If we need to create a placeholder node, we need to call `tf.placeholder(type, shape)`, ``
 * can be used for mini batch `house_gd_minibatch.py`
     * `X = tf.placeholder(dtype=tf.float32, shape=(None, n+1), name='X')`
     * `y = tf.placeholder(dtype=tf.float32, shape=(None, 1), name='y')`
@@ -159,3 +159,66 @@
       after the `add_n`
     * A similar way to define threshold inside `relu` function can be found in `sharing_get_variable_2.py`.
 
+# Chapter 10 Introduction to Artificial Neural Networks
+
+## 10.1 From Biological to Artificial Neurons
+
+* Reasons to believe this wave of ANN will be different: Huge data/computing power/small tweak of algorithm/local optima close to global optima/more money
+* Most used activation functions:
+    * logistic functions
+    * hyperbolic tangent functions: tanh
+    * Relu functions: fast to compute/doesn't have maximum output value
+
+## 10.3 Training a DNN Using Plain TensorFlow
+
+* `plain.ipynb`
+
+1. construction phase
+    1. The dimension of each layer, input layer, multiple hidden layers and output layer.
+    2. `tf.placeholder` for `X` and `y`
+    3. The actual network will be in a function
+        * Initialize `W` to a truncated normal distribution so to converge faster
+	* Initialize `b` to all zero
+    4. But usually, don't need to define manully, there are many handy functions like: `fully_connected` 
+    5. `tensorflow.contrib` package is experimental code, so might move in the future
+    6. The next step is to define cost function.
+       `tf.nn.sparse_softmax_cross_entropy_with_logits` and `tf.nn.softmax_cross_entropy_with_logits` takes care of softmax functions
+       So we don't need to code them. The difference is the 1st takes in the label from 0 to number of classes - 1. The second takes one hot vector
+    7. Next is define the optimizer.
+    8. Last define the evaluation function.
+    9. As usual, define initialier and saver.
+2. execution phase
+    1. Run initialier
+    2. for each epoch and mini-batch, run `sess.run(training_op)`.
+    3. Print accuracy after every epoch
+
+## 10.4 Fine-Tuning Neural Network Hyperparameters
+
+* Things you can change:
+    * Network topology
+    * # of layers
+    * # of neurons
+    * type of activation functions
+    * weight initilization logic
+
+## number of layers
+
+* Training a large NN on huge dataset takes long time
+* The benefits of multiple layers: parameter efficiency.
+    * Can model the same complex functions with exponential less neurons.
+* Lower level neurons model lower level structure
+* Intermedia level neurons model Intermedia level structure
+* High level neurons model High level structure
+* The lower level can be reused for another problem
+* Can reuse parts of a pretrained network.
+
+## number of Neurons per hidden layer
+
+* previous, people use size like a funnel
+* Now, people tend to use the same neurons for each layer
+* More layers are more important
+
+## Activation Functions
+
+* Hidden layer, relu is generally good
+* output layer, none for regression, softmax for classification
