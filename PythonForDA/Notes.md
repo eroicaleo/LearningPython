@@ -332,4 +332,16 @@ import statsmodels as sm
 
 * `remove_duplicates.py`
 * `data.duplicated()` tells if a row is a duplication of one of previous rows
-* `data.drop_duplicates()` to drop them
+* `data.drop_duplicates()` to drop them, `keep='last'`
+
+### Transforming Data Using a Function or Mapping
+
+* `Series.pd.map` takes a dictionary argument: `lowercased.map(meat_to_animal)`
+* It can also just take a function: `data['food'].map(lambda x: meat_to_animal[x.lower()])`
+
+### Replacing Values
+
+* `replace.py`
+* `pd.Series.replace()` can use `inplace=True`
+* If want to replace multiple values to the same value, then pass a list
+* If want to replace multiple values to different value, then pass 2 lists or a dictionary

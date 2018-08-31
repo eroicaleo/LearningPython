@@ -222,3 +222,29 @@
 
 * Hidden layer, relu is generally good
 * output layer, none for regression, softmax for classification
+
+# Chapter 11 Training Deep Neural Nets
+
+## 11.0 Introduction
+
+* 3 problems we are facing:
+    * Vanishing gradients or exploding gradients which makes lower levels very hard to train.
+    * Training will be very slow with large Networks.
+    * Overfitting the training data.
+
+## 11.1 Vanishing/Exploding Gradients Problems
+
+* Gradients often get smaller and smaller as the algorithm progresses down to the lower layer.
+* lower layer weight virtually unchanged.
+* When opposite happens, it's exploding, usually happens in RNN.
+* Xavier and Yoshua found the combination of sigmoid activation function and weight initilization be the problem
+* The output layer variance is much bigger than the input layer
+
+### Xavier and He initialization
+
+* Xavier proposes the variance of ouput should be similar to that of input
+* He propose Different initilization for different activation functions
+* Default initialier for fully_connected layer in Xavier, if you want to change to
+  He, you can do the 2 steps:
+    * `he_init = tf.contrib.layers.variance_scaling_initializer()`, use `mode="FAN_AVG"`
+    * `hidden1 = fully_connected(X, n_hidden1, weights_initializer=he_init, scope="h1")`
