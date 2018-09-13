@@ -244,7 +244,39 @@
 
 * Xavier proposes the variance of ouput should be similar to that of input
 * He propose Different initilization for different activation functions
-* Default initialier for fully_connected layer in Xavier, if you want to change to
+* Default initialier for `fully_connected` layer in Xavier, if you want to change to
   He, you can do the 2 steps:
     * `he_init = tf.contrib.layers.variance_scaling_initializer()`, use `mode="FAN_AVG"`
     * `hidden1 = fully_connected(X, n_hidden1, weights_initializer=he_init, scope="h1")`
+
+### Nonsaturating Activation Functions
+
+* sigmoid -> ReLU -> Leaky ReLU, typically `alpha = 0.01` in leaky
+* Problems with ReLU, dying ReLU:
+    * When the neuron only output 0, because the weighted sum of inputs is negative.
+* Exponential ReLU is also good (ELU):
+    * Alleviate vanishing grad.
+    * Avoid dying units issue
+    * Smooth everywhere
+* It's drawback is slow in computing gradients but faster in convergence.
+  At test time, it's slower.
+* General advice: ELU > leakyRelu > ReLu, but if cares more runtime, use leaky reLU.
+* Tensor flow provide `elu()`, to use it:
+    * `hidden1 = fully_connected(X, n_hidden1, activation_fn=tf.nn.elu)`
+    * Have to define leaky relu ourself: `hidden1 = fully_connected(X, n_hidden1, activation_fn=leaky_relu)`
+
+### Batch Normalization
+
+* The technique consists of adding an operation in the model just before the activation function of each layer,
+  simply zero-centering and normalizing the inputs, then scaling and shifting the result using two new parameters per layer (one for scaling, the other for shifting).
+* Equation 11-3 for the details
+* Four parameters are learned for each batch layer: gamma/beta/mu/sigma.
+* Pro: Significantly improve training time. Also acts like a regulizer.
+* Run-time penalty for each layer. If needs lightning-fast, then use ELU + He
+* Implementation: `batch_norm.ipynb`
+* Things to Note:
+    * `is_training`: use the current mini-batch’s mean and standard deviation (during training),
+      or the running averages that it keeps track of (during testing).
+    * Since all layers needs `normalizer_fn`, we can put them in `tf.contrib.framework.arg_scope`
+    * In the execution phase, we need to add `is_training`
+
