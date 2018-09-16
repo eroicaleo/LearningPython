@@ -280,3 +280,12 @@
     * Since all layers needs `normalizer_fn`, we can put them in `tf.contrib.framework.arg_scope`
     * In the execution phase, we need to add `is_training`
 
+### gradient clip
+
+* Just limit the gradients to prevent from exploding
+* `optimizer.minimize` will do 2 steps, compute the gradients and then apply them
+* So we will clip the gradients before apply them:	
+    * `grads_and_vars = optimizer.compute_gradients(loss)`
+    * `capped_gvs = [(tf.clip_by_value(grad, -threshold, threshold), var) for grad, var in grads_and_vars]`
+    * 
+* example: `gradient_clip.ipynb`
