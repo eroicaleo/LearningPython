@@ -59,3 +59,5 @@
       space delimit
     * The instantiation must take positional arguments not iterables.
     * The elements can be accessed by name or position
+    * Most useful attribute: '\_fields'
+    * Most useful methods: `_make(iterable)`, `_asdict()`: return `OrderedDict`
