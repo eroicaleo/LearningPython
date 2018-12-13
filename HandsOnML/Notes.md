@@ -289,3 +289,80 @@
     * `capped_gvs = [(tf.clip_by_value(grad, -threshold, threshold), var) for grad, var in grads_and_vars]`
     * 
 * example: `gradient_clip.ipynb`
+
+## 11.2 Reusing Pretrained Layers
+
+* Not a good idea to train from scratch, reuse the lower levels, called transfer learning.
+    * Speed up training
+    * require less training data
+* Example: Have DNN to classify 100 objects, need to classify specific types of vehicles.
+* Transfer learning will only work well if the inputs have simliar low-levle features.
+
+### Reusing a TensorFlow Model
+
+* build new model with same definition
+* create initialier
+* get a list of trainable variables and matches the regex
+* a dictionary to map original name to new name, we want to keep the name the same
+* A saver will restore and another saver to store the entire
+* Start a session and init all variables and then restore the layer 1 to 3 in this example
+* More similar jobs, more hidden layers to use. Very similar layer, just keep the output layer
+
+### Reusing Models from Other Frameworks (skip for now)
+
+* Tedious
+
+### Freezing the Lower Layers
+
+* The simplest solution is to give the optimizer the list of variables to train, excluding
+  variables from lower level.
+
+```
+train_vars = tf.get_collection(tf.GraphKeys.TRAINABLE_VARIABLES,
+		scope="hidden[34]|outputs")
+training_op = optimizer.minimize(loss, var_list=train_vars)
+```
+
+### Caching the frozen layers
+
+* Since the lower levels are frozen, we can pre-compute the output of the hidden layers.
+
+### Tweaking, Dropping, or Replacing the Upper Layers
+
+* You want to find the right number of layers to use
+* First try to use all layers
+* Unfreeze one or two, the more data you have, more layers you can unfreeze.
+
+### Model Zoos
+
+* [tensorflow]( https://github.com/tensorflow/models)
+* Caffe's model zoo
+    * converter to tensorflow: https://github.com/ethereon/caffe-tensorflow
+
+### Unsupervised Pretraining
+
+* Don't have much labeled training data and cannot find a similar task
+* First try to gather more labeled training data. 
+* Complex task, no similar model, little labeled training data but plenty
+  of unlabeled training data
+
+## 11.4 Faster Optimizer
+
+### Momentum optimization
+
+* at each iteration, it adds the local gradient to momentum vector m
+* The optimizer may overshoot a bit, then come back and overshoot again.
+* `optimizer = tf.train.MomentumOptimizer(learning_rate=learning_rate, momentum=0.9)`
+
+### RMSProp
+
+* `optimizer = tf.train.RMSPropOptimizer(learning_rate=learning_rate, momentum=0.9, decay=0.9, epsilon=1e-10)`
+
+### Adam
+
+* `optimizer = tf.train.AdamOptimizer(learning_rate=learning_rate)`, `learning_rate` is usually just
+  0.001
+
+All the algorithm discussed is based on first order, second order is too slow and might fit in memory.
+
+### Learning rate scheduing
