@@ -15,7 +15,9 @@ class Solution:
         :type root: TreeNode
         :rtype: void Do not return anything, modify root in-place instead.
         """
-        self.isBST(root, None, None)
+        left, right = self.dualNode(root, None, None)
+        left.val, right.val = right.val, left.val
+        traverse(root)
 
     def isBST(self, node, minVal, maxVal):
         if node == None:
@@ -25,7 +27,7 @@ class Solution:
         val = node.val
         if (maxVal != None and val > maxVal) or (minVal != None and val < minVal):
             print("Found the wrong one: %s" % node.val)
-            return (False, node.val, minVal, maxVal)
+            flagC, wValC, minCondC, maxCondC = (False, val, minVal, maxVal)
 
         print("Going left for Node: %s" % node.val)
         flagL, wValL, minCondL, maxCondL = self.isBST(node.left, minVal, val)
@@ -34,24 +36,29 @@ class Solution:
         flagR, wValR, minCondR, maxCondR = self.isBST(node.right, val, maxVal)
 
         print("Finished with node: %s" % node.val)
+
         if (not flagL) and (not flagR):
             print('Found exchange node in left and right branches: %d, %d' % (wValL, wValR))
             self.swapTwoNodes(node.left, wValR, wValL)
             self.swapTwoNodes(node.right, wValL, wValR)
             return (True, None, None, None)
+
         elif not flagL:
             if self.verifyCurrNodeWrongNode(val, minVal, maxVal, wValL, minCondL, maxCondL):
                 print('Found exchange node: %s' % val)
                 node.val = wValL
                 self.swapTwoNodes(node.left, val, wValL)
                 return (True, None, None, None)
+
             return (flagL, wValL, minCondL, minCondL)
+
         elif not flagR:
             if self.verifyCurrNodeWrongNode(val, minVal, maxVal, wValR, minCondR, maxCondR):
                 print('Found exchange node: %s' % val)
                 node.val = wValR
                 self.swapTwoNodes(node.right, val, wValR)
                 return (True, None, None, None)
+
             return (flagR, wValR, minCondR, minCondR)
 
         return (True, None, None, None)
@@ -75,6 +82,61 @@ class Solution:
         if wMax != None and cVal > wMax:
             return False
         return True
+
+    def headNode(self, node, minVal, maxVal):
+        if node == None:
+            return None
+        val = node.val
+        left = self.headNode(node.left, minVal, val)
+        if left != None:
+            return left
+        right = self.headNode(node.right, val, maxVal)
+        if (maxVal != None and val > maxVal) or (minVal != None and val < minVal):
+            return val
+        if right != None and node.val > right:
+            return val
+        return right
+
+    def tailNode(self, node, minVal, maxVal):
+        if node == None:
+            return None
+        val = node.val
+        right = self.tailNode(node.right, val, maxVal)
+        if right != None:
+            return right
+        left = self.tailNode(node.left, minVal, val)
+        if (maxVal != None and val > maxVal) or (minVal != None and val < minVal):
+            return val
+        if left != None and node.val < left:
+            return val
+        return left
+
+    def dualNode(self, node, minVal, maxVal):
+        if node == None:
+            return (None, None)
+        val = node.val
+        leftHead, leftTail = self.dualNode(node.left, minVal, val)
+        rightHead, rightTail = self.dualNode(node.right, val, maxVal)
+        if leftHead != None:
+            left = leftHead
+        elif (maxVal != None and val > maxVal) or (minVal != None and val < minVal):
+            left = node
+        elif rightHead!= None and node.val > rightHead.val:
+            left = node
+        else:
+            left = rightHead
+
+        if rightTail != None:
+            right = rightTail
+        elif (maxVal != None and val > maxVal) or (minVal != None and val < minVal):
+            right = node
+        elif leftTail != None and node.val < leftTail.val:
+            right = node
+        else:
+            right = leftTail
+
+        return (left, right)
+
 
 def treeBuilder(nodeString):
     nodeList = nodeString[1:-1].split(',')
@@ -112,13 +174,18 @@ def traverse(node):
         traverse(node.right)
 
 sol = Solution()
-nodeString = '[2,3,1]'
-nodeString = '[3,1,4,null,null,2]'
-nodeString = '[1,3,null,null,2]'
 nodeString = '[3,null,2,null,1]'
+nodeString = '[2,3,1]'
+nodeString = '[1,3,null,null,2]'
+nodeString = '[3,1,4,null,null,2]'
 root = treeBuilder(nodeString)
 traverse(root)
-wrong = sol.isBST(root, None, None)
-traverse(root)
+print(sol.headNode(root, None, None))
+print(sol.tailNode(root, None, None))
+l, r = sol.dualNode(root, None, None)
+print(l.val, r.val)
+root = sol.recoverTree(root)
+# traverse(root)
+# wrong = sol.isBST(root, None, None)
 # wrong = sol.isBST(None, None, None)
 # print(wrong[1].val)
