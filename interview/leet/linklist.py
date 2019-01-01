@@ -7,10 +7,13 @@ class ListNode:
 
 def linkListBuilder(nodeString):
     nodeList = nodeString[1:-1].split(',')
-    head = ListNode(nodeList[0])
+    print(nodeList)
+    if len(nodeList) == 0 or nodeList[0] == '':
+        return None
+    head = ListNode(int(nodeList[0]))
     curr = head
     for val in nodeList[1:]:
-        curr.next = ListNode(val)
+        curr.next = ListNode(int(val))
         curr = curr.next
     return head
 
