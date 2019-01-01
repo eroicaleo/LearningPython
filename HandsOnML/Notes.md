@@ -346,7 +346,7 @@ training_op = optimizer.minimize(loss, var_list=train_vars)
 * Complex task, no similar model, little labeled training data but plenty
   of unlabeled training data
 
-## 11.4 Faster Optimizer
+## 11.3 Faster Optimizer
 
 ### Momentum optimization
 
@@ -363,6 +363,74 @@ training_op = optimizer.minimize(loss, var_list=train_vars)
 * `optimizer = tf.train.AdamOptimizer(learning_rate=learning_rate)`, `learning_rate` is usually just
   0.001
 
-All the algorithm discussed is based on first order, second order is too slow and might fit in memory.
+All the algorithm discussed is based on first order, second order is too slow and might not fit in memory.
 
-### Learning rate scheduing
+## Learning rate scheduing
+
+* Different strategies to reduce the learning rate during training.
+* predetermined piecewise constant learning rate
+* performance/exponential/power scheduling
+* AdaGrad, RMSProp, and Adam optimization automatically reduce the learning rate, no need for this step
+
+## 11.4 Avoiding Overfitting Through Regularization
+
+### Early stopping
+
+* Interrupt training when its performance on validation set starts dropping
+* Evaluate the model on a validation set at regular interval, e.g. 50 steps
+
+### L1 and L2 Regularization
+
+* use l1 and l2 Regularization to constrain weights, but not biases.
+* sample code, only work for less layers.
+
+```python
+base_loss = tf.reduce_mean(xentropy, name="avg_xentropy")
+reg_losses = tf.reduce_mean(tf.abs(weights1), tf.reduce_sum())
+loss = tf.add(base_loss, scale * reg_losses, name="loss")
+```
+
+* General approach: TF automatically adds these nodes to a special collection
+  containing all the regularization losses. You just need to not forget to add
+  them to your losses, otherwise, they will be ignored.
+
+```python
+with arg_scope(
+	[fully_connected],
+	weights_regularizer=tf.contrib.layers.l1_regularizer(scale=0.01)):
+    hidden1 = fully_connected(X, n_hidden1, scope="hidden1")
+    hidden2 = fully_connected(hidden1, n_hidden2, scope="hidden2")
+    logits = fully_connected(hidden2, n_outputs, activation_fn=None, scope="out")
+
+reg_losses = tf.get_collection(tf.GraphKeys.REGULARIZATION_LOSSES)
+loss = tf.add_n([base_loss] + reg_losses, name="loss")
+```
+
+### Drop-out
+
+* Arguably most popular
+* Every training step/every neuron has a probability p of being dropped-out.
+* One way to understand the better performance:
+    * Neurons trained with drop-out cannot co-adapt with their neighboring neurons,
+      they have to be as useful as their own.
+    * They cannot just rely excessively on a few input neurons, and have to pay attention
+      to each of their input neurons.
+    * less sensitive to slight changes and more robust which generalizes better.
+* Another way to understand:
+    * Each training step generates a unique NN, each NN is impossible to be sampled
+      twice. They can be seen as an averaging ensemble of all smaller NN.
+* One small but important technical details.
+    * If `p = 50`, then during testing, a neuron will be connected to twice as many input
+      neurons as it was.
+    * To compensate, we need to multiply each neuron's input connection weights by `0.5 (1-p)`
+      (which is called keep probability) after training.
+    * Alternatively, we can divide each neuron's output by the keep probability during
+      training.
+* Sample code:
+
+```python
+```
+
+### Max-norm
+
+### Data augmentation
