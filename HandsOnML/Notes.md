@@ -408,6 +408,7 @@ loss = tf.add_n([base_loss] + reg_losses, name="loss")
 
 ### Drop-out
 
+* `dropout.ipynb`
 * Arguably most popular
 * Every training step/every neuron has a probability p of being dropped-out.
 * One way to understand the better performance:
@@ -429,7 +430,34 @@ loss = tf.add_n([base_loss] + reg_losses, name="loss")
 * Sample code:
 
 ```python
+from tensorflow.contrib.layers import dropout
+[...]
+is_training = tf.placeholder(tf.bool, shape=(), name='is_training')
+
+keep_prob = 0.5
+X_drop = dropout(X, keep_prob, is_training=is_training)
+
+hidden1 = fully_connected(X_drop, n_hidden1, scope="hidden1")
+hidden1_drop = dropout(hidden1, keep_prob, is_training=is_training)
+
+hidden2 = fully_connected(hidden1_drop, n_hidden2, scope="hidden2")
+hidden2_drop = dropout(hidden2, keep_prob, is_training=is_training)
+
+logits = fully_connected(hidden2_drop, n_outputs, activation_fn=None,
+                         scope="outputs")
 ```
+
+* The difference between these 2 `dropout` functions:
+    * `tensorflow.contrib.layers`: turns off 'no-op' when not training, we want to use this one.
+    * `tensorflow.nn`: does not do that.
+* `is_training` needs to be `True` in training and `False` in testing.
+* Overfitting, increase the drop out rate, i.e. reduce `keep_prob`.
+* slow down convergence, but generates much better model, it's worth to try.
+    * Indeed, e.g. compare with `plain.ipynb`, the test accuracy:
+      iter 0, 0.848 v.s. 0.901
+      iter 50, 0.9686 v.s. 0.9764
+      iter 100, 0.9745 v.s. 0.9775
+    * Eventually, it beats no drop-out model: 
 
 ### Max-norm
 

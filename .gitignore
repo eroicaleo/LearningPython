@@ -38,3 +38,6 @@ nosetests.xml
 *.txt
 *.pkl
 *.bin
+
+# ipython notebook
+.ipynb_checkpoints
