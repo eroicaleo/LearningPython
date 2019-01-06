@@ -7,6 +7,8 @@ class TreeNode:
         self.val = x
         self.left = None
         self.right = None
+        self.size = 1
+        self.self_count = 1
 
 def treeBuilder(nodeString):
     nodeList = nodeString[1:-1].split(',')
