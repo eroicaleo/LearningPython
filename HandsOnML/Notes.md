@@ -457,8 +457,13 @@ logits = fully_connected(hidden2_drop, n_outputs, activation_fn=None,
       iter 0, 0.848 v.s. 0.901
       iter 50, 0.9686 v.s. 0.9764
       iter 100, 0.9745 v.s. 0.9775
-    * Eventually, it beats no drop-out model: 
+    * Eventually, it beats no drop-out model: 0.9801 v.s. 0.9788
 
 ### Max-norm
+
+* Another quite popular technique.
+* It constrains the weights w of incoming connections such that ||w||\_2 <= r, which is 
+  max-norm Hyperparameters.
+
 
 ### Data augmentation
