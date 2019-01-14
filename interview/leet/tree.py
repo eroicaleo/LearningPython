@@ -49,3 +49,26 @@ def traverse(node):
     if node.right != None:
         traverse(node.right)
 
+def treeToString(root):
+    nodeQueue = [root]
+    currStr = ''
+    # print(nodeQueue)
+    while len(nodeQueue) > 0:
+        node = nodeQueue[0]
+        nodeQueue = nodeQueue[1:]
+        # print(nodeQueue)
+        if node == None:
+            currStr += 'null,'
+            # print(None)
+        else:
+            # print(node.val, node.left, node.right)
+            nodeQueue += [node.left]
+            nodeQueue += [node.right]
+            currStr += str(node.val)+','
+            # print(nodeQueue)
+        # print(currStr)
+    stringList = currStr[:-1].split(',')
+    while stringList[-1] == 'null':
+        stringList = stringList[:-1]
+    currStr = ','.join(stringList)
+    return currStr
