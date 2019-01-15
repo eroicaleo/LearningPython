@@ -50,6 +50,8 @@ def traverse(node):
         traverse(node.right)
 
 def treeToString(root):
+    if root == None:
+        return None
     nodeQueue = [root]
     currStr = ''
     # print(nodeQueue)
