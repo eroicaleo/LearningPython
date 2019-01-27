@@ -22,10 +22,14 @@
 095_Unique_Binary_Search_Trees_II.py
 187_Repeated_DNA_Sequences.py
 124_Binary_Tree_Maximum_Path_Sum.py
-081_Search_in_Rotated_Sorted_Array_II.py, need to do another version
+081_Search_in_Rotated_Sorted_Array_II.py
 061_Rotate_List.py
 199_Binary_Tree_Right_Side_View.py, need to do a depth first search
 301_Remove_Invalid_Parentheses.py, need to finish documentation for version 2, and summary
 134_Gas_Station.py, need to do a faster version
-145_Binary_Tree_Postorder_Traversal.py
-
+145_Binary_Tree_Postorder_Traversal.py, need to do a reversed pre-order version
+079_Word_Search.py, need to do a cleaner version, without extra 'marked' table.
+083_Remove_Duplicates_from_Sorted_List.py
+137_Single_Number_II.py, need to do a cleaner version
+295_Find_Median_from_Data_Stream.py, need to do a 'heapq' version
+179_Largest_Number.py
