@@ -40,3 +40,14 @@ while stack: # Note here, we don't need to do len(stack)
         stack += [node]
 	node = node.left
 ```
+
+# Python tricks
+
+* return something, but if something can be `None`, then can use `or`, problem 179
+* For range in if statement, python can do `if 0 <= i < len(grid)`, problem 200
+* To run a function on an iterables, can use `list(map(func, arg1, arg2, ...))`
+  code is much more concise, but not necessarily faster. problem 200
+
+# Array related problem
+
+* Always consider if sorting can help, e.g. problem 016
