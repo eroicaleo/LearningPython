@@ -51,3 +51,9 @@ while stack: # Note here, we don't need to do len(stack)
 # Array related problem
 
 * Always consider if sorting can help, e.g. problem 016
+
+# Some problems needs to prove some property
+
+* E.g. 621 TaskScheduler.py, needs to prove use the most frequent characters to build frame can achieve the optimum
+* e.g. 134 Gas station, needs to prove as long as the summation > 0, there must exist a path
+* e.g. 310 Min height tree, needs to prove removing leaf nodes, the distances between the resting nodes stay the same
