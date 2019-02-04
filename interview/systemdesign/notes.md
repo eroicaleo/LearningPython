@@ -193,3 +193,38 @@
 
 * Program = Algorithm + Data Structure
 * System  = Service + Data Storage
+
+## slide 25 Storage data store and access, Schema what attributes to store
+
+* User Service
+
+| User Table |      |
+| :------------- | :------------- |
+| id      | integer       |
+| username      | varchar       |
+| email      | varchar       |
+| password      | varchar       |
+
+* Friendship Table
+
+| Friendship Table |      |
+| :------------- | :------------- |
+| from_user_id | Foreign Key      |
+| to_user_id      | Foreign Key   |
+
+* Tweet Service
+
+| Tweet Table |      |
+| :------------- | :------------- |
+| id | integer      |
+| user_id      | Foreign Key   |
+| content      | text   |
+| created_time | timestamp   |
+
+* Media Service, not structured data, so no attributes.
+
+## slide 28 新鲜事系统 News Feed
+
+* What is News Feed?
+    * After you log on to Facebook/Twitter/朋友圈 之后看到的信息流。
+    * All the new messages from your friends.
