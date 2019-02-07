@@ -228,3 +228,76 @@
 * What is News Feed?
     * After you log on to Facebook/Twitter/朋友圈 之后看到的信息流。
     * All the new messages from your friends.
+    * Timeline: the moments that each user you follow posted
+    * News Feed: combine all the time line together.
+* Typical news feed system
+    * Facebook
+    * Twitter
+    * 朋友圈
+    * RSS Reader/今日头条
+* 新鲜事系统的核心因素
+    * 关注与被关注
+    * 每个人看到的新鲜事都是不同的
+
+## slide 29 Storage - Pull Model
+
+* 算法
+    * When the user check the news feed, get the first 100 tweets from friends
+      and combine them, get the first 100 news feed
+    * Merge K Sorted Arrays
+* 复杂度分析
+    * News Feed, Assume following N friends, then needs to read DB N times +
+      Merge K Sorted Arrays (negligible).
+        * Why K-way merging can be ignored? It's doing in memory. DB reads is
+          way slower, 1000X or 1MX
+        * DB access is ~ milliseconds, arithmetic operations ~ nanoseconds
+        * DB access can be lightweight or complex access.
+    * Post Tweet => 1 DB writes
+
+## slide 29 Storage - Pull Mechanism
+
+1. User send request to get News Feed
+2. Web Server get followings from "Friendship Table"
+3. Web Server get tweets from followings from "Tweet Table"
+4. Merge and return to User
+
+## slide 30 Pull model's 缺陷
+
+```python
+def getNewsFeed(request):
+    followings = DB.getFollowing(user=request.user)
+    news_feed = empty
+    # N reads is really slow
+    # And it's serial, blocking
+    for follow in followings:
+        tweets = DB.getTweets(follow.to_user, 100)
+        news_feed.merge(tweets)
+    # Don't even need to do K-way merging, since it's not bottleneck
+    sort(news_feed)
+    return news_feed
+
+def postTweet(request, tweet):
+    DB.insertTweet(request.user, tweet)
+    return success
+```
+
+## slide 33 Storage - Push Model
+
+* Algorithm:
+    * Create one list for each user's news feed
+    * User post a tweet, this tweet will be pushed to other user's news feed
+      list, it's called fanout, more useful to mention in interview.
+    * When user checks news feed, just need to get the most recent 100
+* Complexity analysis
+    * News Feed => Just needs 1 DB read
+    * Post a tweet => N 粉丝，N DN writes
+        * Writes are slower than reads
+        * Celebrity can have huge number of fans
+    * Good part: can be done async in the background, no user waiting time.
+
+| News Feed Table |    |
+| :------------- | :------------- |
+| id       | integer       |
+| owner_id | Foreign Key       |
+| tweet_id | Foreign Key       |
+| created_at | timestamp       |
