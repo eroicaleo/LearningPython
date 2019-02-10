@@ -61,3 +61,7 @@ while stack: # Note here, we don't need to do len(stack)
 # Recursion
 
 * A very typical example: problem 698
+
+# Problems I feel hard to write code
+
+* Problem 301 remove parentheses
