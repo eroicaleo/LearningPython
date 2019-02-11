@@ -44,3 +44,4 @@
 13_Roman_to_Integer.py
 146_LRU_Cache.py
 5_Longest_Palindromic_Substring.py
+98_Validate_Binary_Search_Tree.py, do another 2 versions with pre-order travel, one recursive, one iterative

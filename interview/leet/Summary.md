@@ -28,17 +28,22 @@ example: problem 179.
 # Depth first search
 You always go one direction until stuck.
 For example, if you travel a tree, then go left until left is Null, e.g. problem 145.
+better example would be problem 98 v3.
+And this is the example from leetcode: 
+https://leetcode.com/problems/validate-binary-search-tree/discuss/32112/Learn-one-iterative-inorder-traversal-apply-it-to-multiple-tree-questions-(Java-Solution)
 If you travel a graph, always go to the next node, e.g. problem 322.
 Usually, the DFS can be achieved through recursion and iterative.
 When using iterative approach, a stack will be used. And the code is Usually like the following,
 with 2 while loop, when the inner while loop terminates, the stack is popped.
 
 ```python
-stack = [root]
-while stack: # Note here, we don't need to do len(stack)
+stack, node, prev = [], root, None
+while node or stack:
     while node:
-        stack += [node]
-	node = node.left
+        stack, node = stack + [node], node.left
+    node = stack.pop(-1)
+    # do some processing about the current node
+    node, prev = node.right, node
 ```
 
 # Python tricks
@@ -51,6 +56,10 @@ while stack: # Note here, we don't need to do len(stack)
 # Array related problem
 
 * Always consider if sorting can help, e.g. problem 016
+
+# Tree problems
+
+* Always consider if inorder/preorder/postorder can help, e.g. problem 098 v2/v3
 
 # Some problems needs to prove some property
 
