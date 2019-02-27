@@ -44,4 +44,14 @@
 13_Roman_to_Integer.py
 146_LRU_Cache.py
 5_Longest_Palindromic_Substring.py
-98_Validate_Binary_Search_Tree.py, do another 2 versions with pre-order travel, one recursive, one iterative
+98_Validate_Binary_Search_Tree.py
+36_Valid_Sudoku.py
+105_Construct_Binary_Tree_from_Preorder_and_Inorder_Traversal.py, Needs to do a more efficient recursive one
+33_Search_in_Rotated_Sorted_Array.py
+127_Word_Ladder.py
+42_Trapping_Rain_Water.py, Needs to do a stack version
+84_Largest_Rectangle_in_Histogram.py
+45_Jump_Game_II.py
+51_N-Queens.py, Needs to a cleaner version
+297_Serialize_and_Deserialize_Binary_Tree.py, Needs to do another recursive pre-order traval version:
+https://leetcode.com/problems/serialize-and-deserialize-binary-tree/discuss/234052/python-10-line-solution-beat-98

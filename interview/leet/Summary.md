@@ -74,3 +74,12 @@ while node or stack:
 # Problems I feel hard to write code
 
 * Problem 301 remove parentheses
+
+# Problems I feel the solution is cool
+
+* Problem 105 solution by
+
+# Graph
+
+* When we travel a graph, in some cases we need to mark some nodes visited.
+  we can actually remove them with a "set" data structure, e.g. problem 127
