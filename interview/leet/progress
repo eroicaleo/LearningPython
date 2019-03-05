@@ -52,6 +52,9 @@
 42_Trapping_Rain_Water.py, Needs to do a stack version
 84_Largest_Rectangle_in_Histogram.py
 45_Jump_Game_II.py
-51_N-Queens.py, Needs to a cleaner version
-297_Serialize_and_Deserialize_Binary_Tree.py, Needs to do another recursive pre-order traval version:
-https://leetcode.com/problems/serialize-and-deserialize-binary-tree/discuss/234052/python-10-line-solution-beat-98
+51_N-Queens.py
+297_Serialize_and_Deserialize_Binary_Tree.py
+23_Merge_k_Sorted_Lists.py
+169_Majority_Element.py, do a vote version
+215_Kth_Largest_Element_in_an_Array.py, needs to do
+133_Clone_Graph.py, needs to do 

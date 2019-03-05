@@ -18,8 +18,11 @@ https://leetcode.com/problems/single-number-ii/discuss/43296/An-General-Way-to-H
 this kind of question the key idea is design a counter that record state. the problem can be every one occurs K times except one occurs M times. for this question, K =3 ,M = 1(or 2) .
 
 # Heap problem:
-Use heapq is way much easier than queue.PriorityQueue
-example: problem 295.
+* Use heapq is way much easier than queue.PriorityQueue. example: problem 295.
+* however, with python 3 and `heapq`, you if you want to insert `(key, node)` into a
+  `heapq`. And if `key` is the same for two tuples, then python don't know how to compare
+  this tuple, so you have to do `(key1, key2, node)`, e.g. problem 23.
+* The time complexity for heapify is O(N)
 
 # Sorting problem:
 In python, how to use custmized comparator.
@@ -33,8 +36,11 @@ And this is the example from leetcode:
 https://leetcode.com/problems/validate-binary-search-tree/discuss/32112/Learn-one-iterative-inorder-traversal-apply-it-to-multiple-tree-questions-(Java-Solution)
 If you travel a graph, always go to the next node, e.g. problem 322.
 Usually, the DFS can be achieved through recursion and iterative.
+Another example is problem 133.
+
 When using iterative approach, a stack will be used. And the code is Usually like the following,
 with 2 while loop, when the inner while loop terminates, the stack is popped.
+For iterative DFS for graph, it's quite similar to BFS. Consider problem 133, not done yet
 
 ```python
 stack, node, prev = [], root, None
@@ -52,6 +58,9 @@ while node or stack:
 * For range in if statement, python can do `if 0 <= i < len(grid)`, problem 200
 * To run a function on an iterables, can use `list(map(func, arg1, arg2, ...))`
   code is much more concise, but not necessarily faster. problem 200
+* When we want to assign the same value to 2 variables, we can do: `dummy = currNode = ListNode(0)`
+  e.g. problem 23.
+* To concat list of list to a list, you can use `itertools.chain.from_iterable(your_list_of_lists)`
 
 # Array related problem
 
@@ -60,6 +69,7 @@ while node or stack:
 # Tree problems
 
 * Always consider if inorder/preorder/postorder can help, e.g. problem 098 v2/v3
+* e.g. problem 297 v2/v3 use preorder to solve
 
 # Some problems needs to prove some property
 
