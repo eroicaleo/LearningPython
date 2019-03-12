@@ -27,6 +27,7 @@ this kind of question the key idea is design a counter that record state. the pr
 # Sorting problem:
 In python, how to use custmized comparator.
 example: problem 179.
+how to use `key` in `sorted` function: problem 56.
 
 # Depth first search
 You always go one direction until stuck.
@@ -65,6 +66,7 @@ while node or stack:
 # Array related problem
 
 * Always consider if sorting can help, e.g. problem 016
+* If index matters, consider bucket sort, e.g. problem 220
 
 # Tree problems
 
@@ -93,3 +95,9 @@ while node or stack:
 
 * When we travel a graph, in some cases we need to mark some nodes visited.
   we can actually remove them with a "set" data structure, e.g. problem 127
+
+# Similar problem
+
+* skyline, heap
+* water, two pointers
+* 84 rectangle, stack

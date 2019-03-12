@@ -56,5 +56,9 @@
 297_Serialize_and_Deserialize_Binary_Tree.py
 23_Merge_k_Sorted_Lists.py
 169_Majority_Element.py, do a vote version
-215_Kth_Largest_Element_in_an_Array.py, needs to do
-133_Clone_Graph.py, needs to do 
+215_Kth_Largest_Element_in_an_Array.py, needs to do max queue
+133_Clone_Graph.py, needs to finish the last iterative DFS
+56_Merge_Intervals.py
+128_Longest_Consecutive_Sequence.py
+218_The_Skyline_Problem.py, need to check top voted python solutions
+220_Contains_Duplicate_III.py
