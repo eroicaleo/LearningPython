@@ -478,3 +478,10 @@ def fanoutTweet(user, tweet):
 | 双向好友关系，没有明星问题 （微信朋友圈）| 单向好友关系，明星问题       |
 
 * 东邪老师认为朋友圈用的是push模型
+
+## Slide 49 - 52 skipped in Video.
+
+## Slide 53
+
+* 九章问答板块
+* www.lintcode.com/en/ladder/8 刷系统设计题
