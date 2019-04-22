@@ -72,3 +72,19 @@
 138_Copy_List_with_Random_Pointer.py
 238_Product_of_Array_Except_Self.py
 17_Letter_Combinations_of_a_Phone_Number.py
+139_Word_Break.py, still not finish the v3
+49_Group_Anagrams.py, needs to check discussion
+347_Top_K_Frequent_Elements.py, needs to check bucket sort implementation
+151_Reverse_Words_in_a_String.py, needs to do a non standard lib version
+54_Spiral_Matrix.py, check Stefan's solution
+564_Find_the_Closest_Palindrome.py, has an accepted solution, but it has bug
+50_pow_x_n.py
+91_Decode_Ways.py, do an more memory efficient way
+289_Game_of_Life.py
+25_Reverse_Nodes_in_k_Group.py, no done yet
+22_Generate_Parentheses.py
+32_Longest_Valid_Parentheses.py, might do a version without stack
+560_Subarray_Sum_Equals_K.py, need to study discussion
+102_Binary_Tree_Level_Order_Traversal.py
+236_Lowest_Common_Ancestor_of_a_Binary_Tree.py, needs to check discussion forum
+randomize_dict.py

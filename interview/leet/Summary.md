@@ -12,6 +12,9 @@
 
 # Counting:
 * There are two ways to count, either by row or by column.
+* Or count from start to current position, or from current position to end
+  For example, problem 560, my solution is at position i, count to the end
+  Better solution, from discussion form, at position i, count from the beginning
 
 # Single number problem: general solution:
 https://leetcode.com/problems/single-number-ii/discuss/43296/An-General-Way-to-Handle-All-this-sort-of-questions.
@@ -62,11 +65,13 @@ while node or stack:
 * When we want to assign the same value to 2 variables, we can do: `dummy = currNode = ListNode(0)`
   e.g. problem 23.
 * To concat list of list to a list, you can use `itertools.chain.from_iterable(your_list_of_lists)`
+* sort a string, has to use ''.join(sorted(s)), problem 49
+* 
 
 # Array related problem
 
 * Always consider if sorting can help, e.g. problem 016
-* If index matters, consider bucket sort, e.g. problem 220
+* If index matters and if it needs to count freqeuncy, consider bucket sort, e.g. problem 220/347
 
 # Tree problems
 
@@ -91,6 +96,10 @@ while node or stack:
 
 * Problem 105 solution by
 
+# Problems I cannot solve in the first round
+
+* Problem 238/50
+
 # Graph
 
 * When we travel a graph, in some cases we need to mark some nodes visited.
@@ -101,3 +110,7 @@ while node or stack:
 * skyline, heap
 * water, two pointers
 * 84 rectangle, stack
+
+# parentheses problem:
+
+* problem 301/22
