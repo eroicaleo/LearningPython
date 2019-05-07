@@ -2,6 +2,9 @@
 # Useful links
 
 * 专栏 -》 系统设计
+* 数据库具体如何建index查询：“B+ tree”
+* mini casasandra in lintcode: http://www.lintcode.com/problem/mini-cassandra/
+* www.jiuzhang.com/qa/
 
 # Slide 2 课程大纲
 
@@ -226,3 +229,289 @@ D. database.set(user); cache.delete(key);
     * 某个user的所有粉丝
     * A关注B, 就插入一条数据
     * B关注A, 删除一条数据。
+
+* User table 需要存用户名，密码等，query方式复杂。有可能按照email/phone number/id去查询。
+  所以大部分网站不选择NoSQL数据库。
+
+# 23 SQL vs NoSQL
+
+* Friendship Table 适合什么数据库？
+* SQL和NoSQL的选择标准。
+
+# 24 数据库选择原则1
+
+* 大部分情况，SQL/NoSQL都可以。
+* System Design很少有只能选这个，不能选那个。
+
+# 25 数据库选择原则2
+
+* 需要支持Transaction的话不能选NoSQL。
+* Transaction: 像是银行交易。发红包，A的钱发给了B。
+
+``` python
+A.money -= 10
+B.money += 10
+# 必须同时成功活着失败的另一个例子
+database.set(user); cache.delete(key)
+# 无法做transaction: 1. 不是同一款软件。2. 不在同一台机器上。
+```
+
+* 必须同时成功活着失败。
+
+# 26 数据库选择原则3
+
+* 想不想偷懒
+* SQL帮忙做很多事情：
+    * serialization, email/password/full name/ 数据类型全都不一样。存到硬盘上全都是
+      字符串。
+    * secondary index
+* NoSQL
+
+# 28 Friendship Service
+
+* 如果存在SQL
+
+| Friendship Table | Header Two     | Header Two     |
+| :------------- | :------------- | :------------- |
+| smaller_user_id   | Foreign key    | 双向好友关系中id小一点的，index=true    |
+| bigger_user_id     | Foreign key    | 双向好友关系中id大一点的，index=true   |
+
+* 查询好友关系时
+    * 给定的user id
+    * select bigger_user_id from friendship where smaller_user_id = user_id
+    * select smaller_user_id from friendship where bigger_user_id = user_id
+
+* 如果存在nosql
+* 很多nosql不支持multi indexes
+* 查分两台数据
+    * A的好友B: key = A, value = B
+    * B的好友A: key = B, value = A
+
+# 29 例子
+
+* 好友关系存一份
+* 查询2的好友：select from friendship where bigger_user_id = 2 or smaller_user_id = 2
+
+| smaller_user_id | bigger_user_id     |
+| :------------- | :------------- |
+| 1       | 2       |
+| 1       | 3       |
+| 2       | 3       |
+
+* 好友关系存两份
+* 查询2的好友：select from friendship where from_user_id = 2
+
+| from_user_id | to_user_id |
+| :----------: | :--------: |
+| 1       | 2       |
+| 2       | 1       |
+| 1       | 3       |
+| 3       | 1       |
+| 2       | 3       |
+| 3       | 2       |
+
+* 效率没有多大差别，第二种稍微快一点。
+* 数据库会对每一个column帮助建index，如果不建index，就要做for loop。
+* 具体如何建index查询：“B+ tree”
+
+# 30 以 Cassandra 为例剖析典型的NoSQL数据结构
+
+* Cassandra是一个三层结构的NoSQL数据库，又叫三元组结构。
+    * http://www.lintcode.com/problem/mini-cassandra/
+    * 新企业用的很多用NoSQL
+    * Facebook用的是它们自己开发的graphDB.
+* 第一层：row_key
+    * 又称为hash_key
+        * Cassandra最有用的地方就是分布式数据库系统
+        * 我们要知道一个数据分布在哪里。
+        * row key 决定了他在哪台机器上。
+    * 也就是我们传统所说的key-value中的那个key
+    * 任何查询都要带上这个key，无法进行range query
+        * 因为做了hash，没有办法查询user 1 - 100
+    * 最常用的row_key：user_id
+* 第二层：column_key
+    * 是排序的，可以进行range query。没有做个hash。
+        * 可以这样，user id = 1, column key = [200,300]
+    * 可以是复合值，不如是一个timestamp + user_id的组合。
+* 第三层: value
+    * 一般来说是String。
+    * 如果需要存很多信息的话，可以自己做 serialization。
+    * serialization: 把一个object / hash 序列化为一个string，比如把一个二叉树序列化。
+
+```java
+public void insert(String row_key, int column_key, String column_val) {
+}
+
+public List<Column> query(String row_key,
+                          Integer column_start,
+                          Integer column_end) {
+
+}
+```
+
+# 33 SQL VS NoSQL
+
+* SQL的column是在Schema中预先指定好的，不能随意添加。
+* 一条数据一般以row为单位（取出整个row作为一条数据），所以又叫行式存储。
+
+| SQL | id | username | email | password | first name | ... |
+| :-- | :- | :------- | :---- | :------- | :--------- | :-- |
+| Row1|    |          |       |          |            |     |
+| Row2|    |          |       |          |            |     |
+
+* NoSQL 的column是动态的，无限大，可以随意添加。可以叫列式存储
+* 一条数据一般以grid为单位：row_key + column_key + val = 一条数据。
+    * 以行号+列号定位到一个数据。
+* 只需要提前定义好column_key本身的格式(是一个int还是一个int+string)
+* row key可能是id，column key可能是username，剩下的打包放在一个grid里。压缩起来，serialization。
+* 局限是不能用value里的值进行query，比如不能用email。
+* 但是效率可能更高。
+
+| NoSQL | col1 | col2 | col3 | col4 | col5 | ... |
+| :-- | :- | :------- | :---- | :------- | :--------- | :-- |
+| Row1| val0 | val1   |       |          |            |     |
+| Row2|      |        |       |          |            |     |
+
+* 如何把friendship table 存在 Cassandra NoSQL 里
+    * 怎么存依赖你有什么样的需求，需求不同，存法不一样。
+    * 需求1: 查询A-B是不是好友。一个同学提出row key = user id, column key = # of friends
+      好友作为list存在val里。但是这样就没法简单的查询A-B是不是好友。
+    * 比较合理的做法row key = user id， col key = other user id, val = whatever you
+      want: [is mutual friend, is blocked, timestamp]
+    * 如果要查询A的所有好友，指定row key = A，不指定col key
+    * 如果要查询A-B是不是好友，row key = A，col key start / end = B.
+
+# Cassandra 存储 NewsFeed
+
+* Slide 34 News Feed Table
+* 我们需要怎样的查询？
+    * 需求1：查询一个用户的所有tweet，所以user id 肯定要作为一个 row key。
+    * 接下来看前多少条，就要把tweet按时间倒序排列，所以column key = <created_at, tweet_id1>
+    * val 就可以是tweet data.
+
+# Cassandra 例子和总结
+
+* Cassandra为代表的NoSQL存储数据相当于一个一个的三元组，比如存储好友关系时：
+    * 1-2 好友
+    * 2-3 好友
+
+| row_key | column_key | value |
+| :-----: | :--------: | :---: |
+| 1 | 2 | null |
+| 2 | 1 | null |
+| 2 | 3 | null |
+| 3 | 2 | null |
+
+# 38 Interviewer: How to scale?
+
+* 系统设计的日经题
+* last step in 4S: Scenario/Service/Storage/Scale
+
+# 39 除了QPS，还有什么需要考虑的？
+
+* 100M的用户存在一台MySQL数据库里也存的下，storage没问题
+* cache优化读操作后，300QPS的写，QPS也没问题。
+* 还有什么问题？
+
+# 40 单点失效 single point failure
+
+* 万一这一台数据库挂了
+* 短暂：网站不可用
+* 彻底：数据全丢失
+* 不能把所有的鸡蛋放在一个篮子里
+
+# 41 两件事
+
+* Sharding:
+    * NoSQL 把数据存在不同的机器上
+* Replica
+
+# 42 Sharding / Replica
+
+* 数据拆分 Sharding，row kew/sharding kew/hash key/partition key 是同一个意思。
+    * 按照一定的规则，将数据拆分成不同的部分，保存在不同的机器上。
+    * 就算挂一台，网站也不会100%不可用。
+* 数据备份Replica
+    * 通常的做法是一式三份（重要的事情写三遍）。三份同时不能访问概率极低。
+    * Replica 同时还能分摊读请求。
+
+# 43 Sharding in SQL vs NoSQL
+
+* SQL 自身不带Sharding功能，需要码农亲自上手。
+* Cassandra为例的NoSQL大多数都自带Sharding，码农可以偷懒。
+* 它们的做法都是一样的。
+
+# 44 数据拆分 Sharding
+
+* vector sharding
+* horizontal sharding
+
+# 45 纵向切分
+
+* User table 一台数据库
+* Friendship table 一台
+* Message Table 一台
+
+# 46 复杂一点的vertical sharding
+
+* User table包含：Email/Username/Password/push_preference/avatar
+* email/username/password 变动较小
+* push reference, avatar变动频率高
+* 拆分成两个table，user table + user profile table 放在两个机器上。user profile table
+  挂了仍然可以登陆。
+* Vertical sharding的缺点是什么？不能解决什么问题？
+    * 依然存在single point failure
+
+# 47 横向拆分
+
+* 核心考点
+
+# 48 粗暴想法
+
+* Friendship table
+* 有10台数据库机器
+* 按照from_user_id % 10进行拆分，问题是啥？
+    * 每台机器分配到的不均匀，这个问题还不算严重。
+
+# 49 加机器怎么办？
+
+* % 10 变成 % 11 所有数据都要大迁移。
+
+# 50 过多数据迁移会造成的问题：
+
+* 慢，牵一发动全身
+* 迁移期间，服务器压力增大，容易挂
+* 容易造成数据不一致性。
+
+# 51 怎么办
+
+* 一致性Hash算法 consistent hashing
+
+# 52 Consistent Hashing
+
+* why do we need it?
+    * % n is the simplest hash algorithm
+    * when n -> n+1, key % n and key % (n+1) most likely will be different
+    * it's not Consistent Hashing
+
+# 53 Consistent Hashing
+
+* one simple Consistent Hashing
+    * key模一个很大的数，比如360
+    * 360分配给n台机器，每个机器负责一段区间
+    * 区间分配记录在一张表，存在web server上。
+    * 新加一台机器的时候，在表中选择一个位置，匀走相邻两台机器的一部分数据
+        * 不是变化他模多少
+* 比如n 从2变到3，只有1/3的数据移动。
+    * 比起52页75%的数据好多了。
+    * In general, 1/(n) -> 1/(n+1), only 1/(n+1) data needs to be move.
+    * This is just basic idea, in reality, there are more details and tricks.
+
+# Q&A
+
+* 什么是push preference?
+    * 发生什么样的情况给发push。比如谁发帖要提醒，加好友要不要提醒。
+* LFU 和 LRU 都用在什么情况？
+    * LRU 更加常用。
+* 问答板块提问。
+    * www.jiuzhang.com/qa/
