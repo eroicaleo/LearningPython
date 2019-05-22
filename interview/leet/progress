@@ -87,4 +87,26 @@
 560_Subarray_Sum_Equals_K.py, need to study discussion
 102_Binary_Tree_Level_Order_Traversal.py
 236_Lowest_Common_Ancestor_of_a_Binary_Tree.py, needs to check discussion forum
-380_Insert_Delete_GetRandom_O1.py
+300_Longest_Increasing_Subsequence.py, check forum for nlogn solution
+336_Palindrome_Pairs.py, needs to finish trie version
+403_Frog_Jump.py, needs to check forum
+380_Insert_Delete_GetRandom_O1.py, accepted, but need to check the forum
+140_Word_Break_II.py, accepted, but need to check the forum
+153_Find_Minimum_in_Rotated_Sorted_Array.py
+341_Flatten_Nested_List_Iterator.py, then do a Stefan version
+239_Sliding_Window_Maximum.py
+722_Remove_Comments.py
+48_Rotate_Image.py
+173_Binary_Search_Tree_Iterator.py
+322_Coin_Change.py, needs to check out discussion forum
+229_Majority_Element_II.py, not done yet.
+24_Swap_Nodes_in_Pairs.py
+62_Unique_Paths.py
+142_Linked_List_Cycle_II.py
+148_Sort_list.py
+85_Maximal_Rectangle.py, needs to do a DP version from forum
+207_Course_Schedule.py, needs to do a BFS version
+57_Insert_Interval.py, check out Pochman's solution
+312_Burst_Balloons.py
+402_Remove_K_Digits.py, implement Pochmann's solution
+636_Exclusive_Time_of_Functions.py

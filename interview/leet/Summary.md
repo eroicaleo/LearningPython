@@ -56,6 +56,15 @@ while node or stack:
     node, prev = node.right, node
 ```
 
+# Dynamic Programming Problems
+
+* The key is to find what does `dp[i][j]` mean?
+* How to split the original problem into smaller irrelevant problem.
+* In problem 312 Burst Balloons
+    * `dp[i][j]` means the maximum coins we get after we burst all the balloons between i and j in the original array.
+    * If we consider `i` to be the first balloon to pop, the left/right problems are depending on each other
+      but if we consider `i` to be the last one balloon to pop, the left/right problems are independent
+
 # Python tricks
 
 * return something, but if something can be `None`, then can use `or`, problem 179
@@ -66,7 +75,7 @@ while node or stack:
   e.g. problem 23.
 * To concat list of list to a list, you can use `itertools.chain.from_iterable(your_list_of_lists)`
 * sort a string, has to use ''.join(sorted(s)), problem 49
-* 
+* list[:-0] returns empty list, but list[:None] returns the whole list 
 
 # Array related problem
 
@@ -99,18 +108,35 @@ while node or stack:
 # Problems I cannot solve in the first round
 
 * Problem 238/50
+* Problem 312 Burst Balloons
 
 # Graph
 
 * When we travel a graph, in some cases we need to mark some nodes visited.
   we can actually remove them with a "set" data structure, e.g. problem 127
 
-# Similar problem
+# Similar problem and hard
 
 * skyline, heap
 * water, two pointers
-* 84 rectangle, stack
+* 84 rectangle, 85 maximal rectangle: stack
 
 # parentheses problem:
 
 * problem 301/22
+
+# New Algorithm I learned
+
+* Topological sort: problem 207
+
+Topological sort has two implementations: BFS and DFS
+BFS is more straightforward, find the node with indegree of 0
+then for all it's adjacent node, reduce their indegree by 1.
+repeat this process
+
+DFS needs to maintain 2 sets, 1 for visited, 1 for done
+we add the node to visited when we enter the dfs.
+we then dfs all it's adjacent node
+then we add it's for done.
+
+* Trie: problem 336
