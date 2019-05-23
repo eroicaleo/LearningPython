@@ -345,3 +345,25 @@ import statsmodels as sm
 * `pd.Series.replace()` can use `inplace=True`
 * If want to replace multiple values to the same value, then pass a list
 * If want to replace multiple values to different value, then pass 2 lists or a dictionary
+
+### Renaming Axis
+
+* `rename_axix.py`
+* The `Index` object also has a `map` method
+* If we want to create a new DataFrame, use `data.rename(index=, columns=)`
+    * the argument can either take a function or a dictionary.
+    * can have `inplace=True`
+
+### Discretization and Binning
+
+* `discretize_bin.py`
+* `cats = pd.cut(ages, bins)`
+* It is a `Categories` object.
+* To find the levels: `cats.codes`
+* To find the Categories: `cat.categories`
+* Count each level: `pd.value_counts(cats)`
+* Default is left exclusive / right inclusive, to change this behaviour: `pd.cut(ages, bins, right=False)`
+* To give each bin their names: `cats_new = pd.cut(ages, bins, labels=group_names)`
+* If pass a integer to `bins` argument, it will split equal distance based on min/max
+
+* `qcut`
