@@ -68,6 +68,9 @@ def get_speak_func(text, volumn):
     else:
         return whisper
 
+print('################################################################################')
+print('## Functions can capture local state')
+print('################################################################################')
 def make_adder(n):
     def adder(x):
         return x+n
@@ -78,6 +81,9 @@ plus_5 = make_adder(5)
 print(plus_3(4))
 print(plus_5(4))
 
+print('################################################################################')
+print('## Objects can behave like functions')
+print('################################################################################')
 class Adder:
     def __init__(self, n):
         self.n = n

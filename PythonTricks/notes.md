@@ -70,7 +70,7 @@
     * requires more typing.
 * new style, python3 and 2.7, [link](https://docs.python.org/3/library/string.html#string-formatting)
     * Use `''.format(arg1=arg1, arg2=arg2)`, the order can change
-* Literal String Interpolation, in python3.6
+* Literal String Interpolation, in python3.6, [link](https://www.python.org/dev/peps/pep-0498/)
     * `str_ = f'Hey {name}, there is a {errno:#x} error!'`
 * Template Strings:
     * not core language feature
@@ -163,3 +163,87 @@ def proxy(func):
 * really cool feature: unpacking argument from sequence and dict with `*` and `**` .
 * putting a `*` before an iterable in a function call will unpack it and pass its
   elements as separate positional arguments to the called function.
+* This technique works for any iterable, including generator expressions.
+* `**` will pass key argument to the function, so if there is a key not present in
+  the function's argument list, it will give an error.
+* We can also use `*` to unpack dictionary, then it will pass the key to the function.
+
+## 3.6 Nothing to Return Here
+
+* If we don't add any `return` statements, then
+  the function will return `None` or you can just do `return`
+* When is good to use this?
+    * For function like `print`
+* This is a core Python feature but your code might communicate
+its intent more clearly with an explicit return None statement.
+
+# Chapter 4 Classes and OOP
+
+## 4.1 Object Comparisons: “is” vs “==”
+
+* `==` compares by checking for equality
+* `is` compares identity
+* When in doubt, think about the twin cats
+
+## 4.2 String Conversion (Every Class Needs a `__repr__`)
+
+* For a user defined class, if we print it, it just shows the memory address and very
+  little info.
+* With `__str__` method, `str` and `'{}'.format()` will call it.
+* Inspecting an object in interative session will call `__repr__`
+* Convert a container like str and dict will call `__repr__`
+* Manually call with `str` and `repr`
+* Difference, check out the `datetime.date` object:
+    * `str` returns something readable
+    * `repr` returns something not ambiguious, for debugging purpose
+* My rule of thumb is to make my __repr__ strings unambiguous
+  and helpful for developers, but I don’t expect them to be able to restore
+  an object’s complete state.
+* if `__str__`  is missing, it will always call `__repr__`
+
+## 4.3 Defining your own exception classes
+
+* Defining your own error types can be of great value:
+    * Make potential error cases stand out clearly
+    * functions and modules more maintainable
+* Generally, you want to derive your custom exceptions from the root `Exception`
+  or `ValueError` or `TypeError`
+* We can use the `try ... except ... as ...`
+* easier to ask for forgiveness than permission (EAFP)
+
+## 4.4 Cloning Objects for fun and profit
+
+* Assignment only binds name to an object.
+* Copy python built-in collections, using `list, dict, set` factory functions
+    * `new_list = list(original_list)`
+    * `new_dict = dict(original_dict)`
+    * `new_set  = set(original_set)`
+* This method won't work for custom object
+* Shallow copy:
+    * Create a collection, then child objects are reference
+* Deep copy:
+    * Create a collection, recursively copy child objects
+* Use `copy.deepcopy` for deep copy
+* Use `copy.copy` to create shallow copy
+    * But for built-in collections, using factory functions is more pythonic and more simple
+* Arbitrary object:
+    * `Point` object only has built-in type, so shallow and deep are the same
+    * `Rectangle` object needs to use `copy.deepcopy`
+* Further reading: python `copy` module [here](https://docs.python.org/3/library/copy.html)
+
+## 4.5 Abstract Base Class Keeps Inheritance in Check
+
+* ABC ensure the derived classes implement particular methods from the base class.
+* Scenario:
+    * `BaseService`
+    * Several concrete implementations: `MockService`, `RealService`
+* Target
+    * instantiating the base class is impossible
+    * forgetting to implement interface raises and error as early as possible
+* Downsides of 1st implementation
+    * Not satisfy the first
+    * second is not early enough
+* With `abc` module and `ABCMeta` and `abstractmethod`
+    * The above 2 are all satisfied
+    * More robust / maitainable / communicative
+* Further reading: python `abc` module [here](https://docs.python.org/3/library/abc.html)
