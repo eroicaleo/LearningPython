@@ -1,3 +1,7 @@
+# Some Reference
+
+* [Select and Indexing data](https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html)
+
 # Chapter 01 Preliminaries
 
 * `numpy`
@@ -358,6 +362,8 @@ import statsmodels as sm
 
 * `discretize_bin.py`
 * `cats = pd.cut(ages, bins)`
+    * Note that if a value is out of the range, when you print `cats`, it shows up as `NaN`
+    * When you print `cats.codes`, it shows up as `-1`
 * It is a `Categories` object.
 * To find the levels: `cats.codes`
 * To find the Categories: `cat.categories`
@@ -365,5 +371,94 @@ import statsmodels as sm
 * Default is left exclusive / right inclusive, to change this behaviour: `pd.cut(ages, bins, right=False)`
 * To give each bin their names: `cats_new = pd.cut(ages, bins, labels=group_names)`
 * If pass a integer to `bins` argument, it will split equal distance based on min/max
+* `qcut` based on quatile, so each has roughly the same number of samples
+    * We can pass our own `quatile` to `qcut`
 
-* `qcut`
+### Detecting and Filtering Outliers
+
+* `outliers.py`
+* `data.describe()` to get a summary of the DataFrame.
+* find all rows with any of element whose absolute value is greater than 3
+  `data[(np.abs(data) > 3).any(1)]`
+* cap it at +/-3.0: `data[np.abs(data) > 3] = np.sign(data) * 3.0`
+
+### Permutation and Random Sampling
+
+* `permutation.py`
+* Generate the `sampler = np.random.permutation(n)`
+* `df.take(sampler)` to permutate the row
+* `df[sampler]` to permutate the column
+* `df.sample(n)` to select a random subset across the row, but you can do it across columns by doing
+  `df.sample(n, axis=1)`, note this doesn't have repeat choice
+* To have repeat choice, do `df.sample(n, replace=True)`
+
+### Computing Indicator/Dummy variables
+
+* `indicator.py`
+* What a indicator or dummy matrix? If a column with k values, convert it to a matrix with k column
+* `pd.get_dummies(df['key'])`
+* Add a prefix: `pd.get_dummies(df['key'], prefix='key')`
+* Join the dummy matrix, with previous column `df_with_dummy = df[['data1']].join(dummies)`
+    * Note1: `df[['data1']]` creates a DataFrame, `df['data1']` creates a Series.
+    * Note2: `pd.DataFrame.join` to merge 2 DataFrame by `index`
+* For the previous example, the `key` can take one of `a, b, c`.
+  But for Movie genres, one move can be action, comedy and children's at the same time
+* Then we need to do it in several steps:
+    * Create a list of all genres:
+```python
+all_genres = []
+for x in movies.genres:
+    all_genres.extend(x.split('|'))
+```
+    * Create a all zero matrix: `zero_matrix = np.zeros((len(movies), len(genres)))`
+    * And create a DF based on the zero matrix: `dummies = pd.DataFrame(zero_matrix, columns=genres)`
+    * iterate each movie, find it's genres, assign them to 1. We use `get_indexer`.
+```python
+for i, gen in enumerate(movies.genres):
+    indices = dummies.columns.get_indexer(gen.split('|'))
+    dummies.iloc[i, indices] = 1
+```
+* A common recipe is with `cut`: `pd.get_dummies(pd.cut(values, bins))`
+
+## 7.2 String Manipulation
+
+### String Object Methods 
+
+* `string_object_methods.py`.
+* See table 7-3 for a reference.
+
+### Regular Expressions
+
+* `regular_exp.py`
+* `pattern.split(text)`
+* `pattern.findall(text)`
+* `pattern.search(text)`
+* `pattern.match(text)`
+* `pattern.sub(repl, text)`
+
+### Vectorized String Functions in pandas
+
+* `vectorized_string.py` 
+* Some value maybe `np.nan`, `pd.Series.map` can't handle NA values.
+* Have to use `pd.Series.str` function
+    * It can also use Regular expression
+* `data.str.get(1)`, `data.str[1]`, `data.str[:5]`
+* erreta/typo here
+* See table 7-5 for a reference
+
+# Chapter 08 Data wrangling: Join, Combine, Reshape
+
+## 8.1 Hierachical Indexing
+
+* `hier_index.py`
+* Indexing example: `Notes_indexing.md`
+    * section "Indexing in Hierachical Series"
+    * section "Indexing in Hierachical DataFrame"
+* The hierachical Series can be converted to `DataFrame` and back
+    * `data.unstack()`
+    * `data.unstack().stack()`
+* For hierachical `DataFrame`, the levels can assign name:
+    * `frame.index.names = ['key1', 'key2']`
+    * `frame.columns.names = ['state', 'color']`
+* `pd.MultiIndex` can be created alone:
+    * `mi = pd.MultiIndex.from_arrays([['Ohio','Ohio','Colorado'], ['Green','Red','Green']], names=['state', 'color'])`

@@ -52,6 +52,59 @@
 * Instance based: remember the instance and use the most similar instance to make prediction
 * Model based: like linear regression.
 
+# Chapter 2 End-to-End ML Project
+
+## Working with real data
+
+* List all the website with data
+
+## Looking at the Big Picture
+
+### Frame the problem
+
+* Machine Learning Project checklist see Appendix B
+* How does the company expect to use and benefit from this model?
+    * Boss's Answer: will be used in next stage of the pipeline
+* pipeline:
+    * Each stage: pulls in data -> process it -> spits out
+    * Self contained so robust
+    * Interface is data store
+    * Broken component needs to be monitored properly
+* What the current solution looks like? (reference performance)
+    * Boss's Answer: Manual and Not great (15% error)
+* Frame the problem
+    * Supervised/Unsupervised/Reinforcement?
+    * Classification/Regression?
+    * Batch/Online?
+
+### Select a performance Measure
+
+* For regression: Root mean squre error (RMSE)
+* Can also use Mean absolute error (MAE)
+* RMSE: l2 norm, MAE: l1 norm and general `l_k` norm
+* The higher the norm, more sensitive to outliers. So RMSE is more sensitive that MAE.
+
+### Check the assumption
+
+* It's important to list assumption we have
+  can help find problem in early stage
+* For example, we assume the downstream needs just the price, but what if they actually need
+  just cheap/expensive, 2 categorical Variables.
+
+## Get the Data
+
+* fetch data should be one function: `fetch_housing_data`
+* load data should be another function: `load_housing_data`
+
+### Take a quick look at the data
+
+* `housing.head()`
+* `housing.info()`: how many rows, the data type of each attributes and # of non-null value
+* Then if we find some categorical variables, we can use `pd.value_counts()`
+    * `housing.ocean_proximity.value_counts()`
+    * `housing['ocean_proximity'].value_counts()`
+* Then we use `data.describe()` to show the numerical variables
+
 # Chapter 9 Up and Running with TF 
 
 * First define a python graph of computation to perform
