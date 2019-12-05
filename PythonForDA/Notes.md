@@ -462,3 +462,32 @@ for i, gen in enumerate(movies.genres):
     * `frame.columns.names = ['state', 'color']`
 * `pd.MultiIndex` can be created alone:
     * `mi = pd.MultiIndex.from_arrays([['Ohio','Ohio','Colorado'], ['Green','Red','Green']], names=['state', 'color'])`
+
+### 8.1.2 Reordering and Sorting Levels
+
+* `reorder_sort_levels.py`
+* swap the across the row index can be name based and level based
+    * `frame.swaplevel('key1', 'key2')`
+    * `frame.swaplevel(0, 1)`
+* swap the across the column need to add `axis=1`
+    * `frame.swaplevel('state', 'color', axis=1)`
+    * `frame.swaplevel(0, 1, axis=1)`
+* sort index across the row
+    * `frame.sort_index(level=1)`
+* sort index across the column
+    * `frame.sort_index(level=0, axis=1)`
+
+### 8.1.3 Summary Statistics by Level 
+
+* `summ_stat_by_level.py`
+* Most statistic functions takes the `level` argument
+* You can also use `axis`
+
+### 8.1.4 Indexing with a DataFrame’s columns
+
+* `index_df_col.py`
+* We want to use one or more columns as the index or vice versa
+* use `set_index`: `frame.set_index(['c', 'd'])`
+* use `reset_index` to do the reverse
+
+

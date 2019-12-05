@@ -99,6 +99,57 @@ three    6
 Name: Colorado, dtype: int64
 ```
 
+* Select multiple rows consecutive and seperately with `.loc`
+
+```
+In [27]: data.loc[:'Utah', 'two']
+Out[27]:
+Ohio        1
+Colorado    5
+Utah        9
+Name: two, dtype: int64
+
+In [28]: data.loc['Ohio':'Utah', 'two']
+Out[28]:
+Ohio        1
+Colorado    5
+Utah        9
+Name: two, dtype: int64
+
+In [29]: data.loc['Colorado':'Utah']
+Out[29]:
+          one  two  three  four
+Colorado    4    5      6     7
+Utah        8    9     10    11
+
+In [30]: data.loc[['Ohio', 'Utah']]
+Out[30]:
+      one  two  three  four
+Ohio    0    1      2     3
+Utah    8    9     10    11
+```
+
+* Note the following 2 difference
+    * The first: `data.iloc[:]` get the whole dataframe, then `[:3]` is slicing, so it's on the row
+    * The second: use `iloc` to select row first, then column.
+
+```
+In [37]: data.iloc[:][:3]
+Out[37]:
+          one  two  three  four
+Ohio        0    1      2     3
+Colorado    4    5      6     7
+Utah        8    9     10    11
+
+In [41]: data.iloc[:, :3]
+Out[41]:
+          one  two  three
+Ohio        0    1      2
+Colorado    4    5      6
+Utah        8    9     10
+New York   12   13     14
+```
+
 ## Indexing in Hierachical Series
 
 ```

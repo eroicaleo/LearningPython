@@ -104,6 +104,53 @@
     * `housing.ocean_proximity.value_counts()`
     * `housing['ocean_proximity'].value_counts()`
 * Then we use `data.describe()` to show the numerical variables
+* Next step is to use `housing.hist(bins=50, figsize=(20,15))` to do histogram
+* Analyze the data
+    * Has the data been preprocessed, e.g. capped?
+    * The data has very different scale?
+    * Not bell shape?
+
+### Create a Test Set
+
+* Generally, test set is 20%
+* `sklearn` has the available function:
+    * `train_set, test_set = train_test_split(housing, test_size=0.2, random_state=42)`
+* stratified sampling on most important feature, i.e. `median_income`
+    * step 1: scale it to 0 ~ 10
+    * step 2: discretize it by using `np.ceil()`
+    * step 3: merge everything above 5 to 5, with `where`
+    * step 4: Now do the real staff
+
+```
+split = StratifiedShuffleSplit(n_splits=1, test_size=0.2, random_state=42)
+for train_index, test_index in split.split(housing, housing['income_cat']):
+    strat_train_set = housing.loc[train_index]
+    strat_test_set  = housing.loc[test_index]
+```
+
+## Discover and Visualize the Data to Gain Insights
+
+### Scatter plot
+
+* Scatter plot:
+    * `housing.plot(kind="scatter", x='longitude', y='latitude')`
+    * color for high density: `housing.plot(kind="scatter", x='longitude', y='latitude', alpha=0.1)`
+    * Much sofisticated example:
+
+```
+strat_train_set_copy.plot(kind='scatter', x='longitude', y='latitude', alpha=0.4,
+                          s=strat_train_set_copy.population/100,
+                          c=strat_train_set_copy.median_house_value,
+                          cmap=plt.get_cmap("jet"),
+                          label="population", figsize=(15, 15),
+                          colorbar=True)
+plt.legend()
+```
+
+### Looking for Correlation
+
+* First way, find correlation matrix `corr_matrix = house.corr(); corr_matrix.median_house_value.sort_values(ascending=False)`
+* Second way, Use `from pandas.tools.plotting import scatter_matrix`
 
 # Chapter 9 Up and Running with TF 
 
