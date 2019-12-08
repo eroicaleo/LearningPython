@@ -76,6 +76,10 @@ while node or stack:
 * To concat list of list to a list, you can use `itertools.chain.from_iterable(your_list_of_lists)`
 * sort a string, has to use ''.join(sorted(s)), problem 49
 * list[:-0] returns empty list, but list[:None] returns the whole list 
+* `[0]*-1` returns an empty list, this is useful to make code concise when we need to patch a list 
+  like problem 165
+* `itertools.zip_longest(v1, v2, fillvalue = 0)` to `zip` two lists with different length,
+  see problem 165
 
 # Array related problem
 
@@ -109,6 +113,8 @@ while node or stack:
 
 * Problem 238/50
 * Problem 312 Burst Balloons
+* Problem 25 Reverse Nodes in k Group
+* `126_Word_Ladder_II.py`
 
 # Graph
 
@@ -140,3 +146,5 @@ we then dfs all it's adjacent node
 then we add it's for done.
 
 * Trie: problem 336
+    * problem 208
+    * problem 212

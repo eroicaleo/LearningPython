@@ -111,3 +111,21 @@
 402_Remove_K_Digits.py, implement Pochmann's solution
 636_Exclusive_Time_of_Functions.py
 18_4Sum.py
+518_Coin_Change_2.py, needs to implement with only array, add description to summary
+68_Text_Justification.py, check forum
+468_Validate_IP_Address.py, check forum
+445_Add_Two_Numbers_II.py
+165_Compare_Version_Numbers.py
+43_Multiply_Strings.py, check out forum
+143_Reorder_List.py, check out forum
+39_Combination_Sum.py, check out forum for back tracking and DFS solution
+150_Evaluate_Reverse_Polish_Notation.py
+208_Implement_Trie.py
+212_Word_Search_II.py, check out the forum
+166_Fraction_to_Recurring_Decimal.py, check out the forum
+692_Top_K_Frequent_Words.py, check out the forum
+126_Word_Ladder_II.py, still not got the v2 working
+412_Fizz_Buzz.py
+547_Friend_Circles.py
+034_Find_First_and_Last_Position_of_Element_in_Sorted_Array.py, read Stefan's solution
+410_Split_Array_Largest_Sum.py
