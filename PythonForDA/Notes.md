@@ -490,4 +490,20 @@ for i, gen in enumerate(movies.genres):
 * use `set_index`: `frame.set_index(['c', 'd'])`
 * use `reset_index` to do the reverse
 
+## 8.2 Combining and Merging Datasets
+
+### 8.2.1 Database-Style DataFrame Joins
+
+* `db_style_df_join.py`
+* Use `pd.merge()` function to do many-to-one join
+    * It's a good practise to specify the merge key explicitly, like `pd.merge(df1, df2, on='key')`
+    * If there is no column with the same name, then we have to specify the left key and the right key
+      `pd.merge(df1, df2, left_on='lkey', right_on='rkey')`
+    * Note, if one value in the merge column exists in one dataframe but not in the other, it will
+      be dropped.
+    * The above behavior is called `inner`, other 3 options are `left/right/outer`
+* Use `pd.merge()` function to do many-to-many join, which is like Cartesian product
+    * `pd.merge(on=['key1', 'key2'])` to supply a list of keys
+    * treat overlapping column name by supplying a list of name, `pd.merge(on='key1', suffix=['_left', '_right'])`
+* See table 8-2 for reference
 
