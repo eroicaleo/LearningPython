@@ -565,5 +565,6 @@ logits = fully_connected(hidden2_drop, n_outputs, activation_fn=None,
 * It constrains the weights w of incoming connections such that ||w||\_2 <= r, which is 
   max-norm Hyperparameters.
 
-
 ### Data augmentation
+
+* This is a test for source tree
