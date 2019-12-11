@@ -189,9 +189,9 @@ housing_tr = pd.DataFrame(X, columns=housing_num.columns)
         * `Estimator`: estimate some parameters based on a dataset, like `imputer`
 	  It has `fit()` function, takes one dataset or two dataset in case of supervised learning.
 	  Hyperparameters like `strategy` is instance variables and usually set in constructor.
-	* `Transformers`, like `imputer`, which has a `transform` function. Use `fit_transform` might
+        * `Transformers`, like `imputer`, which has a `transform` function. Use `fit_transform` might
 	  run faster.
-	* `Predictor`: has a `predict()` function.
+        * `Predictor`: has a `predict()` function.
     * Inspection: like `imputer.statistics_` and `imputer.strategy` are all instance variables.
 
 # Chapter 9 Up and Running with TF 
