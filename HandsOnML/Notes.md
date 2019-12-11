@@ -151,6 +151,48 @@ plt.legend()
 
 * First way, find correlation matrix `corr_matrix = house.corr(); corr_matrix.median_house_value.sort_values(ascending=False)`
 * Second way, Use `from pandas.tools.plotting import scatter_matrix`
+    * Looks like, in later `pandas`, it changes to `from pandas.plotting import scatter_matrix`.
+    * Zoom in to see the promising variables
+    * If correlation is strong, we can see clear upward or downward trend and points are not too dispersed
+      like `median_income` and the `median_house_value`
+
+### Experimenting with Attribute Combinations 
+
+* We found the following two new varaiables are more informative than some of existing variables.
+    * `housing["rooms_per_household"] = housing["total_rooms"] / housing["households"]`
+    * `housing["population_per_household"]=housing["population"]/housing["households"]`
+* This step doesn't have to be thorough, we can come back later
+
+## 2.5 Prepare the Data for Machine Learning Algorithms
+
+### 2.5.1 Data Cleaning
+
+* Since most machine learning algorithm cannot work with `NA` value, so we have the following strategies:
+    * Drop the row where `total_bedrooms` is `NA`: `housing.dropna(subset=['total_bedrooms']).info()`
+    * Drop the `total_bedrooms` column: `housing.drop('total_bedrooms', axis=1)`
+    * Filla the `NA` with the `median` value: `housing['total_bedrooms'].fillna(housing['total_bedrooms'].median())`
+
+* `Imputer` flow for data Cleaning
+
+```python
+from sklearn.impute import SimpleImputer
+imputer = SimpleImputer(strategy='median')
+housing_num = housing.drop("ocean_proximity", axis=1)
+imputer.fit(housing_num)
+imputer.statistics_
+X = imputer.transform(housing_num)
+housing_tr = pd.DataFrame(X, columns=housing_num.columns)
+```
+
+* `sklearn` Design
+    * Consistency 
+        * `Estimator`: estimate some parameters based on a dataset, like `imputer`
+	  It has `fit()` function, takes one dataset or two dataset in case of supervised learning.
+	  Hyperparameters like `strategy` is instance variables and usually set in constructor.
+	* `Transformers`, like `imputer`, which has a `transform` function. Use `fit_transform` might
+	  run faster.
+	* `Predictor`: has a `predict()` function.
+    * Inspection: like `imputer.statistics_` and `imputer.strategy` are all instance variables.
 
 # Chapter 9 Up and Running with TF 
 
