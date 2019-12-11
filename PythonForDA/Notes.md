@@ -507,3 +507,17 @@ for i, gen in enumerate(movies.genres):
     * treat overlapping column name by supplying a list of name, `pd.merge(on='key1', suffix=['_left', '_right'])`
 * See table 8-2 for reference
 
+### 8.2.2 Merging on Index
+
+* In some cases, the merge key will be in the index, we need to use `left_index=True` or `right_index=True` or both
+    * `pd.merge(left=left1, right=right1, left_on='key', right_index=True)`
+    * `pd.merge(left=left1, right=right1, left_on='key', right_index=True, how='outer')`
+* Hierarchical index is more complex, has to pass a list for `left_on` or `right_on`
+    * `pd.merge(lefth, righth, left_on=['key1', 'key2'], right_index=True, how='outer')`
+* Both dataframe can use index to merge
+    * `pd.merge(left2, right2, how='outer', left_index=True, right_index=True)`
+* If 2 dataframe has similar index, then we case use `join` method
+    * `left2.join(right2, how='outer')`
+    * `left1.join(right1, on='key')`
+* `join` index-on-index merge, we can give a list of dataframe:
+    * `left2.join([right2, another], how='outer')`
