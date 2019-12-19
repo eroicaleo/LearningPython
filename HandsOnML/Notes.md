@@ -194,6 +194,19 @@ housing_tr = pd.DataFrame(X, columns=housing_num.columns)
         * `Predictor`: has a `predict()` function.
     * Inspection: like `imputer.statistics_` and `imputer.strategy` are all instance variables.
 
+### 2.5.2 Handling Text and Categorical Attributes
+
+* We met 3 encoders from `sklearn.preprocessing`
+    * `LabelEncoder` : convert text to label, the result after `fit_transform` is `numpy.ndarray`
+        * `encoder.classes_` to check the classes
+    * `OneHotEncoder` : convert label to one hot array, note we need to convert the above `numpy.ndarray` to 2-d
+      with `numpy.ndarray.reshape(-1, 1)`
+        * The output is `scipy.sparse.csr.csr_matrix`
+        * We can convert to `ndarray` with `toarray()` function
+    * `LabelBinarizer` : combine the above two.
+        * The output is dense `numpy.ndarray`, which is not memory efficient.
+        * We can make the output sparse by `LabelBinarizer(sparse_output=True)`
+
 # Chapter 9 Up and Running with TF 
 
 * First define a python graph of computation to perform
