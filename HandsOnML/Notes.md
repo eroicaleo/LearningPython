@@ -207,6 +207,17 @@ housing_tr = pd.DataFrame(X, columns=housing_num.columns)
         * The output is dense `numpy.ndarray`, which is not memory efficient.
         * We can make the output sparse by `LabelBinarizer(sparse_output=True)`
 
+### 2.5.3 Customer Transformer
+
+* We just need to provide our own `fit`, `transform` and `fit_transform` function.
+* We need to make our class inherited from `BaseEstimator, TransformerMinMax`
+    * `BaseEstimator` gives you free `get_params` and `set_params`
+    * `TransformerMinMax`: gives you free `fit_transform` if you have `fit` and `transform`.
+* Note in this example, the author uses `X = housing.values` to convert a DataFrame to an `np.ndarray`
+    * This is consistent with the `transform` function output.
+    * If we want to play with `DataFrame`, we can use
+      `housing.iloc[:, [rooms_ix, bedrooms_ix, households_ix, population_ix]]`
+
 # Chapter 9 Up and Running with TF 
 
 * First define a python graph of computation to perform
