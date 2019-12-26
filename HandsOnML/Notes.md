@@ -187,10 +187,10 @@ housing_tr = pd.DataFrame(X, columns=housing_num.columns)
 * `sklearn` Design
     * Consistency 
         * `Estimator`: estimate some parameters based on a dataset, like `imputer`
-	  It has `fit()` function, takes one dataset or two dataset in case of supervised learning.
-	  Hyperparameters like `strategy` is instance variables and usually set in constructor.
+          It has `fit()` function, takes one dataset or two dataset in case of supervised learning.
+          Hyperparameters like `strategy` is instance variables and usually set in constructor.
         * `Transformers`, like `imputer`, which has a `transform` function. Use `fit_transform` might
-	  run faster.
+          run faster.
         * `Predictor`: has a `predict()` function.
     * Inspection: like `imputer.statistics_` and `imputer.strategy` are all instance variables.
 
@@ -218,7 +218,53 @@ housing_tr = pd.DataFrame(X, columns=housing_num.columns)
     * If we want to play with `DataFrame`, we can use
       `housing.iloc[:, [rooms_ix, bedrooms_ix, households_ix, population_ix]]`
 
-# Chapter 9 Up and Running with TF 
+### 2.5.4 Feature Scaling
+
+* One of the most important transformation.
+    * To find if data has different scales: `housing.describe()`
+* 2 common ways
+    * min-max scaling: `MinMaxScalar` with `feature_range` hyperparameter
+    * standardization: mean 0, with unit variance
+        * `StandardScalar`
+        * might not work well for some Neural Network algorithm which expect `[0, 1]`.
+* Sample code using `MinMaxScaler/StandardScaler` is like below, note we have to use `values` and `reshape` to
+  get it work.
+
+```python
+from sklearn.preprocessing import MinMaxScaler
+
+scalar = MinMaxScaler()
+scalar.fit(housing["total_rooms"].values.reshape(-1, 1))
+pd.DataFrame(scalar.transform(housing["total_rooms"].values.reshape(-1, 1))).describe()
+
+count    16512.000000
+mean         0.066560
+std          0.054394
+min          0.000000
+25%          0.036552
+50%          0.053759
+75%          0.079743
+max          1.000000
+Name: total_rooms, dtype: float64
+
+from sklearn.preprocessing import StandardScaler
+
+scalar = StandardScaler()
+scalar.fit(housing["total_rooms"].values.reshape(-1, 1))
+pd.DataFrame(scalar.transform(housing["total_rooms"].values.reshape(-1, 1)), columns=["total_rooms"])["total_rooms"].describe()
+
+count    1.651200e+04
+mean     8.606884e-17
+std      1.000030e+00
+min     -1.223689e+00
+25%     -5.516890e-01
+50%     -2.353301e-01
+75%      2.423650e-01
+max      1.716114e+01
+Name: total_rooms, dtype: float64
+```
+
+# Chapter 9 Up and Running with TF
 
 * First define a python graph of computation to perform
 * Possible to run them in different CPU and GPUs
