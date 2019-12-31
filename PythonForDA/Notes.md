@@ -492,6 +492,8 @@ for i, gen in enumerate(movies.genres):
 
 ## 8.2 Combining and Merging Datasets
 
+* [official examples](https://pandas.pydata.org/pandas-docs/stable/user_guide/merging.html)
+
 ### 8.2.1 Database-Style DataFrame Joins
 
 * `db_style_df_join.py`
@@ -509,6 +511,7 @@ for i, gen in enumerate(movies.genres):
 
 ### 8.2.2 Merging on Index
 
+* `merge_on_index.py`
 * In some cases, the merge key will be in the index, we need to use `left_index=True` or `right_index=True` or both
     * `pd.merge(left=left1, right=right1, left_on='key', right_index=True)`
     * `pd.merge(left=left1, right=right1, left_on='key', right_index=True, how='outer')`
@@ -521,3 +524,24 @@ for i, gen in enumerate(movies.genres):
     * `left1.join(right1, on='key')`
 * `join` index-on-index merge, we can give a list of dataframe:
     * `left2.join([right2, another], how='outer')`
+
+### 8.2.3 Concatenating Along an Axis
+
+* `concat.py`
+* It has been called concatenation, binding or stacking.
+* `np.concatenate([arr, arr], axis=1)` will concat along column
+* `np.concatenate([arr, arr], axis=0)` will concat along row
+* For a concat of `Series` with index, and when we concat along the column, the default
+  behaviour is to use `outer` method for the index. If we want to use `inner`, we do this
+  `pd.concat([s1,s4], axis=1, join="inner")`
+* We can even specify the axes to be used on the other axes with `join_axes`.
+  `pd.concat([s1,s2], axis=1, join_axes=[['a', 'c', 'b']])`
+* When we concat them, we cannot tell which row belongs to which, we can do this:
+  `pd.concat([s1,s2,s3],keys=['lala','haha','kaka'])`
+    * In addition to use `keys` argument, you can just pass a dictionary to `concat`
+      `pd.concat({'level1':df1, 'level2':df2}, axis=1)`
+    * We can even give names to the `hier_index`:
+      pd.concat({'level1':df1, 'level2':df2}, axis=1, names=['upper','lower'])
+* If we want drop the index because it doesn't have any relevant info:
+  `pd.concat([df1,df2], ignore_index=True)`
+* Table 8-3 for reference
