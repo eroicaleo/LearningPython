@@ -264,6 +264,70 @@ max      1.716114e+01
 Name: total_rooms, dtype: float64
 ```
 
+### 2.5.5 Transformation Pipeline
+
+* `scikit-learn` provides `Pipeline` class to combine them together.
+* To initialize a `Pipeline`, give it a list of transformers and one `Estimator` at the very end
+* When you call `fit` method of the pipeline, it will call `fit_transform()` of the `n-1` stage
+  and `fit()` on the last stage
+* When you call `fit_transform()`, it will call `fit_transform()` on all stages.
+* Sample code is like the following
+    * Use `np.array_equal` to verify
+
+```python
+num_pipeline = Pipeline([
+    ('imputer', SimpleImputer(strategy="median")),
+    ('attr_adder', CombinedAttributesAdder()),
+    ('std_scaler', StandardScaler())
+])
+
+# Verify the pipeline version is the same as the stand alone version
+X_pipeline = num_pipeline_stage1.fit_transform(housing_num)
+X = imputer.transform(housing_num)
+np.array_equal(X, X_pipeline)
+```
+
+* The above works for numerical features, we need to do the same for the categorical
+  features.
+* `sklearn` provides `FeatureUnion` to combine them together
+* Note the code defined in the book has some problem
+    * See this [discussion](https://stackoverflow.com/questions/46162855/fit-transform-takes-2-positional-arguments-but-3-were-given-with-labelbinarize)
+      and see my fix below
+    * The reason is in newer `sklearn`, `LabelBinarizer.fit()` can only take `X`
+      But the `Pipeline` still pass `X, y` to it.
+    * This is the reason this code `LabelBinarizer().fit_transform(DataFrameSelector(cat_attribs).fit_transform(housing))`
+      works.
+
+```python
+class CustomizedLabelBinarizer(BaseEstimator, TransformerMixin):
+    def __init__(self, sparse_output=False):
+        self.encode = LabelBinarizer(sparse_output = sparse_output)
+    def fit(self, X, y=None):
+        return self.encode.fit(X)
+    def transform(self, X):
+        return self.encode.transform(X)
+
+cat_pipeline = Pipeline([
+    ('selector', DataFrameSelector(cat_attribs)),
+    ('label_binarizer', CustomizedLabelBinarizer()),
+])
+```
+
+* The usage is like below
+    * I don't understand why the transformed data has 17 features, mine only has 16	
+    * Maybe it has `add_bedrooms_per_room`
+
+```python
+from sklearn.pipeline import FeatureUnion
+
+full_pipeline = FeatureUnion(transformer_list=[
+    ('num_pipeline', num_pipeline),
+    ('cat_pipeline', cat_pipeline),
+])
+
+housing_prepared = full_pipeline.fit_transform(housing)
+```
+
 # Chapter 9 Up and Running with TF
 
 * First define a python graph of computation to perform
@@ -356,7 +420,7 @@ Name: total_rooms, dtype: float64
 * We can define the function
 * `tf.add_n` is useful to add a list of nodes
 * When creating a node, tensorflow will add `_1`, `_2` if a variable name is already there.
-* So can be combined with name_scope to make graph much clearer.
+* So can be combined with `name_scope` to make graph much clearer.
 
 ## Sharing Variables
 
@@ -390,7 +454,7 @@ Name: total_rooms, dtype: float64
     2. `tf.placeholder` for `X` and `y`
     3. The actual network will be in a function
         * Initialize `W` to a truncated normal distribution so to converge faster
-	* Initialize `b` to all zero
+        * Initialize `b` to all zero
     4. But usually, don't need to define manully, there are many handy functions like: `fully_connected` 
     5. `tensorflow.contrib` package is experimental code, so might move in the future
     6. The next step is to define cost function.
@@ -530,8 +594,7 @@ Name: total_rooms, dtype: float64
   variables from lower level.
 
 ```
-train_vars = tf.get_collection(tf.GraphKeys.TRAINABLE_VARIABLES,
-		scope="hidden[34]|outputs")
+train_vars = tf.get_collection(tf.GraphKeys.TRAINABLE_VARIABLES, scope="hidden[34]|outputs")
 training_op = optimizer.minimize(loss, var_list=train_vars)
 ```
 
