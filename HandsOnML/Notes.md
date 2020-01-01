@@ -328,6 +328,73 @@ full_pipeline = FeatureUnion(transformer_list=[
 housing_prepared = full_pipeline.fit_transform(housing)
 ```
 
+## 2.6 Select and Train a Model
+
+### 2.6.1 Training and Evaluating on the Training Set
+
+* The sample code to use a linear regressiong model is below:
+
+```python
+from sklearn.linear_model import LinearRegression
+from sklearn.metrics import mean_squared_error
+
+lin_reg = LinearRegression()
+lin_reg.fit(housing_prepared, housing_labels)
+housing_prediction = lin_reg.predict(housing_prepared)
+
+# compute the rooted mean_squared_error
+lin_mse = mean_squared_error(housing_prediction, housing_labels)
+lin_rmse = np.sqrt(lin_mse)
+
+```
+
+* The sample code to use a more powerful tree model is almost the same:
+
+```python
+from sklearn.tree import DecisionTreeRegressor
+
+tree_reg = DecisionTreeRegressor()
+tree_reg.fit(housing_prepared, housing_labels)
+tree_predictions = tree_reg.predict(housing_prepared)
+tree_mse = mean_squared_error(tree_predictions, housing_labels)
+tree_rmse = np.sqrt(tree_mse)
+```
+
+### 2.6.2 Better Evaluation Using Cross-Validation
+
+* Use cross validation is also very easy
+
+```python
+from sklearn.model_selection import cross_val_score
+scores = cross_val_score(tree_reg, housing_prepared, housing_labels, scoring="neg_mean_squared_error", cv=10)
+```
+
+* Use Random forest
+
+```python
+from sklearn.ensemble import RandomForestRegressor
+
+forest_reg = RandomForestRegressor()
+forest_reg.fit(housing_prepared, housing_labels)
+forest_scores = cross_val_score(forest_reg, housing_prepared, housing_labels, scoring="neg_mean_squared_error", cv=10)
+forest_rmse_scores = np.sqrt(-forest_scores)
+display_scores(forest_rmse_scores)
+```
+
+* What we saw is the training error is still much smaller than the
+  cross-validation error, meaning we are still overfitting.
+    * make the model simpler
+    * regulation
+    * more training data
+* But first thing is to try many more other models.
+* Save and load model for future use
+
+```python
+from sklearn.externals import joblib
+joblib.dump(forest_reg, 'forest_reg.pkl')
+forest_reg_loaded = joblib.load('forest_reg.pkl')
+```
+
 # Chapter 9 Up and Running with TF
 
 * First define a python graph of computation to perform
