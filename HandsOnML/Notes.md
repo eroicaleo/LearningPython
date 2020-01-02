@@ -395,6 +395,59 @@ joblib.dump(forest_reg, 'forest_reg.pkl')
 forest_reg_loaded = joblib.load('forest_reg.pkl')
 ```
 
+## 2.7 Fine Tune your models
+
+### 2.7.1 Grid Search
+
+* Sample code like below
+
+```python
+from sklearn.model_selection import GridSearchCV
+param_grid = [
+    {'n_estimators': [3, 10, 30], 'max_features': [2,4,6,8]},
+    {'bootstrap': [False], 'n_estimators': [3, 10, 30], 'max_features': [2,4,6,8]}
+]
+forest_reg = RandomForestRegressor()
+grid_search = GridSearchCV(forest_reg, param_grid, cv=5, scoring="neg_mean_squared_error")
+grid_search.fit(housing_prepared, housing_labels)
+```
+
+* If not sure what grid to use, power of 10 is a good start, or a more fine number
+  like in the example.
+* Useful variable can be accessed directly:
+    * `grid_search.best_params_`
+    * `grid_search.best_estimator_`
+    * `grid_search.cv_results_`: a dictionary, `mean_test_score` and `params` are important keys
+* Grid search can do if use a feature or not, see exercise 5.
+
+### 2.7.2 Random Search
+
+* `RandomizedSearchCV`
+* Usually good when search space is large, benefits
+    * Seems like we can just give the hyperparameter, and give how many iterations we want.
+      Don't have to give list for each hyperparameter.
+    * We can control computing budget by change # of iterations.
+
+### 2.7.4 Analyze the best models and their errors
+
+* `feature_importances = grid_search.best_estimator_.feature_importances_`
+
+### 2.7.5 Evaluate Your System on the Test Set
+
+* The sample code
+
+```python
+final_model = grid_search.best_estimator_
+X_test = strat_test_set.drop("median_house_value", axis=1)
+y_test = strat_test_set.median_house_value.copy()
+X_test_prepared = full_pipeline.transform(X_test)
+
+final_predictions = final_model.predict(X_test_prepared)
+final_mse = mean_squared_error(final_predictions, y_test)
+final_rmse = np.sqrt(final_mse)
+final_rmse
+```
+
 # Chapter 9 Up and Running with TF
 
 * First define a python graph of computation to perform
