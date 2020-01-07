@@ -545,3 +545,13 @@ for i, gen in enumerate(movies.genres):
 * If we want drop the index because it doesn't have any relevant info:
   `pd.concat([df1,df2], ignore_index=True)`
 * Table 8-3 for reference
+
+### 8.2.4 Combining Data with Overlap
+
+* `overlap.py`
+* Sometimes we want to update the `null` value in one `DataFrame` with
+  the value in another `DataFrame`.
+* `numpy` has `where` function, which is array oriented `if-else`
+    * `np.where(pd.isnull(a), b, a)` will patch
+* `combine_first` does the same thing
+    * `np.array_equal(np.where(pd.isnull(a), b, a), a.combine_first(b).values)` will give `True`
