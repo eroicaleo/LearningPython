@@ -448,6 +448,82 @@ final_rmse = np.sqrt(final_mse)
 final_rmse
 ```
 
+## 2.8 Exercise
+
+### 2.8.1 `GridSearchCV` with `SVM`
+
+```python
+from sklearn.svm import SVR
+from sklearn.model_selection import GridSearchCV
+
+param_grid = [
+    {'kernel': ['linear'], 'C': [0.1, 1.0, 10.0]},
+    {'kernel': ['rbf'], 'C': [0.1, 1.0, 10.0], 'gamma': np.logspace(-2, 2, 5)},
+]
+
+svm_reg = SVR()
+grid_search = GridSearchCV(svm_reg, param_grid, cv=5, scoring="neg_mean_squared_error")
+
+grid_search.fit(housing_prepared, housing_labels)
+
+cvres = grid_search.cv_results_
+for mean_score, params in zip(cvres["mean_test_score"], cvres["params"]):
+    print(np.sqrt(-mean_score), params)
+```
+
+### 2.8.2 `RandomizedSearchCV`
+
+### 2.8.4 Add one pipeline to predict
+
+* My solution
+
+```python
+full_pred_pipeline = Pipeline([
+    ('full_pipeline', full_pipeline),
+    ('pred_pipeline', RandomForestRegressor()),
+])
+
+full_pred_pipeline.fit(housing, housing_labels)
+forest_prediction_pipeline = full_pred_pipeline.predict(housing)
+forest_rmse_pipeline = np.sqrt(mean_squared_error(forest_prediction_pipeline, housing_labels))
+forest_rmse_pipeline
+```
+
+* Author's solution, note he is use the best solution in random search
+  to initialize the `SVR`
+
+```python
+prepare_select_and_predict_pipeline = Pipeline([
+    ('preparation', full_pipeline),
+    ('feature_selection', TopFeatureSelector(feature_importances, k)),
+    ('svm_reg', SVR(**rnd_search.best_params_))
+])
+```
+### 2.8.5
+
+* My solution
+
+```python
+full_pred_pipeline = Pipeline([
+    ('full_pipeline', full_pipeline),
+    ('pred_pipeline', RandomForestRegressor()),
+])
+
+param_grid = [
+    {   'full_pipeline__num_pipeline__attr_adder__add_bedrooms_per_room' : [False, True],
+        'pred_pipeline__n_estimators': [3, 10, 30], 'pred_pipeline__max_features': [2,4,6,8]},
+]
+```
+
+* Author's solution
+
+```python
+param_grid = [{
+    'preparation__num__imputer__strategy': ['mean', 'median', 'most_frequent'],
+    'feature_selection__k': list(range(1, len(feature_importances) + 1))
+}]
+```
+
 # Chapter 9 Up and Running with TF
 
 * First define a python graph of computation to perform
