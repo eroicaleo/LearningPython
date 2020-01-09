@@ -247,3 +247,26 @@ its intent more clearly with an explicit return None statement.
     * The above 2 are all satisfied
     * More robust / maitainable / communicative
 * Further reading: python `abc` module [here](https://docs.python.org/3/library/abc.html)
+
+## 4.6 What Namedtuples Are Good For
+
+* Namedtuples can be a great alternative to defining a class manually
+* plain tuple data can only be accessed through integer indexing, impact readability.
+* `namedtuple` are immutable containers
+    * object can be accessed through `identifer`
+* Initialization, first parameter needs to be type.
+    * Value can be accessed through name: `my_car.color`
+    * Value can be accessed through index: `my_car.color`
+* Memory is more efficient than `class`
+* We can add method to `namedtuple` by subclassing
+* If we want to add new field, the trick is to use `_fields` in `namedtuple`:
+    * `ElectricCar = namedtuple('ElectricCar', Car._fields + ('charge',))`
+* Build-in helper methods
+    * `_asdict`: `my_car._asdict()`
+    * `_replace`: `my_car._replace(color="blue")`
+    * `_make`
+* When to use?
+    * clean up your code / more readable
+    * Dictionary with fixed format -> `namedtuple`
+    * Unstructured `tuple` and `dict` -> `namedtuple` self-documenting
+    * Don't use it if doesn't make your code cleaner
