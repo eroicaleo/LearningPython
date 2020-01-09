@@ -3,6 +3,7 @@
 ## Official document
 
 * [Select and Indexing data](https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html)
+* [MultiIndex / advanced indexing](https://pandas.pydata.org/pandas-docs/stable/user_guide/advanced.html#advanced-indexing-with-hierarchical-index)
 
 ## Indexing in Regular Series
 
@@ -101,7 +102,7 @@ Name: Colorado, dtype: int64
 
 * Select multiple rows consecutive and seperately with `.loc`
 
-```
+```python
 In [27]: data.loc[:'Utah', 'two']
 Out[27]:
 Ohio        1
@@ -238,3 +239,101 @@ dtype: float64
 
 ## Indexing in Hierachical DataFrame
 
+```python
+frame = pd.DataFrame(np.arange(12).reshape(4,3),
+                     index=[['a','a','b','b'],[1,2,1,2]],
+                     columns=[['Ohio','Ohio','Colorado'],
+                              ['Green','Red','Green']])
+frame.index.names = ['key1', 'key2']
+frame.columns.names = ['state', 'color']
+
+Out[12]:
+state      Ohio     Colorado
+color     Green Red    Green
+key1 key2
+a    1        0   1        2
+     2        3   4        5
+b    1        6   7        8
+     2        9  10       11
+```
+
+* Select outer level column
+
+```python
+In [13]: frame['Ohio']
+Out[13]:
+color      Green  Red
+key1 key2
+a    1         0    1
+     2         3    4
+b    1         6    7
+     2         9   10
+```
+
+* Select outer level row
+
+```python
+In [17]: frame.loc['a']
+Out[17]:
+state  Ohio     Colorado
+color Green Red    Green
+key2
+1         0   1        2
+2         3   4        5
+```
+
+* Use `loc` to select row and column
+
+```python
+In [18]: frame.loc[['a','b'], 'Ohio']
+Out[18]:
+color      Green  Red
+key1 key2
+a    1         0    1
+     2         3    4
+b    1         6    7
+     2         9   10
+```
+
+* Select inner column
+
+```python
+frame.loc[:, 'Ohio']['Green']
+
+Out[35]:
+key1  key2
+a     1       0
+      2       3
+b     1       6
+      2       9
+Name: Green, dtype: int64
+```
+
+* select both `Green` columns, seems to be messy
+
+```python
+In [38]: frame.loc[:, [('Ohio', 'Green'), ('Colorado', 'Green')]]
+Out[38]:
+state      Ohio Colorado
+color     Green    Green
+key1 key2
+a    1        0        2
+     2        3        5
+b    1        6        8
+     2        9       11
+```
+
+* A more generic usage would be, it's inspired by the last example
+  in this [section](https://pandas.pydata.org/pandas-docs/stable/user_guide/advanced.html#advanced-indexing-with-hierarchical-index)
+
+```python
+In [56]: frame.loc[:, (list(frame.columns.droplevel(1).unique()), 'Green')]
+Out[56]:
+state      Ohio Colorado
+color     Green    Green
+key1 key2
+a    1        0        2
+     2        3        5
+b    1        6        8
+     2        9       11
+```
