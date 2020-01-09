@@ -524,6 +524,18 @@ param_grid = [{
 }]
 ```
 
+# Chapter 3 Classification
+
+## 3.1 MNIST
+
+* The steps to load the image
+
+```python
+%matplotlib inline
+import matplotlib
+import matplotlib.pyplot as plt
+```
+
 # Chapter 9 Up and Running with TF
 
 * First define a python graph of computation to perform
