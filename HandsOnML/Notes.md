@@ -534,7 +534,51 @@ param_grid = [{
 %matplotlib inline
 import matplotlib
 import matplotlib.pyplot as plt
+
+some_digit = X[36000]
+some_digit_image = some_digit.reshape((28, 28))
+plt.imshow(some_digit_image, cmap = matplotlib.cm.binary, interpolation="nearest")
+plt.axis('off')
+plt.show()
 ```
+
+* Split the train/test data:
+    * the dataset has been arranged in the way such that [0:60000] is training data
+      [60000:] is the testing data
+    * Since the data is ordered, we need to shuffle it:
+
+```python
+shuffle_index = np.random.permutation(len(X_train))
+X_train, y_train = X_train[shuffle_index], y_train[shuffle_index]
+```
+
+## 3.2 Training a binary classifier
+
+* We first to convert it to a binary classification problem: 5 or not 5.
+  We can see the ratio is 1:10, which makes sense.
+
+```python
+y_train_5 = (y_train == 5)
+y_test_5 = (y_test == 5)
+pd.Series(y_train_5.reshape(len(y_train_5),)).value_counts()	
+False    54579
+True      5421
+dtype: int64
+```
+
+* Use `SGDClassifier` to train and predict
+    * Note that in `predict`, we need to make the data to `some_digit.reshape(1, -1)`
+      or `[some_digit]`
+
+```python
+from sklearn.linear_model import SGDClassifier
+
+sgd_clf = SGDClassifier(random_state=42)
+sgd_clf.fit(X_train, y_train_5)
+sgd_clf.predict([some_digit])
+```
+
+## 3.3 Performance Measure
 
 # Chapter 9 Up and Running with TF
 
