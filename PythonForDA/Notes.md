@@ -541,7 +541,7 @@ for i, gen in enumerate(movies.genres):
     * In addition to use `keys` argument, you can just pass a dictionary to `concat`
       `pd.concat({'level1':df1, 'level2':df2}, axis=1)`
     * We can even give names to the `hier_index`:
-      pd.concat({'level1':df1, 'level2':df2}, axis=1, names=['upper','lower'])
+      `pd.concat({'level1':df1, 'level2':df2}, axis=1, names=['upper','lower'])`
 * If we want drop the index because it doesn't have any relevant info:
   `pd.concat([df1,df2], ignore_index=True)`
 * Table 8-3 for reference
@@ -555,3 +555,56 @@ for i, gen in enumerate(movies.genres):
     * `np.where(pd.isnull(a), b, a)` will patch
 * `combine_first` does the same thing
     * `np.array_equal(np.where(pd.isnull(a), b, a), a.combine_first(b).values)` will give `True`
+
+## 8.3 Reshaping and Pivoting
+
+### 8.2.3 Reshaping with Hierarchical Indexing
+
+* `reshape_hier_index.py`
+* `stack`: rotates from columns to rows
+    * A `pd.DataFrame` becomes `pd.Series` of MultiIndex.
+* `unstack`: rotates from rows to columns
+    * Change it back
+    * Can change level: `result.unstack(0)`
+    * If index has name, can use its name to unstack `result.unstack('state')`
+    * `unstack()` will produce `nan` in case of missing value, this is easier
+      to recover back with `stack()`
+    * but we don't want to drop `np.nan`, we use `stack(dropna=False)`
+* For `pd.DataFrame`, here is an example:
+    * with `unstack`: `MultiIndex` in rows becomes columns
+    * with `stack`: `MultiIndex` in columns becomes rows
+
+```python
+In [51]: df = pd.DataFrame({'left': result, 'right': result+5}, columns=pd.Index(['left', 'right'], name='side'))
+
+In [54]: df
+Out[54]:
+side             left  right
+state    number
+Ohio     one        0      5
+         two        1      6
+         three      2      7
+Colorado one        3      8
+         two        4      9
+         three      5     10
+
+In [52]: df.unstack('state')
+Out[52]:
+side   left          right
+state  Ohio Colorado  Ohio Colorado
+number
+one       0        3     5        8
+two       1        4     6        9
+three     2        5     7       10
+
+In [53]: df.unstack('state').stack('side')
+Out[53]:
+state         Colorado  Ohio
+number side
+one    left          3     0
+       right         8     5
+two    left          4     1
+       right         9     6
+three  left          5     2
+       right        10     7
+```
