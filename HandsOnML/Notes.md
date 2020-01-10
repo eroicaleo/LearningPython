@@ -580,6 +580,96 @@ sgd_clf.predict([some_digit])
 
 ## 3.3 Performance Measure
 
+### 3.3.1 Measuring Accuracy Using Cross-Validation
+
+* Creating cross validation data with `StratifiedKFold` instead of `cross_val_score`
+  It's pretty much similar as `StratifiedShuffleSplit`
+
+```python
+from sklearn.model_selection import StratifiedKFold
+from sklearn.base import clone
+
+skfolds = StratifiedKFold(n_splits=3, random_state=42)
+for train_index, test_index in skfolds.split(X_train, y_train_5):
+    pass
+```
+
+* Now use `cross_val_score`, note in this case, the `scoring` is `'accuracy'`
+  instead of `neg_mean_squared_error`
+
+```python
+from sklearn.model_selection import cross_val_score
+cross_val_score(sgd_clf, X_train, y_train_5.reshape(len(y_train_5,)), cv=3, scoring="accuracy")
+```
+
+* Define a dummy estimator, it's subclassing `BaseEstimator` 
+    * The accuracy is > 90%
+
+```python
+from sklearn.base import BaseEstimator
+
+class Never5Classifier(BaseEstimator):
+    def fit(self, X, y=None):
+        pass
+    def predict(self, X):
+        return np.zeros((len(X), 1), dtype=bool)
+```
+
+### 3.3.2 Confusion matrix
+
+* First we want to have the actual prediction for the training set,
+  instead of just score, but we want the clean prediction,
+  meaning a prediction on a instance which is not seen in training
+  so we use `cross_val_predict`, like the following
+
+```python
+from sklearn.model_selection import cross_val_predict
+y_train_predict = cross_val_predict(sgd_clf, X_train, y_train_5.reshape(len(y_train_5,)), cv=3)
+```
+
+* The we use `sklearn.metrics.confusion_matrix` to get
+    * `True Negtive`
+    * `False Negtive`
+    * `True Positive`
+    * `False Positive`
+
+```python
+from sklearn.metrics import confusion_matrix
+confusion_matrix(y_train_5, y_train_predict)
+
+array([[53409,  1170],
+       [  976,  4445]])
+```
+
+* The row is a class, row 0 is `False` or row 1 is `True`
+* The row is a prediction, col 0 is predicting `False`, col 1 is predicting `True`
+* Precision: `TP/(TP+FP)`
+* Recall: `TP/(TP+FN)`
+* F1 score
+
+```python
+from sklearn.metrics import precision_score, recall_score, f1_score
+```
+
+* Select which one depends on application
+    * Video safe for kids: It's OK to have large `FN` but must have almost 0 `FP`
+      so it's high precision / low recall
+    * Catch shoplift: It's OK to have large `FP`, but should have low FN
+      so it's low precision / high recall
+
+### 3.3.3 Precision Recall Tradeoff
+
+* Instead of `predict` function, we can call the `decision_function` to get the actual score
+  and the 2nd line clearly shows the `decision_function` are `predict` are equivalent if use
+  0 as the `threshold`.
+
+```python
+y_scores = sgd_clf.decision_function([some_digit])
+np.array_equal(np.where(sgd_clf.decision_function(X_train) < 0, False, True), sgd_clf.predict(X_train))
+```
+
+* So how to decide which `threshold` is best?
+
 # Chapter 9 Up and Running with TF
 
 * First define a python graph of computation to perform
