@@ -669,6 +669,34 @@ np.array_equal(np.where(sgd_clf.decision_function(X_train) < 0, False, True), sg
 ```
 
 * So how to decide which `threshold` is best?
+    * The first step is to get the actual score
+    * The 2nd step is to use `sklearn.metrics.precision_recall_curve`
+    * The 3rd step is to plot
+
+```python
+y_scores = cross_val_predict(sgd_clf, X_train, y_train_5, cv=3, method="decision_function")
+
+from sklearn.metrics import precision_recall_curve
+precisions, recalls, thresholds = precision_recall_curve(y_train_5, y_scores)
+```
+
+* We can see the precision might be bumpy and recall is smooth
+    * `TP/(TP+FP) = 1/(1+FP/TP)`, when threshold increase, both `TP` and `FP` goes down, so might not be monotonic
+    * `TP/(TP+FN) = 1/(1+FN/TP)`, when threshold increase, `FN` increase, `TP` decrease, so it's monotonic
+
+* Assume our task is to find a threshold to achieve 90% precision
+    * We use `np.argmax` to find the threshold
+
+```python
+threshold_90_precision = thresholds[np.argmax(precisions >= 0.9)]
+y_train_pred_90 = (y_scores >= threshold_90_precision)
+
+print(precision_score(y_train_5, y_train_pred_90))
+print(recall_score(y_train_5, y_train_pred_90))
+
+0.9001403180542563
+0.710016602102933
+```
 
 # Chapter 9 Up and Running with TF
 
