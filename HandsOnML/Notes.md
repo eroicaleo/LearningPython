@@ -735,6 +735,59 @@ y_probas_forest = cross_val_predict(forest_clf, X_train, y_train_5, cv=3, method
 y_scores_froest = y_probas_forest[:, 1]
 ```
 
+## 3.4 Multiclass Classication
+
+* Multiclass: Random forest / naive Bayes classifiers
+* Binary classification: SVM / Linear
+    * Convert binary to multiclass: 
+        * Get 10 classifiers
+        * Get the highest score
+        * One versus all (OVA) AKA One versus the rest
+    * One V.S. One (OVO)
+        * Get one classifier for every pair of lables: 0 v.s. 1, 1 v.s. 2, etc
+        * (N-1)*N/2 classifiers
+        * Good for algorithm that doesn't scale well with big dataset, e.g. SVM
+    * For other binary classifications, OVA
+* `sklearn` automatically detects multiclass and will perform OVA underhood
+    * The training time is much longer
+    * `sgd_clf.decision_function()` outputs a vector of 10 instead of a single number.
+    * `sgd_clf.classes_` to show the classes
+
+```
+sgd_clf.fit(X_train, y_train)
+sgd_clf.decision_function([some_digit])
+sgd_clf.classes_
+```
+
+* We can manully use `OneVsOneClassifier` or `OneVsRestClassifier`
+    * `ovo_clf.estimators_` shows the number of estimators is 45
+
+```python
+from sklearn.multiclass import OneVsOneClassifier
+ovo_clf = OneVsOneClassifier(SGDClassifier(random_state=42))
+ovo_clf.fit(X_train, y_train)
+ovo_clf.predict([some_digit])
+len(ovo_clf.estimators_)
+```
+
+* `RandomForestClassifier` automatically runs multiclass
+    * use `forest_clf.predict_proba` to get the probability on each lables
+
+* We can check the accuracy like the binary classifications
+
+```python
+cross_val_score(sgd_clf, X_train, y_train, cv=3, scoring="accuracy")
+```
+
+* We can simplely improve the accuracy by scaling the input
+    * See also section 2.5.4
+
+```python
+from sklearn.preprocessing import StandardScaler
+scaler = StandardScaler()
+X_train_scaled = scaler.fit_transform(X_train)
+```
+
 # Chapter 9 Up and Running with TF
 
 * First define a python graph of computation to perform
