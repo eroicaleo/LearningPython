@@ -558,7 +558,7 @@ for i, gen in enumerate(movies.genres):
 
 ## 8.3 Reshaping and Pivoting
 
-### 8.2.3 Reshaping with Hierarchical Indexing
+### 8.3.1 Reshaping with Hierarchical Indexing
 
 * `reshape_hier_index.py`
 * `stack`: rotates from columns to rows
@@ -608,3 +608,74 @@ two    left          4     1
 three  left          5     2
        right        10     7
 ```
+
+### 8.3.2 Pivoting “Long” to “Wide” Format (skip for now)
+
+# Chapter 9 Plotting and Visualization
+
+* [Official Gallery](https://matplotlib.org/3.1.1/gallery/index.html)
+* To find the list for plot types [Pyplot function overview](https://matplotlib.org/api/pyplot_summary.html)
+* To start add the following in notebook
+
+```python
+%matplotlib notebook
+
+import matplotlib.pyplot as plt
+```
+
+* If we are using IPython, do the following
+
+```python
+%matplotlib
+
+import matplotlib.pyplot as plt
+```
+
+## 9.1 A Brief matplotlib API Primer
+
+* Simple line plot
+
+```python
+plt.plot(data)
+```
+
+### 9.1.1 Figures and Subplots
+
+* plots reside in `Figure()` object
+    * Use `fig = plt.figure()` to create `matplotlib.figure.Figure`
+
+* Add plots to the `fig` just created
+    * Call `plt.plot()` will add to the last plot
+
+```python
+ax1 = fig.add_subplot(2,2,1)
+ax2 = fig.add_subplot(2,2,2)
+ax3 = fig.add_subplot(2,2,3)
+```
+
+* `fig.add_subplot` returns `AxesSubplot` object, we can call `scatter` and `hist`
+  methods of these objects
+
+```python
+_ = ax1.hist(np.random.randn(50), bins=20, color='k', alpha=0.3)
+ax2.scatter(np.arange(30), np.arange(30)+3*np.random.randn(30))
+```
+
+* Easier command to create a grip of subplots: `plt.subplots`
+    * subplot can be acessed thorough `axes[0, 1]`
+    * `sharex, sharey` is very useful to make subplots have the same x- or y-axis
+    * Table 9-1 or `?plt.subplots` to get more detailed info
+
+```python
+fig, axes = plt.subplots(2,3)
+```
+
+#### Adjusting the spacing around subplots
+
+* Use this command `plt.subplots_adjust(right=0.5, bottom=0.5, wspace=0, hspace=0)`
+    * `left, right, top, bottom` is the space in percentage of the figure
+      So `right=0.5` means the right half is empty.
+    * `hspace=1.0` means the vertial space between is same as the height
+
+### 9.1.2 Colors, Markers, and Line Styles
+
