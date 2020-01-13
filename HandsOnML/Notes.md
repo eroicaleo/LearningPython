@@ -642,7 +642,7 @@ array([[53409,  1170],
 ```
 
 * The row is a class, row 0 is `False` or row 1 is `True`
-* The row is a prediction, col 0 is predicting `False`, col 1 is predicting `True`
+* The col is a prediction, col 0 is predicting `False`, col 1 is predicting `True`
 * Precision: `TP/(TP+FP)`
 * Recall: `TP/(TP+FN)`
 * F1 score
@@ -696,6 +696,43 @@ print(recall_score(y_train_5, y_train_pred_90))
 
 0.9001403180542563
 0.710016602102933
+```
+
+### 3.3.4 The ROC Curve
+
+* receiver operating characteristic (ROC) curve: true positive rate against false positive rate
+    * `FPR`: ratio of negtive instance that are incorrectly predicted as positive
+    * `TNR`: ratio of negtive instance that are correctly predicted as positive, A.K.A specificity
+    * `FPR = 1 - TNR`
+
+```python
+from sklearn.metrics import roc_curve
+fpr, tpr, thresholds = roc_curve(y_train_5, y_scores)
+```
+
+* Use area under curve (AUC)
+    * Perfect prediction will have `AUC = 1`
+    * Purely random prediction will have `AUC = 0.5`
+
+```python
+from sklearn.metrics import roc_auc_score
+roc_auc_score(y_train_5, y_scores)
+```
+
+* When to choose `PR`:
+    * positive class is rare
+    * care more false positive (movie for children) than false negative (shoplift)
+* When to choose `ROC`
+    * otherwise
+
+* To use `RandomForestClassifier` to make prediction
+    * Note here we need to get probability first, and then use probability as score
+
+```python
+from sklearn.ensemble import RandomForestClassifier
+forest_clf = RandomForestClassifier(random_state=42)
+y_probas_forest = cross_val_predict(forest_clf, X_train, y_train_5, cv=3, method='predict_proba')
+y_scores_froest = y_probas_forest[:, 1]
 ```
 
 # Chapter 9 Up and Running with TF
