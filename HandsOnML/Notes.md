@@ -746,6 +746,7 @@ y_scores_froest = y_probas_forest[:, 1]
     * One V.S. One (OVO)
         * Get one classifier for every pair of lables: 0 v.s. 1, 1 v.s. 2, etc
         * (N-1)*N/2 classifiers
+        * In classification, each classifier will vote, the class gets the most votes wins
         * Good for algorithm that doesn't scale well with big dataset, e.g. SVM
     * For other binary classifications, OVA
 * `sklearn` automatically detects multiclass and will perform OVA underhood
@@ -787,6 +788,27 @@ from sklearn.preprocessing import StandardScaler
 scaler = StandardScaler()
 X_train_scaled = scaler.fit_transform(X_train)
 ```
+
+## 3.5 Error Analysis
+
+* Again, we need to look at the Confusion matrix, but this time is 10X10 instead of 2X2
+* So it's easier to look at it graphically
+    * Using `plt.matshow(conf_mx, cmap=plt.cm.gray)`
+* The steps to do the error analysis:
+    1. Normalize the confusion matrix with row sum: `rowsum = conf_mx.sum(axis=1, keepdims=True)`
+       and `norm_conf_mx = conf_mx / rowsum`
+    2. To highlight the errors, make the diagnoal of the confusion matrix to be 0 
+       `np.fill_diagonal(norm_conf_mx, 0)`
+    3. `plt.matshow()`
+    4. Then you can see which row/column is brighter than others, in the example of the book
+       column 8 is brighter, which means other digits are classified as 8, then author gives
+       3 suggestions:
+        1. get more images looks like 8 but not, so let the classifier learn to distiguish them
+           from real 8.
+        2. engineer new features: write an algorithm to count the loops. And the number of loops
+           becomes a new feature
+        3. preprocessing the image, make some pattern to stand out more, like closed loops.
+
 
 # Chapter 9 Up and Running with TF
 
