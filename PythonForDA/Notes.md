@@ -679,3 +679,62 @@ fig, axes = plt.subplots(2,3)
 
 ### 9.1.2 Colors, Markers, and Line Styles
 
+* `plot` accepts a optional string `[fmt]` to specify basic `color/marker/linestyle`
+    * `ax.plot(x, y, 'go--')`
+    * more explicitly: `ax.plot(x, y, linestyle='--', color='g', marker='o')`
+* `drawstyle`
+    * By default, it is linear interpolation, `drawstyle='steps-post'`
+* When we pass `label`, if we want to show legend we must to use `plt.legend`.
+
+### 9.1.3 Ticks, Labels and Legends
+
+* `xlim` : plot range
+* `xticks` : tick locations
+* `xticklabels` : tick labels
+* Two usage, kind of like vim
+    * `plt.xlim()` Without argument: get the current value
+    * `plt.xlim([0, 10])`, set value
+* These methods act on current `AxesSubplot`
+    * `plt.xlim` corresponds to `ax.get_xlim`
+    * `plt.xlim([0, 10])` corresponds to `ax.set_xlim`
+    * Author prefers this method, because it's explicit.
+* xticks `ax.set_xticks([0, 250, 500, 750, 1000])`
+* xticklabels: `ax.set_xticklabels(['one', 'two', 'three', 'four', 'five'], rotation=30, fontsize='small')`
+* xlable: `ax.set_xlabel('Stage')`
+* set title: `ax.set_title('My first matplotlib plot')`
+
+#### 9.1.3.4 Adding legend
+
+* `ax.legend(loc='best')`
+* Search `?ax.legend` for other options of `loc`
+
+### 9.1.4 Annotations and Drawing on a Subplot
+
+* The main functions are `text`, `arrow`, `annotate`
+    * Search help: `?ax.text`, `?ax.arrow`, `?ax.annotate`
+* The following is an example
+
+```python
+fig = plt.figure()
+ax = fig.add_subplot(1, 1, 1)
+
+spx.plot(ax=ax, style='k-')
+
+for date, label in crisis_data:
+    ax.annotate(label, xy=(date, spx.asof(date)+75),
+                xytext=(date, spx.asof(date)+225),
+                arrowprops=dict(facecolor='black', headwidth=4, width=2,
+                                headlength=4),
+                horizontalalignment='left', verticalalignment='top'
+               )
+
+ax.set_xlim(['1/1/2007', '1/1/2009'])
+ax.set_ylim([600, 1800])
+ax.set_title('Important dates in the 2008-2009 financial crisis')
+```
+
+* Some notes about the above code
+    * Note the it uses `pd.DataFrame.asof()`, we can `?pd.DataFrame.asof` to learn more
+    * To learn more about `arrowprops` [here](https://matplotlib.org/3.1.1/api/_as_gen/matplotlib.pyplot.annotate.html)
+    * To learn more about `facecolor` [here](https://matplotlib.org/3.1.1/api/_as_gen/matplotlib.patches.FancyArrowPatch.html#matplotlib.patches.FancyArrowPatch)
+
