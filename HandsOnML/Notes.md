@@ -808,7 +808,71 @@ X_train_scaled = scaler.fit_transform(X_train)
         2. engineer new features: write an algorithm to count the loops. And the number of loops
            becomes a new feature
         3. preprocessing the image, make some pattern to stand out more, like closed loops.
+* Then the book plot the image for the following, which is pretty intresting
+    * real 3, pred 3
+    * real 3, pred 5
+    * real 5, pred 3
+    * real 5, pred 5
+    * See the `plot_digits` function below
 
+```python
+def plot_digits(instances, images_per_row=10, **options):
+    size = 28
+    pad_num = len(instances) % images_per_row
+    instances_pad = np.concatenate([instances, np.zeros((pad_num, size**2))])
+    image = []
+    for i in range(0, len(instances_pad), images_per_row):
+        row_image = np.concatenate([j.reshape((size,size)) for j in instances_pad[i:i+images_per_row]], axis=1)
+        image.append(row_image)
+    image = np.concatenate(image)
+    plt.imshow(image, cmap = matplotlib.cm.binary, interpolation="nearest")
+    plt.axis('off')
+```
+
+* So why the linear model doesn't work well?
+    * Because it assigns a weight to each pixel, 3 and 5's pixel are really similar.
+
+## Chapter 3.6 Multilabel classification
+
+* Sometimes we want more than one label
+    * Face detection in photo app: recognize `['Alice', 'Bob', 'Charlie']`
+      it should output `[1, 0, 1]`
+* The example in the book created `y_train_large` and `y_train_odd`
+  the code is straightforward
+
+```python
+from sklearn.neighbors import KNeighborsClassifier
+y_multilabel = np.c_[y_train_larger, y_train_odd]
+knn_clf = KNeighborsClassifier()
+knn_clf.fit(X_train, y_multilabel)
+knn_clf.predict([some_digit])
+```
+
+*  The metrics for Multilabel classification
+    * We use `f1_score`, the `average` options can be `macro` or `weighted`
+
+```python
+y_train_knn_pred = cross_val_predict(knn_clf, X_train, y_multilabel, cv=3)
+f1_score(y_multilabel, y_train_knn_pred, average='macro')
+```
+
+## 3.7 Multioutput Classification
+
+* So multioutput is the generalization version of Multilabel classification.
+  In previous Multilabel classification, there are 2 labels, each lable can only be 0 or 1
+* Now in multioutput classification, each lable can be more than 0 or 1
+* Here is an example of multioutput classification, it filters noise of the original image
+    * And the result image looks much cleaner
+
+```python
+noise = np.random.randint(0, 100, (len(X_train), 784))
+X_train_mod = X_train + noise
+noise = np.random.randint(0, 100, (len(X_test), 784))
+X_test_mod = X_test + noise
+y_train_mod = X_train
+y_test_mod = X_test
+knn_clf.fit(X_train_mod, y_train_mod)
+```
 
 # Chapter 9 Up and Running with TF
 
