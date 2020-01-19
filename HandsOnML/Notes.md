@@ -832,7 +832,7 @@ def plot_digits(instances, images_per_row=10, **options):
 * So why the linear model doesn't work well?
     * Because it assigns a weight to each pixel, 3 and 5's pixel are really similar.
 
-## Chapter 3.6 Multilabel classification
+## 3.6 Multilabel classification
 
 * Sometimes we want more than one label
     * Face detection in photo app: recognize `['Alice', 'Bob', 'Charlie']`
@@ -873,6 +873,18 @@ y_train_mod = X_train
 y_test_mod = X_test
 knn_clf.fit(X_train_mod, y_train_mod)
 ```
+
+## 3.8 Exercise
+
+### ex 01
+
+* First I learned from answer is `accuracy_score(knn_pred, y_test)`
+* Second is for `GridSearchCV`, we can pass a `verbose=3` to print out more messages.
+
+### ex02
+
+* To initialize the model with optimal parameters found in previous `grid_search`
+    * `knn_clf = KNeighborsClassifier(**grid_search.best_params_)`
 
 # Chapter 9 Up and Running with TF
 
