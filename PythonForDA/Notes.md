@@ -707,6 +707,7 @@ fig, axes = plt.subplots(2,3)
 
 * `ax.legend(loc='best')`
 * Search `?ax.legend` for other options of `loc`
+* If we don't want to give legend to an element, just don't pass `label` or `label=_no_legend_`
 
 ### 9.1.4 Annotations and Drawing on a Subplot
 
@@ -738,3 +739,22 @@ ax.set_title('Important dates in the 2008-2009 financial crisis')
     * To learn more about `arrowprops` [here](https://matplotlib.org/3.1.1/api/_as_gen/matplotlib.pyplot.annotate.html)
     * To learn more about `facecolor` [here](https://matplotlib.org/3.1.1/api/_as_gen/matplotlib.patches.FancyArrowPatch.html#matplotlib.patches.FancyArrowPatch)
 
+* Add shapes
+    * add `shp` to a subplot by calling `ax.add_patch(shp)`
+    * The shape can be `Rectangle, Circle, Polygon`
+
+```python
+rect = plt.Rectangle((0.2, 0.75), 0.4, 0.15, color='k', alpha=0.3)
+circ = plt.Circle((0.7, 0.2), 0.15, color='b', alpha=0.3)
+pgon = plt.Polygon([[0.15,0.15], [0.35,0.4], [0.2,0.6]], color='g', alpha=0.5)
+ax.add_patch(rect)
+ax.add_patch(circ)
+ax.add_patch(pgon)
+```
+
+### 9.1.5 Saving figure to file
+
+* Just one command: `plt.savefig('shape.pdf', dpi=400, bbox_inches='tight')`
+    * `dpi` is dot per inch
+* `savefig` can also dump data to file-like object: like `io.BytesIO`
+* Table 9-2 for more options
