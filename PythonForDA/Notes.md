@@ -758,3 +758,62 @@ ax.add_patch(pgon)
     * `dpi` is dot per inch
 * `savefig` can also dump data to file-like object: like `io.BytesIO`
 * Table 9-2 for more options
+
+### 9.1.6 matplotlib Configuration
+
+* Use `plt.rc` to change the default configuration
+
+```python
+plt.rc('figure', figsize=(10, 10))
+```
+
+* The first argument is the component to customize:
+    * `figure`, `axes`, `xtick, ytick, grid, legend`
+* Then is a sequence of keyword
+
+```python
+font_options = {
+    'family' : 'monospace',
+    'weight' : 'bold',
+    'size'   : 'small',
+}
+plt.rt('font', **font_options)
+```
+
+* All the options are here:
+    * `/opt/anaconda3/pkgs/matplotlib-3.1.1-py37h54f8f79_0/lib/python3.7/site-packages/matplotlib/mpl-data/matplotlibrc`
+
+## 9.2 Ploting with pandas and seaborn
+
+### 9.2.1 Line Plots
+
+* `pd.Series` and `pd.DataFrame` comes with `plot` functions.
+* Table 9-3 options for `pd.Series.plot`
+    * `label`: Label for plot legend
+    * `ax`: matplotlib subplot object to plot on; if nothing passed, uses active matplotlib subplot
+    * `style`: Style string, like 'ko--', to be passed to matplotlib
+    * `alpha`: The plot fill opacity (from 0 to 1)
+    * `kind`: Can be 'area', 'bar', 'barh', 'density', 'hist', 'kde', 'line', 'pie'
+    * `logy`: Use logarithmic scaling on the y-axis
+    * `use_index`: Use the object index for tick labels
+    * `rot`: Rotation of tick labels (0 through 360)
+    * `xticks`: Values to use for x-axis ticks
+    * `yticks`: Values to use for y-axis ticks
+    * `xlim`: x-axis limits (e.g., [0, 10])
+    * `ylim`: y-axis limits
+    * `grid`: Display axis grid (on by default)
+* `pd.DataFrame.plot` is equivalent to `pd.DataFrame.plot.line`
+* Table 9-4 more options for `pd.DataFrame.plot`:
+    * `subplots`: Plot each DataFrame column in a separate subplot
+    * `sharex`: If subplots=True, share the same x-axis, linking ticks and limits
+    * `sharey`: If subplots=True, share the same y-axis
+    * `figsize`: Size of figure to create as tuple
+    * `title`: Plot title as string
+    * `legend`: Add a subplot legend (True by default)
+    * `sort_columns`: Plot columns in alphabetical order; by default uses existing column order
+
+```python
+df = pd.DataFrame(np.random.rand(10, 4).cumsum(0), columns=['Captain America', 'Iron Man', 'Thor', 'Black Widow'], index=np.arange(0, 100, 10))
+fig, ax = plt.subplots(2,2)
+df.plot(ax=ax, subplots=True)
+```
