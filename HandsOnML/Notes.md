@@ -886,6 +886,31 @@ knn_clf.fit(X_train_mod, y_train_mod)
 * To initialize the model with optimal parameters found in previous `grid_search`
     * `knn_clf = KNeighborsClassifier(**grid_search.best_params_)`
 
+### ex04
+
+* One way to initialize a sparse matrix is like this, which is used in the solution
+  to convert the word `Counter` to a matrix:
+
+```python
+rows = [0, 0, 0]
+cols = [0, 0, 1]
+data = [3, 2, 1]
+m = csr_matrix((data, (rows, cols)), shape=(1, 2))
+m.toarray()
+```
+
+* I cannot get the good results as the sample code
+
+```python
+# My results
+Precision: 22.73%
+Recall: 5.26%
+
+# Sample results
+Precision: 95.88%
+Recall: 97.89%
+```
+
 # Chapter 9 Up and Running with TF
 
 * First define a python graph of computation to perform
