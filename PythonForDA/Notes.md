@@ -817,3 +817,46 @@ df = pd.DataFrame(np.random.rand(10, 4).cumsum(0), columns=['Captain America', '
 fig, ax = plt.subplots(2,2)
 df.plot(ax=ax, subplots=True)
 ```
+
+### 9.2.2 Bar Plots
+
+* `bar.plot` and `bar.ploth` (for horizontal)
+
+```python
+data.plot.bar(ax=axes[0], color='k', alpha=0.7)
+data.plot.barh(ax=axes[1], color='k', alpha=0.7)
+```
+
+* For `pd.DataFrame`, it groups the value in each row
+    * The name of the columns is used as the title of the legend
+    * If we don't want to group them, but we want to stack them
+      we can use `df.plot.bar(stacked=True)`
+
+```python
+df = pd.DataFrame(np.random.rand(6, 4), index=['one', 'two', 'three', 'four', 'five', 'six'], 
+                 columns=pd.Index(['A', 'B', 'C', 'D'], name='Genus'))
+df.plot.bar()
+```
+
+* To normalize each row: `party_counts.div(party_counts.sum(axis=1), axis=0)`
+
+* When data requires the aggregation and summation, use `seaborn` is much easier.
+    * The following code will make a barplot, it will divide the data based on `day`
+      and do the average for us.
+    * The bar is actually the average
+    * The black line is the 95% confidence level.
+
+```python
+tips['tip_pct'] = tips['tip'] / (tips['total_bill'] - tips['tip'])
+fig = plt.figure()
+sns.barplot(x='tip_pct', y='day', data=tips, orient='h')
+```
+
+* The `sns.barplot` has an option `hue` to split the data based on a categorical variable
+
+```python
+fig = plt.figure()
+sns.barplot(x='tip_pct', y='day', hue='time', data=tips, orient='h')
+```
+
+* Use `?sns.set` to change `color_palette`, background etc.
