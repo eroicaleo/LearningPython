@@ -911,6 +911,134 @@ Precision: 95.88%
 Recall: 97.89%
 ```
 
+# Chapter 4 Training Models
+
+* Start with linear model
+    * "closed-form" approach
+    * iterative approach: gradient descent (GD) and its variants.
+        * Batch GD
+        * Mini-batch GD
+        * Stochastic GD
+* Polynomial Regression
+    * More parameters so more prone to overfitting
+    * Learning curve to detect overfitting
+    * Regularization to reduce the risk of overfitting training data
+* Logistic Regression and Softmax Regression
+
+## 4.1 Linear Regression
+
+### 4.1.1 Normal equation
+
+* Memorize this equation, I call it manual approach:
+
+```python
+(X^T X)^{-1} X^T y
+
+# code
+np.linalg.inv(X_b.T.dot(X_b)).dot(X_b.T).dot(y)
+
+```
+
+* Dimension
+    * `X^T X` is `n x n` matrix
+    * `(X^T X)^{-1} X^T` is `n x l` matrix
+    * `(X^T X)^{-1} X^T y` is `n x 1` matrix
+
+* Use `sklearn.linear_model.LinearRegression`, I call it automatical approach:
+
+```python
+from sklearn.linear_model import LinearRegression
+lin_reg = LinearRegression()
+lin_reg.fit(X, y)
+print(lin_reg.intercept_, lin_reg.coef_)
+```
+
+* Internall, it calls `np.linalg.lstsq()`, we can call it directly.
+
+```python
+theta_best_svd, residules, rank, s = np.linalg.lstsq(X_b, y, rcond=None)
+print(theta_best_svd)
+```
+
+* Or we can get the pseudoinverse like following 
+    * It uses singular value decomposition (SVD)
+
+```python
+np.linalg.pinv(X_b).dot(y)
+```
+
+### 4.1.2 Computation Complexity
+
+* Inverse the matrix: `O(n^{2.4}) ~ O(n^3)`
+* SVD: `O(n^2)`
+
+### 4.2 Gradient Descent
+
+* If learning rate is too small: converge slow
+* If learning rate is too big: make the algorithms diverge
+* Not all cost functions are good, holes, ridges, plateaus
+* MSE cost function is convex, gradient descent is guarantee to converge
+    * learning rate is not too big
+    * wait enough long time
+* Using gradient descent needs to make sure features having similar scale
+    * Use `StandardScalar`
+
+### 4.2.1 Batch Gradient
+
+* The gradient equation 4.5, see my notes in AML section 1.3
+* The matrix version 4.6, see my notes in AML section 1.3
+
+```python
+# Equation: 2/m X^{T} (X \theta - y)
+# Code:
+gradient = 2. / m * X_b.T.dot(X_b.dot(theta) - y)
+```
+
+* Learning rate: use gird search
+    * limit the number of iterations
+* Number or iterations
+    * set a large number at the beginning
+    * stop the training early when the gradient is small
+* `1/epsilon` iterations to reach `epsilon` range
+
+### 4.2.2 Stochastic Gradient Descent
+
+* Each step just pick one sample to do the gradient descent
+
+```python
+# Graident
+gradient = 2 * (xi.dot(theta) - yi) * xi
+
+# Complete code
+for epoch in range(n_epochs):
+    for i in range(m):
+        random_index = np.random.randint(100)
+        xi = X_b[random_index]
+        yi = y[random_index]
+        gradients = 2 * (xi.dot(theta) - yi) * xi
+        eta = learning_schedule(epoch * m + i)
+        theta = theta - eta * gradients.reshape(2,1)
+```
+
+* The cost function will bounce up and down. Finally, it will be close to optimal, but not optimal.
+* Slow down the learning rate over the time.
+* Iterate by `m` iterations, is call an epoch.
+* If we want to make sure every sample is picked in one epoch, we need to shuffle the
+  trainning set at the beginning of each epoch.
+* Use `sklearn.linear_model.SGDRegressor`
+    * `max_iter`: is the number of epoch
+    * `tol`: the threshold hold of cost function to stop
+    * `penalty`: Regularization
+    * `eta0`: the initial learning rate, see the `doc` for more info
+
+```python
+from sklearn.linear_model import SGDRegressor
+
+sgd_reg = SGDRegressor(max_iter=1000, tol=1e-3, penalty=None, eta0=0.1)
+sgd_reg.fit(X, y.ravel())
+sgd_reg.coef_, sgd_reg.intercept_
+```
+
 # Chapter 9 Up and Running with TF
 
 * First define a python graph of computation to perform
