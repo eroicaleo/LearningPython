@@ -1039,6 +1039,26 @@ sgd_reg.fit(X, y.ravel())
 sgd_reg.coef_, sgd_reg.intercept_
 ```
 
+### 4.2.3 Mini-Batch Gradient Descent
+
+* Computes the gradients based on a small random subset of instances
+    * Compare to SGD, have a performance boost with GPUs
+
+## 4.3 Polynomial Regression
+
+* It's essentially same as linear model and the code is here
+    * Note the important thing here is `PolynomialFeatures`, it transforms `[x]` to `[x^2, x]`
+    * If there are 2 features, it's able to get the interaction.
+
+```python
+from sklearn.preprocessing import PolynomialFeatures
+poly_features = PolynomialFeatures(degree=2, include_bias=False)
+X_poly = poly_features.fit_transform(X)
+
+lin_reg = LinearRegression()
+lin_reg.fit(X_poly, y)
+```
+
 # Chapter 9 Up and Running with TF
 
 * First define a python graph of computation to perform
