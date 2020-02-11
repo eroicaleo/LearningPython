@@ -860,3 +860,23 @@ sns.barplot(x='tip_pct', y='day', hue='time', data=tips, orient='h')
 ```
 
 * Use `?sns.set` to change `color_palette`, background etc.
+
+### 9.2.3 Histograms and Density Plots
+
+* Use `pandas` and `seaborn`
+    * `df.plot.hist()`
+    * `df.plot.density()`
+    * `sns.distplot()`
+
+```python
+
+_ = tips['tip_pct'].plot.hist(bins=50)
+
+_ = tips['tip_pct'].plot.density(color='r')
+
+fig = plt.figure()
+comp1 = np.random.normal(0, 1, size=200)
+comp2 = np.random.normal(10, 2, size=200)
+values = pd.Series(np.concatenate([comp1, comp2]))
+sns.distplot(values, bins=100, color='orange')
+```

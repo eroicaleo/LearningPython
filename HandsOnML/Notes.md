@@ -1106,7 +1106,7 @@ lin_reg.fit(X_poly, y)
 * Three ways to perform ridge regression in `sklearn`
     * `Ridge` with `cholesky` solver
     * `Ridge` with `sag` solver
-    * `SGDRegressor` with ``
+    * `SGDRegressor` with `penalty='l2'`
 
 ```python
 from sklearn.linear_model import Ridge
