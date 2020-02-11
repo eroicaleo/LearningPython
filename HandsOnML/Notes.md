@@ -1059,6 +1059,79 @@ lin_reg = LinearRegression()
 lin_reg.fit(X_poly, y)
 ```
 
+## 4.4 Learning curve
+
+* How can you tell your model is overfitting or underfitting?
+    * One way is to use training
+    * Another way is the learning curve
+* Training error goes up as the training data grows
+    * the model cannot fit a lot of data perfectly
+* Validation error goes down
+    * the model generalize better with more training data
+* underfitting model:
+    * Both curves reached plateau
+    * They are close and fairly high
+    * No use to add more training data
+* overfitting model:
+    * The error on training data is much lower than underfitting model.
+    * There is a gap between train curve and validation curve. This is the hallmark of overfitting.
+    * Increase training data can bring these 2 curves together.
+
+### 4.4.1 Bias/Variance Tradeoff
+
+* Generalization error = bias + variance + irreducible
+* Bias error:
+    * Wrong assumption, assume linear model but actually is quadratic model
+    * high bias will underfit training data
+* Variance error:
+    * Excessive sensitive to variance in training data
+    * Model with too much freedom is likely to have high variance, overfitting the
+      training data
+* Irreducible error:
+    * Due to the noise of the data
+    * Can only be reduced by cleaning the data: fix data source
+
+## 4.5 Regulized Linear Model
+
+### 4.5.1 Ridge Regression
+
+* The cost function for Ridge Regression:
+
+![alt text](./ch04/Equation_4_8.png "Logo Title Text 1")
+
+* Very important: needs to scale the input data
+  e.g. use `StandardScalar`. Most Regulized Model is sensitive to the scale
+  of input data.
+* Also very important, note the Regulized term doesn't include bias term.
+* Three ways to perform ridge regression in `sklearn`
+    * `Ridge` with `cholesky` solver
+    * `Ridge` with `sag` solver
+    * `SGDRegressor` with ``
+
+```python
+from sklearn.linear_model import Ridge
+
+ridge_reg = Ridge(alpha=1, solver='cholesky', random_state=42)
+ridge_reg.fit(X, y)
+print(ridge_reg.predict([[1.5]]))
+print(ridge_reg.coef_, ridge_reg.intercept_)
+
+ridge_reg = Ridge(alpha=1, solver='sag', random_state=42)
+ridge_reg.fit(X, y)
+print(ridge_reg.predict([[1.5]]))
+print(ridge_reg.coef_, ridge_reg.intercept_)
+from sklearn.linear_model import SGDRegressor
+
+sgd_reg = SGDRegressor(alpha=0.001, max_iter=5000, tol=-np.infty, penalty='l2', random_state=42)
+sgd_reg.fit(X, y.ravel())
+print(sgd_reg.coef_, sgd_reg.intercept_)
+print(sgd_reg.predict([[1.5]]))
+```
+
+### 4.5.2 Lasso Regression
+
+### 4.5.3 Elastic net
+
 # Chapter 9 Up and Running with TF
 
 * First define a python graph of computation to perform
