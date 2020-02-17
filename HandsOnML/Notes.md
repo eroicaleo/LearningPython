@@ -1130,7 +1130,44 @@ print(sgd_reg.predict([[1.5]]))
 
 ### 4.5.2 Lasso Regression
 
+* The cost function for Ridge Regression:
+
+![alt text](./ch04/Equation_4_10.png "Logo Title Text 1")
+
+* The implementation is easy.
+    * We can also use `SGDRegressor(penalty='l1')`
+
+```python
+from sklearn.linear_model import Lasso
+lasso_reg = Lasso(alpha=0.1)
+lasso_reg.fit(X, y)
+lasso_reg.predict([[1.5]])
+```
+
+* It tends to completely eliminate the weights of least important features.
+* See my note on how to plot coutour plot
+
 ### 4.5.3 Elastic net
+
+* The cost function for Elastic Net:
+
+![alt text](./ch04/Equation_4_12.png "Logo Title Text 1")
+
+* Always prefer to have some regularization
+    * Ridge is a good default
+    * If suspect only a few features useful, then Lasso or Elastic net
+    * Elastic Net is always preferred over Lasso
+
+* `sklearn` example
+
+```python
+from sklearn.linear_model import ElasticNet
+
+elastic_net = ElasticNet(alpha=0.1, l1_ratio=0.5)
+elastic_net.fit(X, y)
+elastic_net.predict([[1.5]])
+
+```
 
 # Chapter 9 Up and Running with TF
 
