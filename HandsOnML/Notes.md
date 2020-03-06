@@ -1223,6 +1223,36 @@ log_reg = LogisticRegression(solver='liblinear', C=10**10, random_state=42)
 
 * Check out the 2 plots to see the plot related commands
 
+### 4.6.4 Softmax Regression
+
+* Computes score for each class
+
+![alt text](./ch04/Equation_4_19.png "Logo Title Text 1")
+
+* Computes probability use softmax function, a.k.a. normalized exponential
+
+![alt text](./ch04/Equation_4_20.png "softmax")
+
+* When in classification, use `argmax` to return the class that has the highest probability
+
+![alt text](./ch04/Equation_4_21.png "argmax")
+
+* Cross entropy is the cost function
+
+![alt text](./ch04/Equation_4_22.png "Cross entropy")
+
+* Gradient of cross entropy
+
+![alt text](./ch04/Equation_4_23.png "Gradient of Cross entropy")
+
+* Default Logistic uses one-versus-all, to use softmax, have to use:
+    * `multi_class='multinomial'`
+    * `solver='lbfgs'`
+
+```python
+softmax_reg = LogisticRegression(multi_class='multinomial', solver='lbfgs', C=10)
+```
+
 # Chapter 9 Up and Running with TF
 
 * First define a python graph of computation to perform

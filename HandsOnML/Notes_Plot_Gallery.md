@@ -44,3 +44,45 @@ plt.xlabel("Petal length", fontsize=14)
 plt.ylabel("Petal width", fontsize=14)
 ```
 
+* Softmax Decision Boundary 1
+
+```python
+from sklearn import datasets
+iris = datasets.load_iris()
+
+X = iris['data'][:, (2,3)]
+y = iris['target']
+
+softmax_reg = LogisticRegression(multi_class='multinomial', solver='lbfgs', C=10)
+softmax_reg.fit(X, y)
+
+x0, x1 = np.meshgrid(
+    np.linspace(0, 8, 500).reshape(-1,1),
+    np.linspace(0, 3.5, 200).reshape(-1,1),
+)
+
+X_new = np.c_[x0.ravel(), x1.ravel()]
+
+y_proba = softmax_reg.predict_proba(X_new)
+y_predict = softmax_reg.predict(X_new)
+
+zz1 = y_proba[:, 1].reshape(x0.shape)
+zz = y_predict.reshape(x0.shape)
+
+plt.figure(figsize=(10,4))
+for i, style in enumerate(['yo', 'bs', 'g^']):
+    plt.plot(X[y==i, 0], X[y==i, 1], style, label='Iris-'+iris.target_names[i].capitalize())
+
+from matplotlib.colors import ListedColormap
+custom_cmap = ListedColormap(['#fafab0','#9898ff','#a0faa0'])
+
+plt.contourf(x0, x1, zz, cmap=custom_cmap)
+contour = plt.contour(x0, x1, zz1, cmap=plt.cm.rainbow)
+plt.clabel(contour, inline=1, fontsize=12)
+
+plt.xlabel("Petal length", fontsize=14)
+plt.ylabel("Petal width", fontsize=14)
+plt.legend(loc="center left", fontsize=14)
+plt.axis([0, 7, 0, 3.5])
+```
+
