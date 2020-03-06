@@ -1169,6 +1169,60 @@ elastic_net.predict([[1.5]])
 
 ```
 
+### 4.5.4 Early Stopping
+
+* Works for iterative learning algorithms such as Gradient Descent
+* Stops training when validation error reaches minimum.
+* For Stochastic and Mini-batch, the curves might be bumpy. So might
+  need to wait the validation error for sometime.
+* Note in the code below
+    * when `warm_start` is `True`, and when calling `fit`, it continues
+      from where it left.
+
+```python
+sgd_reg = SGDRegressor(
+    max_iter=1,
+    tol=-np.infty,
+    penalty=None,
+    eta0=0.0005,
+    warm_start=True,
+    learning_rate='constant',
+    random_state=42)
+```
+
+## 4.6 Logistic Regression
+
+### 4.6.1 Estimating Probabilities
+
+![alt text](./ch04/Equation_4_13.png "Logo Title Text 1")
+
+![alt text](./ch04/Equation_4_14.png "Logo Title Text 1")
+
+### 4.6.2 Training and Cost Function
+
+![alt text](./ch04/Equation_4_17.png "Logo Title Text 1")
+
+![alt text](./ch04/Equation_4_18.png "Logo Title Text 1")
+
+### 4.6.3 Decision boundaries
+
+* Use `astype` to convert the data labels
+* Use `log_reg.predict_proba` to get the probability
+
+```python
+y = (iris['target'] == 2).astype(int)
+y_proba = log_reg.predict_proba(X_new)
+```
+
+* Logistic Regression can also be used with regularization
+  instead of `alpha`, it uses `C` like the following.
+
+```python
+log_reg = LogisticRegression(solver='liblinear', C=10**10, random_state=42)
+```
+
+* Check out the 2 plots to see the plot related commands
+
 # Chapter 9 Up and Running with TF
 
 * First define a python graph of computation to perform
