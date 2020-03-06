@@ -4,6 +4,7 @@ import collections
 from heapq import heappush, heappop
 
 TwitterInfo = collections.namedtuple('TwitterInfo', [
+        'GlobalIndex',
         'TwitterID',
         'UserID',
         'Index',
@@ -18,6 +19,7 @@ class Twitter:
         """
         self.t_dict = collections.defaultdict(list)
         self.f_dict = collections.defaultdict(set)
+        self.global_index = 0
 
     def postTweet(self, userId: int, tweetId: int) -> None:
         """
@@ -25,7 +27,9 @@ class Twitter:
         """
         if len(self.f_dict[userId]) == 0:
             self.f_dict[userId].add(userId)
-        self.t_dict[userId].append(tweetId)
+        ix = len(self.t_dict[userId])
+        self.t_dict[userId].append(TwitterInfo(self.global_index, tweetId, userId, ix))
+        self.global_index -= 1
 
     def getNewsFeed(self, userId: int):
         """
@@ -35,27 +39,28 @@ class Twitter:
         for u in self.f_dict[userId]:
             l = len(self.t_dict[u])
             if l > 0:
-                heappush(heap, (-self.t_dict[u][-1], TwitterInfo(self.t_dict[u][-1], u, l-1)))
+                heappush(heap, self.t_dict[u][-1])
         print(f'Inital heap: {heap}')
         while (len(news_feed) < 10) and (len(heap) > 0):
-            tweet_info = heappop(heap)[1]
+            tweet_info = heappop(heap)
             news_feed.append(tweet_info.TwitterID)
             if tweet_info.Index > 0:
-                new_tweeter_id = self.t_dict[tweet_info.UserID][tweet_info.Index-1]
-                heappush(heap, (-new_tweeter_id, TwitterInfo(new_tweeter_id, tweet_info.UserID, tweet_info.Index-1)))
+                heappush(heap, self.t_dict[tweet_info.UserID][tweet_info.Index-1])
         return news_feed
 
     def follow(self, followerId: int, followeeId: int) -> None:
         """
         Follower follows a followee. If the operation is invalid, it should be a no-op.
         """
+        self.f_dict[followerId].add(followerId)
         self.f_dict[followerId].add(followeeId)
 
     def unfollow(self, followerId: int, followeeId: int) -> None:
         """
         Follower unfollows a followee. If the operation is invalid, it should be a no-op.
         """
-        self.f_dict[followerId].discard(followeeId)
+        if followerId != followeeId:
+            self.f_dict[followerId].discard(followeeId)
 
 
 # Your Twitter object will be instantiated and called as such:
@@ -67,6 +72,13 @@ class Twitter:
 
 cmd = ["Twitter","postTweet","getNewsFeed","follow","postTweet","getNewsFeed","unfollow","getNewsFeed"]
 arg = [[],[1,5],[1],[1,2],[2,6],[1],[1,2],[1]]
+
+cmd = ["Twitter","postTweet","follow","follow","getNewsFeed","postTweet","getNewsFeed","getNewsFeed","unfollow","getNewsFeed","getNewsFeed","unfollow","getNewsFeed","getNewsFeed"]
+arg = [[],[1,5],[1,2],[2,1],[2],[2,6],[1],[2],[2,1],[1],[2],[1,2],[1],[2]]
+
+cmd = ["Twitter","postTweet","postTweet","postTweet","postTweet","postTweet","postTweet","postTweet","postTweet","postTweet","postTweet","getNewsFeed","follow","getNewsFeed"]
+arg = [[],[2,5],[1,3],[1,101],[2,13],[2,10],[1,2],[2,94],[2,505],[1,333],[1,22],[2],[2,1],[2]]
+# expected: [null,null,null,null,null,null,null,null,null,null,null,[505,94,10,13,5],null,[22,333,505,94,2,10,13,101,3,5]]
 
 obj = Twitter()
 for i in range(1,len(arg)):
