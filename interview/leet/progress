@@ -129,3 +129,9 @@
 547_Friend_Circles.py
 034_Find_First_and_Last_Position_of_Element_in_Sorted_Array.py, read Stefan's solution
 410_Split_Array_Largest_Sum.py
+59_Spiral_Matrix_II.py
+    * check out Stefan's solution
+114_Flatten_Binary_Tree_to_Linked_List.py
+    * check top voted solution, it's based on the reverse preorder, very clean (Done)
+355_Design_Twitter.py, check out Stefan's solution
+162_Find_Peak_Element.py
