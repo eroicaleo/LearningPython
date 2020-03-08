@@ -135,3 +135,5 @@
     * check top voted solution, it's based on the reverse preorder, very clean (Done)
 355_Design_Twitter.py, check out Stefan's solution
 162_Find_Peak_Element.py
+    * See if binary search only works
+406_Queue_Reconstruction_by_Height.py
