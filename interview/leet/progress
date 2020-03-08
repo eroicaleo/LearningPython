@@ -137,3 +137,5 @@
 162_Find_Peak_Element.py
     * See if binary search only works
 406_Queue_Reconstruction_by_Height.py
+    * Stefan's solution is much cleaner
+376_Wiggle_Subsequence.py
