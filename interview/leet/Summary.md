@@ -134,6 +134,7 @@ while node or stack:
 # New Algorithm I learned
 
 * Topological sort: problem 207
+    * 210. Course Schedule II
 
 Topological sort has two implementations: BFS and DFS
 BFS is more straightforward, find the node with indegree of 0
@@ -144,6 +145,27 @@ DFS needs to maintain 2 sets, 1 for visited, 1 for done
 we add the node to visited when we enter the dfs.
 we then dfs all it's adjacent node
 then we add it's for done.
+An example of implementation is like:
+
+```python
+visited, done, sched = set(), set(), list()
+self.feasible = True
+def dfs(p):
+    print(f'p={p}, visited={visited}, done={done}')
+    if not self.feasible:
+        return
+    if p in visited:
+        if not p in done:
+            self.feasible = False
+        return
+    visited.add(p)
+    for q in edges[p]:
+        dfs(q)
+    done.add(p)
+    sched.append(p)
+for p in range(numCourses):
+    dfs(p)
+```
 
 * Trie: problem 336
     * problem 208
