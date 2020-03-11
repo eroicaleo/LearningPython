@@ -139,5 +139,15 @@
 406_Queue_Reconstruction_by_Height.py
     * Stefan's solution is much cleaner
 376_Wiggle_Subsequence.py
+    * Need to check forum
 210_Course_Schedule_II.py
+    * Need to implement BFS and non-recursive DFS
 279_Perfect_Squares.py
+    * Need to implement a faster version
+    * Need to implement a number theory based method
+75_Sort_Colors.py
+80_Remove_Duplicates_from_Sorted_Array_II.py
+632_Smallest_Range_Covering_Elements_from_K_Lists.py (Hard)
+331_Verify_Preorder_Serialization_of_a_Binary_Tree.py
+394_Decode_String.py
+316_Remove_Duplicate_Letters.py (Hard)

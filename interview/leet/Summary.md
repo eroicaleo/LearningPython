@@ -80,6 +80,16 @@ while node or stack:
   like problem 165
 * `itertools.zip_longest(v1, v2, fillvalue = 0)` to `zip` two lists with different length,
   see problem 165
+* See how stefan implements the following:
+
+```python
+if val == '#':
+    need -= 1
+else:
+    need += 1
+
+need -= ' #'.find(val)
+```
 
 # Array related problem
 
@@ -90,6 +100,8 @@ while node or stack:
 
 * Always consider if inorder/preorder/postorder can help, e.g. problem 098 v2/v3
 * e.g. problem 297 v2/v3 use preorder to solve
+* To verify if a tree is valid, use outer degree and in degree, e.g. `331_Verify_Preorder_Serialization_of_a_Binary_Tree.py`
+  or 一个萝卜一个坑. one raddish fill one hole, but create 2 new holes. See 331, stefan's solution.
 
 # Some problems needs to prove some property
 
