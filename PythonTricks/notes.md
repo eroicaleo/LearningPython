@@ -270,3 +270,19 @@ its intent more clearly with an explicit return None statement.
     * Dictionary with fixed format -> `namedtuple`
     * Unstructured `tuple` and `dict` -> `namedtuple` self-documenting
     * Don't use it if doesn't make your code cleaner
+
+## 4.7 Class vs Instance Variable Pitfalls
+
+* Class variables
+    * They are declared inside class definition, but outside instance methods
+    * Not tie to any particular instance
+    * Store their contents on the class
+    * All objects share the same set of objects, meaning, modify it affects all objects
+    * You can access it by: `Dog.num_legs` or `jack.num_legs`
+    * Make sure to access class variable: `self.__class__.num_instances += 1`
+* Instance variables
+    * Tie to particular instance
+    * If we do `jack.num_legs = 4`, we create an instance Variable for `jack`, which
+      override and hide the class variable
+* Because class variables can be “shadowed” by instance vari-ables of the same name,
+  it’s easy to (accidentally) override class variables in a way that introduces bugs and odd behavior.

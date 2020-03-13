@@ -60,7 +60,9 @@
 133_Clone_Graph.py, needs to finish the last iterative DFS
 56_Merge_Intervals.py
 128_Longest_Consecutive_Sequence.py
-218_The_Skyline_Problem.py, need to check top voted python solutions
+218_The_Skyline_Problem.py (Hard)
+    * need to check top voted python solutions
+    * V4 is my cleanest implementation
 220_Contains_Duplicate_III.py
 76_Minimum_Window_Substring.py, needs to do a cleaner version
 31_Next_Permutation.py
@@ -149,5 +151,14 @@
 80_Remove_Duplicates_from_Sorted_Array_II.py
 632_Smallest_Range_Covering_Elements_from_K_Lists.py (Hard)
 331_Verify_Preorder_Serialization_of_a_Binary_Tree.py
+    * Done
 394_Decode_String.py
 316_Remove_Duplicate_Letters.py (Hard)
+    * Check out Stefan's 1st and 2nd solution, 3rd one is same as mine
+047_Permutations_II.py
+060_Permutation_Sequence.py
+044_Wildcard_Matching.py (Hard)
+211_Add_and_Search_Word.py
+284_Peeking_Iterator.py
+
+Example:Assume that the iterator is initialized to the beginning of the list: [1,2,3].Call next() gets you 1, the first element in the list.Now you call peek() and it returns 2, the next element. Calling next() after that still return 2. You call next() the final time and it returns 3, the last element. Calling hasNext() after that should return false.

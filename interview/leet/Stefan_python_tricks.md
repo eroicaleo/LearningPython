@@ -27,3 +27,34 @@ need -= ' #'.find(val)
 ```python
 s = re.sub(r'(\d+)\[([a-z]+)\]', lambda m: int(m.group(1)) * m.group(2), s)
 ```
+
+## `list` tricks
+
+### `index`
+
+* If a value is not in a list, then `[1].index(0)` raise an `ValueError`.
+* In Problem `047_Permutations_II`, Stefan uses a sentinel to guarantee
+  `(p+[n]).index(n)` does raise exception.
+
+```python
+perms = [p[:i]+[n]+p[i:] for p in perms for i in range((p+[n]).index(n)+1)]
+```
+
+## `functools` tricks
+
+### `reduce`
+
+* Sometimes, e.g. `047_Permutations_II`, we will see this kind of code when we use bottom-up
+  approach to build something, `reduce` can make it one-liner.
+  See the `functools.reduce(function, iterable[, initializer])`
+  [official doc](https://docs.python.org/3/library/functools.html#functools.reduce)
+
+```python
+perms = [[]]
+for n in nums:
+    perms = [p[:i]+[n]+p[i:] for p in perms for i in range((p+[n]).index(n)+1)]
+return perms
+
+from functools import reduce
+return reduce(lambda perms, n: [p[:i]+[n]+p[i:] for p in perms for i in range((p+[n]).index(n)+1)], nums, [[]])
+```
