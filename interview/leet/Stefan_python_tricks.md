@@ -58,3 +58,73 @@ return perms
 from functools import reduce
 return reduce(lambda perms, n: [p[:i]+[n]+p[i:] for p in perms for i in range((p+[n]).index(n)+1)], nums, [[]])
 ```
+
+### `any`
+
+* Sometimes, I would like to see if any of the iterable is `True`
+
+```python
+# My way
+for c in path:
+    if c != self.word_end:
+        ret = ret or self.search_recursive(word[1:], path[c])
+    if ret:
+        return ret
+return ret
+
+# Stefan's way
+if word[0] == '.':
+    return any(self.search_recursive(word[1:], path[c]) for c in path if c != self.word_end)
+```
+
+### `filter`
+
+* How to filter `None`: `211_Add_and_Search_Word.py`
+* See discussion of [here](https://stackoverflow.com/questions/16096754/remove-none-value-from-a-list-without-removing-the-0-value)
+
+```python
+filter(None, iterable)
+```
+
+
+## bit manipulation tricks
+
+### how to get the right most bit that's 1'b1: `260_Single_Number_III.py`
+
+```python
+diff &= -diff
+```
+
+## Breadth first implementation
+
+* `211_Add_and_Search_Word.py`
+* My lame implementation:
+
+```python
+def search_iterative(self, word):
+    nodes = [self.word_dict]
+    for c in word:
+        new_nodes = []
+        for n in nodes:
+            if c in n:
+                new_nodes.append(n[c])
+            elif c == '.':
+                for k in n:
+                    if k != self.word_end:
+                        new_nodes.append(n[k])
+        nodes = new_nodes
+    return any(self.word_end in n for n in nodes)
+```
+
+* Stefan's
+
+```python
+def search_iterative2(self, word):
+     nodes = [self.word_dict]
+     for c in word:
+         nodes = [kid for n in nodes for kid in
+                         ([n[c]] if c in n else
+                          [n[k] for k in n if k != self.word_end] if c == '.' else [])]
+     return any(self.word_end in n for n in nodes)
+```
+

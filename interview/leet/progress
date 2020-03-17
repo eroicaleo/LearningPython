@@ -159,6 +159,11 @@
 060_Permutation_Sequence.py
 044_Wildcard_Matching.py (Hard)
 211_Add_and_Search_Word.py
+    * Check out Stefan's solution iterative and non iterative
+    * Check out one line solution
 284_Peeking_Iterator.py
-
-Example:Assume that the iterator is initialized to the beginning of the list: [1,2,3].Call next() gets you 1, the first element in the list.Now you call peek() and it returns 2, the next element. Calling next() after that still return 2. You call next() the final time and it returns 3, the last element. Calling hasNext() after that should return false.
+324_Wiggle_Sort_II.py
+    * Cannot figure out yet
+524_Longest_Word_in_Dictionary_through_Deleting.py
+201_Bitwise_AND_of_Numbers_Range.py
+260_Single_Number_III.py

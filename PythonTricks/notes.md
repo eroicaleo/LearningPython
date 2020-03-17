@@ -286,3 +286,12 @@ its intent more clearly with an explicit return None statement.
       override and hide the class variable
 * Because class variables can be “shadowed” by instance vari-ables of the same name,
   it’s easy to (accidentally) override class variables in a way that introduces bugs and odd behavior.
+
+## 4.8 Instance, Class, and Static Methods Demystified
+
+* Regular instance methods
+* Class methods
+    * `@classmethod`
+* Static methods
+    * `@staticmethod`
+
