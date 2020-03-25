@@ -128,3 +128,8 @@ def search_iterative2(self, word):
      return any(self.word_end in n for n in nodes)
 ```
 
+## `itertool`
+
+### `heap` problems
+
+## Heap

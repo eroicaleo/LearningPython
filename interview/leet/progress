@@ -159,7 +159,7 @@
 060_Permutation_Sequence.py
 044_Wildcard_Matching.py (Hard)
 211_Add_and_Search_Word.py
-    * Check out Stefan's solution iterative and non iterative
+    * Check out Stefan's solution iterative and non iterative (Done)
     * Check out one line solution
 284_Peeking_Iterator.py
 324_Wiggle_Sort_II.py
@@ -167,3 +167,11 @@
 524_Longest_Word_in_Dictionary_through_Deleting.py
 201_Bitwise_AND_of_Numbers_Range.py
 260_Single_Number_III.py
+399_Evaluate_Division.py
+684_Redundant_Connection.py
+685_Redundant_Connection_II.py (Hard)
+    * Done
+82_Remove_Duplicates_from_Sorted_List_II.py
+721_Accounts_Merge.py
+424_Longest_Repeating_Character_Replacement.py
+765_Couples_Holding_Hands.py (Hard)
