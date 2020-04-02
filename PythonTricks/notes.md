@@ -290,8 +290,15 @@ its intent more clearly with an explicit return None statement.
 ## 4.8 Instance, Class, and Static Methods Demystified
 
 * Regular instance methods
+    * Can access class itself by using `self.__class__`
+    * `MyClass.method(obj)`
 * Class methods
     * `@classmethod`
+    * takes `cls` parameter, can modify class state
+    * doesn't have access to the instance object
 * Static methods
     * `@staticmethod`
+    * cannot modify object state or class state
+    * A way to namespace your methods
+    * doesn't have access to the instance state or the class state
 
