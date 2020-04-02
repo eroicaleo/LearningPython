@@ -90,7 +90,6 @@
 102_Binary_Tree_Level_Order_Traversal.py
 236_Lowest_Common_Ancestor_of_a_Binary_Tree.py, needs to check discussion forum
 300_Longest_Increasing_Subsequence.py, check forum for nlogn solution
-336_Palindrome_Pairs.py, needs to finish trie version
 403_Frog_Jump.py, needs to check forum
 380_Insert_Delete_GetRandom_O1.py, accepted, but need to check the forum
 140_Word_Break_II.py, accepted, but need to check the forum
@@ -175,3 +174,19 @@
 721_Accounts_Merge.py
 424_Longest_Repeating_Character_Replacement.py
 765_Couples_Holding_Hands.py (Hard)
+567_Permutation_in_String.py
+241_Different_Ways_to_Add_Parentheses.py
+973_K_Closest_Points_to_Origin.py
+336_Palindrome_Pairs.py (Hard)
+472_Concatenated_Words.py (Hard)
+761_Special_Binary_String.py (Hard)
+073_Set_Matrix_Zeroes.py
+    * Need to do a more efficient solution
+074_Search_a_2D_Matrix.py
+123_Best_Time_to_Buy_and_Sell_Stock_III.py (Hard)
+    * Not done yet
+152_Maximum_Product_Subarray.py
+213_House_Robber_II.py
+221_Maximal_Square.py
+202_Happy_Number.py
+223_Rectangle_Area.py
