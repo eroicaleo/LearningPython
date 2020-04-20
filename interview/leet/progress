@@ -35,7 +35,7 @@
 179_Largest_Number.py
 332_Reconstruct_Itinerary.py
 200_Number_of_Islands.py
-327_Count_of_Range_Sum.py
+327_Count_of_Range_Sum.py (Hard)
 698_Partition_to_K_Equal_Sum_Subsets.py
 621_Task_Scheduler.py
 41_First_Missing_Positive.py
@@ -108,7 +108,7 @@
 85_Maximal_Rectangle.py, needs to do a DP version from forum
 207_Course_Schedule.py, needs to do a BFS version
 57_Insert_Interval.py, check out Pochman's solution
-312_Burst_Balloons.py
+312_Burst_Balloons.py (Hard)
 402_Remove_K_Digits.py, implement Pochmann's solution
 636_Exclusive_Time_of_Functions.py
 18_4Sum.py
@@ -190,3 +190,29 @@
 221_Maximal_Square.py
 202_Happy_Number.py
 223_Rectangle_Area.py
+93_Restore_IP_Addresses.py
+53_Maximum_Subarray.py
+522_Longest_Uncommon_Subsequence_II.py
+115_Distinct_Subsequences.py
+129_Sum_Root_to_Leaf_Numbers.py
+222_Count_Complete_Tree_Nodes.py
+230_Kth_Smallest_Element_in_a_BST.py
+337_House_Robber_III.py
+417_Pacific_Atlantic_Water_Flow.py
+329_Longest_Increasing_Path_in_a_Matrix.py
+435_Non-overlapping_Intervals.py
+407_Trapping_Rain_Water_II.py (hard)
+    * Do a little bit cleaner version
+828_Count_Unique_Characters_of_All_Substrings_of_a_Given_String.py (hard)
+    * Do a Lee's version
+525_Contiguous_Array.py
+287_Find_the_Duplicate_Number.py
+    * Do a O(n) version (Done)
+457_Circular_Array_Loop.py
+224_Basic_Calculator.py (Hard)
+726_Number_of_Atoms.py (Hard)
+    * Check forum and the solution
+77_Combinations.py
+37_Sudoku_Solver.py (Hard)
+678_Valid_Parenthesis_String.py
+493_Reverse_Pairs.py (Hard)

@@ -113,9 +113,11 @@ need -= ' #'.find(val)
 
 * A very typical example: problem 698
 
-# Problems I feel hard to write code
+# Problems I feel hard to write code and implement
 
 * Problem 301 remove parentheses
+* `75_Sort_Colors.py`
+* Group anagram
 
 # Problems I feel the solution is cool
 
@@ -124,10 +126,15 @@ need -= ' #'.find(val)
 # Problems I cannot solve in the first round
 
 * Problem 238/50
-* Problem 312 Burst Balloons
-* Problem 25 Reverse Nodes in k Group
+* Problem 312 Burst Balloons (DP)
+* Problem 25 Reverse Nodes in k Group (Link list)
 * `126_Word_Ladder_II.py`
-* `123_Best_Time_to_Buy_and_Sell_Stock_III.py`
+* `123_Best_Time_to_Buy_and_Sell_Stock_III.py` (DP)
+    * Which leads to deeper understanding to DP
+    * See my notes on DP
+* `435_Non-overlapping_Intervals.py` (Greedy)
+* `417_Pacific_Atlantic_Water_Flow.py` (DFS)
+* `493_Reverse_Pairs.py` (Sorting / Divide & Conqure)
 
 # Graph
 

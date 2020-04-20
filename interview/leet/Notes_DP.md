@@ -1,4 +1,6 @@
 
+# One point of view, in the problem there are some sequence of operations
+
 * DP problem must have some kind of sequence, and this sequence normally consists of y-axis:
     * Shoot bullooms
     * Rob houses
@@ -14,11 +16,23 @@
 	  like, do we rob house j or not? Do we sell stock on day j?
 * Consider Further optimization
 * Boundary conditions
-    * Does adding Ф help? like `044_Wildcard_Matching.py`
+    * Does adding Ф help? like `044_Wildcard_Matching.py` and all other string problems
     * Don't start on column 0
 * If the space can be improved to O(MN) to O(N)
 * If the space can be further reduced to O(1), like
     * `123_Best_Time_to_Buy_and_Sell_Stock_III.py`? If we don't go row by row, but go column by column
+
+# Another point of view, the current problem can be divided into disjoint sub-problems
+
+* Examples are: 
+    * Longest common substring
+    * Longest common subsequence
+    * `115_Distinct_Subsequences.py`
+
+# `115_Distinct_Subsequences.py`
+
+* How to divide the solution to disjoint sub-problems
+* what is the meaning of dp[i, j]: how many subsequence of s[:j] matches t[:i]
 
 # `123_Best_Time_to_Buy_and_Sell_Stock_III.py`
 
@@ -44,7 +58,6 @@
       so the memory can be reduced to O(N)
 * Memory optimization for O(N) to O(1)
     * We update across the row, since it only has 2 transaction
-
 
 # `213_House_Robber_II.py`
 * what is the row: the house in it's door number

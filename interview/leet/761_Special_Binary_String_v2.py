@@ -28,11 +28,12 @@ class Solution:
 
 S = ''
 S = "11100010"
-S = '10'
-S = '1010'
-S = '1100'
-S = "11011000"
 S = "111000111100001100"
+S = '1100'
+S = '1010'
+S = '10'
+S = "11011000"
+S = "11100010"
 sol = Solution()
 print(sol.makeLargestSpecial(S))
 
