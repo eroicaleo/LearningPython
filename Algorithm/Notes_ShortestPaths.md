@@ -54,3 +54,23 @@
     * delete-min: `logV`
     * decrease-key: `logV`
     * total: `E logV`
+
+## 15.D Edge-Weighted DAGs
+
+### Acyclic edge-weighted digraphs
+
+* For no directed cycles, is it easier to find shortest paths than in a general digraph?
+    * Yes
+    * Sort the vertex in topological order
+
+### Shortest paths in edge-weighted DAGs
+
+* Topological sort algorithm computes SPT in any edge weighted DAG in time proportional to `E+V`
+    * weight can even be negative
+* Proof:
+    * Each edge is relaxed exactly once, when v is relaxed,
+      leaving `distTo[w] <= distTo[v] + e.weight()`
+    * Inequality holds until algorithm terminates because:
+        1. `distTo[w]` cannot increase
+        2. `distTo[v]` will not change since it's topological order
+    * Shortest path optimality conditions hold

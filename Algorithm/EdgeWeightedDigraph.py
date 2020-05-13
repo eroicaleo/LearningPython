@@ -5,10 +5,10 @@ from DirectedEdge import DirectedEdge
 class EdgeWeightedDigraph:
     def __init__(self, *args):
         if isinstance(args[0], int):
-            self.V = V
+            self.V = args[0]
             self.E = 0
-            self.indgree = [0]*V
-            self.adj = [set() for i in range(V)]
+            self.indgree = [0]*self.V
+            self.adj = [set() for i in range(self.V)]
         elif isinstance(args[0], str):
             with open(args[0]) as f:
                 self.V = int(f.readline())
