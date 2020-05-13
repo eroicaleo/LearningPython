@@ -80,3 +80,7 @@
 * large/median/small/xs: `col-lg-6/col-md-6/col-sm-6/col-6`. Note extra small
   is changed: [here](https://getbootstrap.com/docs/4.4/migration/#grid-system)
 * Further documentation: []
+
+## Bootstrap Part Five Project
+
+* Have to use `card` class.
