@@ -117,11 +117,12 @@ need -= ' #'.find(val)
 
 * Problem 301 remove parentheses
 * `75_Sort_Colors.py`
-* Group anagram
+* Group anagram: `438_Find_All_Anagrams_in_a_String.py`
 
 # Problems I feel the solution is cool
 
 * Problem 105 solution by
+* `978_Longest_Turbulent_Subarray` by wangzi
 
 # Problems I cannot solve in the first round
 

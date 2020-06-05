@@ -109,7 +109,9 @@
 207_Course_Schedule.py, needs to do a BFS version
 57_Insert_Interval.py, check out Pochman's solution
 312_Burst_Balloons.py (Hard)
-402_Remove_K_Digits.py, implement Pochmann's solution
+402_Remove_K_Digits.py
+    * implement Pochmann's solution (Done)
+      My v2 is pretty much similar
 636_Exclusive_Time_of_Functions.py
 18_4Sum.py
 518_Coin_Change_2.py, needs to implement with only array, add description to summary
@@ -216,3 +218,26 @@
 37_Sudoku_Solver.py (Hard)
 678_Valid_Parenthesis_String.py
 493_Reverse_Pairs.py (Hard)
+    * Learn BIT from top coder
+1008_Construct_Binary_Search_Tree_from_Preorder_Traversal.py
+338_Counting_Bits.py
+378_Kth_Smallest_Element_in_a_Sorted_Matrix.py
+659_Split_Array_into_Consecutive_Subsequences.py
+947_Most_Stones_Removed_with_Same_Row_or_Column.py
+0000_Check_If_a_String_Is_a_Valid_Sequence_from_Root_to_Leaves.py
+778_Swim_in_Rising_Water.py (Hard)
+480_Sliding_Window_Median.py (Hard)
+282_Expression_Add_Operators.py (Hard)
+514_Freedom_Trail.py (Hard)
+993_Cousins_in_Binary_Tree.py
+648_Replace_Words.py
+676_Implement_Magic_Dictionary.py
+794_Valid_Tic-Tac-Toe_State.py
+540_Single_Element_in_a_Sorted_Array.py
+894_All_Possible_Full_Binary_Trees.py
+918_Maximum_Sum_Circular_Subarray.py
+438_Find_All_Anagrams_in_a_String.py
+0000_Stock_Spanner.py
+699_Falling_Squares.py (Hard)
+1029_Two_City_Scheduling.py
+40_Combination_Sum_II.py

@@ -1,0 +1,28 @@
+
+# TODO list
+
+# Algorithms in Leetcode
+
+* Finish Binary Indexed Tree in topcoder (Done)
+    * Finish `493_Reverse_Pairs.py` and similar problems
+	* BIT (Done)
+        * Learn bisect and 493's fastest solution
+	* Mergesort
+    * Finish `315_Count_of_Smaller_Numbers_After_Self.py` with BIT (Done) and merge sort
+    * Finish `327_Count_of_Range_Sum.py` with BIT (Done) and merge sort (Stefan)
+        * Fun4Leetcode's solution 
+	* Fastest solution
+* Finish Segment Tree in top coder, it's "range minimum query and lowest common ancestor"
+    * `699_Falling_Squares.py` (Done)
+    * Last couple of examples in codeforce.
+
+# Algorithms in Princeton Algorithms
+
+* Finish Directed Graphs
+* Finish Shortest Path Lecture
+
+# Problem discussion
+
+* `472_Concatenated_Words.py` fastest solution
+* `378_Kth_Smallest_Element_in_a_Sorted_Matrix.py` bisect solution
+* Edit Distance fastest solution

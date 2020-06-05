@@ -17,6 +17,11 @@
 
 * `i` is the first balloon to pop doesn't work, why not make `i` the last.
 
+## `282_Expression_Add_Operators.py`
+
+* Build the anwser from bottom up doesn't work, why don't consider
+  build the anwser from top down
+
 # Array problem with partial sum, always consider converting to pre-sum
 
 *

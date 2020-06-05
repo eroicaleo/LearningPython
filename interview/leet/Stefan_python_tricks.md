@@ -40,6 +40,13 @@ s = re.sub(r'(\d+)\[([a-z]+)\]', lambda m: int(m.group(1)) * m.group(2), s)
 perms = [p[:i]+[n]+p[i:] for p in perms for i in range((p+[n]).index(n)+1)]
 ```
 
+### slicing
+
+* Let `stack = [1,2,3,4,5]`, `stack[:-1]` gives `[1,2,3,4]` and so on
+  but stack[:-0] gives `[]`, what if we want the whole list?
+* We can do this `stack[:-0 or None]`
+* Stefan's solution in `402_Remove_K_Digits.py`
+
 ## `functools` tricks
 
 ### `reduce`

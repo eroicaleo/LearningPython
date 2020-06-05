@@ -30,6 +30,30 @@ def bfs(G, s):
 
 * One of the invariant of the `while` loop is all nodes in `queue` is grey.
 
+# The notes from Princeton
+
+* BFS (from source Vertex s)
+    * Put s on to a FIFO queue, and mark s as visited. Repeat until the queue is empty.
+    * Remove the least recently added vertex v
+    * for each unmarked vertex pointing from v:
+      add to queue and mark as visited.
+
+```python
+def bfs(self, G, sources):
+    queue = deque(sources)
+    for s in sources:
+        self.marked[s] = 1
+        self.distTo[s] = 0
+    while queue:
+        v = queue.popleft()
+        for w in G.getAdj(v):
+            if not self.marked[w]:
+                self.marked[w] = 1
+                self.edgeTo[w] = v
+                self.distTo[w] = self.distTo[v]+1
+                queue.append(w)
+```
+
 # The notes from leetcode problems
 
 * typical BFS search uses a queue
