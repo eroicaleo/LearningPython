@@ -84,3 +84,30 @@
 ## Bootstrap Part Five Project
 
 * Have to use `card` class.
+
+# Section 9 JS Level One - Basics
+
+## Introduction
+
+* Chrome -> New Incog Window -> F12
+* Hello world: `alert("Hello World!")`
+* Comment: `//`
+* Data type:
+    * numbers
+    * Strings
+    * Boolean: ""
+    * `undefined` and `null`
+* `clear()` to clear console doesn't work for me, `ctrl+L` and `console.clear()`
+  works.
+* strings:
+    * `s1+s2`
+    * `s1.length`
+    * escape: `\t \n \"`
+    * Indexing: `"hello"[0]`
+* Variables
+    * `var varName = value`
+    * JS uses camel case
+    * `undefined` and `null`
+* A few more methods:
+    * `console.log()`
+    * `prompt("enter something:")`
