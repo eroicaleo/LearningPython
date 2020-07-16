@@ -22,6 +22,11 @@
 * Build the anwser from bottom up doesn't work, why don't consider
   build the anwser from top down
 
+### `174_Dungeon_Game.py`
+
+* My first thinking is from [0,0] to [nr-1,nc-1], but turns out the correct way is
+  from [nr-1,nc-1] to [0,0].
+
 # Array problem with partial sum, always consider converting to pre-sum
 
 *

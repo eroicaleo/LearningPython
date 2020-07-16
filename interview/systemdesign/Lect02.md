@@ -156,11 +156,11 @@ D. database.set(user); cache.delete(key);
 * 用户是如何实现登陆与保持登陆的？如何识别下次登陆不需要输入密码
 * 服务器端如何创建session table。
 
-| Header One     | Header Two     | Header Two     |
-| :------------- | :------------- | :------------- |
-| session_key    | string         | 一个hash值，全局唯一，无规律 |
-| user_id        | Foreign key    | 指向User Table |
-| expire_at      | timestamp      | 什么时候过期 |
+| Header One       | Header Two     | Header Two     |
+| :--------------- | :------------- | :------------- |
+| `session_key`    | string         | 一个hash值，全局唯一，无规律 |
+| `user_id`        | Foreign key    | 指向User Table |
+| `expire_at`      | timestamp      | 什么时候过期 |
 
 * 用户登陆流程：
     * 用户登陆：系统创建session key

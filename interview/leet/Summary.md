@@ -115,9 +115,13 @@ need -= ' #'.find(val)
 
 # Problems I feel hard to write code and implement
 
+* These problems deserve repeatedly brush
 * Problem 301 remove parentheses
 * `75_Sort_Colors.py`
 * Group anagram: `438_Find_All_Anagrams_in_a_String.py`
+* `BIT` and segment tree
+* Ugly number series
+* `1008` and `105`
 
 # Problems I feel the solution is cool
 
@@ -135,7 +139,12 @@ need -= ' #'.find(val)
     * See my notes on DP
 * `435_Non-overlapping_Intervals.py` (Greedy)
 * `417_Pacific_Atlantic_Water_Flow.py` (DFS)
-* `493_Reverse_Pairs.py` (Sorting / Divide & Conqure)
+* `493_Reverse_Pairs.py` (Sorting / Divide & Conqure / BIT)
+* `132_Palindrome_Partitioning_II.py` (DP)
+* `1044_Longest_Duplicate_Substring.py` (BS+Rabin-Knarp)
+* `335_Self_Crossing.py` (Math)
+* `287_Find_the_Duplicate_Number.py`
+* `332_Reconstruct_Itinerary.py` (Eular cycle)
 
 # Graph
 

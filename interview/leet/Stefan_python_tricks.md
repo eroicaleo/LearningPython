@@ -93,6 +93,14 @@ if word[0] == '.':
 filter(None, iterable)
 ```
 
+### `iter`
+
+* `392_Is_Subsequence.py`
+
+```python
+t = iter(t)
+return all(c in t for c in s)
+```
 
 ## bit manipulation tricks
 

@@ -13,6 +13,9 @@ class Solution(object):
             den *= (i+1)
         return num // den
 
+    def uniquePaths2(self, m, n):
+        return math.comb(m+n-2, n-1)
+
 sol = Solution()
 print(sol.uniquePaths(3, 2))
 print(sol.uniquePaths(7, 3))

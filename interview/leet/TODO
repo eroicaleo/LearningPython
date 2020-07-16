@@ -15,6 +15,7 @@
 * Finish Segment Tree in top coder, it's "range minimum query and lowest common ancestor"
     * `699_Falling_Squares.py` (Done)
     * Last couple of examples in codeforce.
+* Finish KMP algorithm
 
 # Algorithms in Princeton Algorithms
 
@@ -26,3 +27,19 @@
 * `472_Concatenated_Words.py` fastest solution
 * `378_Kth_Smallest_Element_in_a_Sorted_Matrix.py` bisect solution
 * Edit Distance fastest solution
+* `406_Queue_Reconstruction_by_Height.py` fastest solution
+* `97_Interleaving_String.py`: caikehe's DFS and BFS solutions.
+* `132_Palindrome_Partitioning_II_v3.py`: hongyu9310's 3rd solutions or the 3rd fastest solution.
+* `174_Dungeon_Game.py`: fastest solution
+* `368_Largest_Divisible_Subset.py`: fastest solution
+* `787_Cheapest_Flights_Within_K_Stops.py`: fastest solution
+* `336_Palindrome_Pairs.py` solution
+* `279_Perfect_Squares.py` Stefan math solution
+* `332_Reconstruct_Itinerary.py` Stefan's solution
+* `212_Word_Search_II.py` The fastest solution and Stefan's complex number solution
+* `957_Prison_Cells_After_N_Days.py` lee315's cleaner solution.
+* `463_Island_Perimeter.py` Stefan's and fastest solution
+* `15_3Sum.py` fastest solution
+* `491_Increasing_Subsequences.py` Stefan and dp solutions
+
+# Good articles from leetcode

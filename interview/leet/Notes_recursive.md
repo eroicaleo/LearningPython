@@ -14,7 +14,9 @@
     * `761_Special_Binary_String.py`
     * `224_Basic_Calculator.py`
 * Similar problems but has a tree context
-    * `1008_Construct_Binary_Search_Tree_from_Preorder_Traversal.py`
+    * `1008_Construct_Binary_Search_Tree_from_Preorder_Traversal.py`, lee315's solution
+    * `105_Construct_Binary_Tree_from_Preorder_and_Inorder_Traversal.py`
+      my own solution and Stefan's solution
 
 ## Recursive approach
 
@@ -99,7 +101,28 @@
 
 # recursive call to build anwser from top down
 
+* This kind of problems aim to build a set of solutions that
+  satisfy certain criterion, it builds from top down, and
+  at certain recursive call, we might encounter a valid solution,
+  we add it to the solution set.
+
 * `301_Remove_Invalid_Parentheses.py`
 * `282_Expression_Add_Operators.py`
 
+* `Subsets II`
 
+```python
+res = []
+nums = sort(nums)
+
+def rec(i, path):
+    res.append(path)
+    for j in range(i, len(nums)):
+        if j > i and nums[j] == nums[j-1]:
+	    continue
+        rec(j+1, path+[nums[j]])
+rec(0, [])
+return res
+```
+
+* `40_Combination_Sum_II.py`

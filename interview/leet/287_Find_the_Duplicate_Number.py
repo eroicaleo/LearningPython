@@ -20,7 +20,10 @@ class Solution:
 # Then n[i_{j-1}] = n[i_{k}] is the results
 
 # Assume the length of loop is K, the length outside of the loop is m
-# when slow and fast meet with each other in the loop, it's K-m
+# When slow enters the loop for the first time, fast is at m%K
+# The distance between slow and fast is K-m%K
+# it takes K-m%K steps for fast to catch slow
+# when slow and fast meet with each other in the loop, it's K-m%K
 # Then start another pointer from "finder", the finder will meet "slow" at the entrace
 
     def findDuplicate_On(self, nums):
