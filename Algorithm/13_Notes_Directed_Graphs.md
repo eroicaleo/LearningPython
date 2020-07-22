@@ -52,7 +52,7 @@
 
 * Goal: Crawl web, Starting from some root web page, `www.princeton.edu`
 
-# 13.D Topological Sort
+# 13.D Topological Sort (algs4partII L02 S4, No. 65)
 
 ## Precedence scheduling
 
@@ -65,4 +65,21 @@
 * See the following code:
     * `DirectedCycle.py`
     * `DepthFirstOrder.py`
+
+## Topological sort in a DAG: correctness proof
+
+* Consider any edge `v->w`
+* Case 1: `dfs(w)` has been called and returned. `w` was done before `v`.
+* Case 2: `dfs(w)` has not been called.
+    * `dfs(w)` will get called directly or indirectly by `dfs(v)`
+    * w will be done before v.
+* Case 3: `dfs(w)` has been called but has not yet returned. This is impossible
+  because `G` doesn't have cycle.
+
+## Directed cycle detection application: cyclic inheritance
+
+* Java compiler does cycle detection for inheritance.
+* MS Excel, circular reference. 
+
+# 13.E Topological Sort (algs4partII L02 S5, No. 66)
 
