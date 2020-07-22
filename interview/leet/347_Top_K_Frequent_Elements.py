@@ -13,7 +13,17 @@ class Solution:
         heapify(l)
         return [i for n, i in nlargest(k, l)]
 
+    def topKFrequent_bucket(self, nums, k):
+        from collections import Counter
+        c, bucket, res = Counter(nums), [[] for _ in nums] + [[]], []
+        for i in c:
+            bucket[c[i]].append(i)
+        for b in bucket[::-1]:
+            res += b
+            if len(res) == k:
+                return res
+
 sol = Solution()
-nums, k = [1,1,1,2,2,3], 2
 nums, k = [1], 1
-print(sol.topKFrequent(nums, k))
+nums, k = [1,1,1,2,2,3], 2
+print(sol.topKFrequent_bucket(nums, k))

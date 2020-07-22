@@ -629,6 +629,269 @@ User view/search image-----------> |------------------------|-----------> image 
 
 ## 4.7 Data Size Estimation
 
+* User table entry: ID(4B) + Name(20B)+Email(32B)+3xdates(12B) = 68B
+    * 500M Users * 68B = 32G
+* Photo table entry is similar: 284B
+    * 2M new photos / day, 2M * 284B ~= 0.5GB/day
+    * 10 years ~ 1.88T
+* UserFollow table:
+    * Every one follow 500 followers * 5M users * 8 bytes ~= 1.82 TB
+* Total space in 10 yr ~ 3.7 TB
+
+## 4.8 Component Design
+
+* Uploads can be slow, it goes to disk. Reads will be fast, if we have cache.
+* Webserver has certain connection limit, and also write is slow.
+  So we need to use different servers for reads and writes service.
+* Seperation will also allow us to scale and optimize independently.
+
+User upload image----------------> |------------------------|-----------> image storage
+                                   | image upload service   |   ^
+                                   |                        |   |
+                                   |------------------------|------|
+                                                                |  |
+                                                                |  |
+                                   |------------------------|---|  |
+                                   | image download service |      V
+                                   |                        |      V
+User view/search image-----------> |------------------------|-----------> image metadata
+
+## 4.9 Reliability and Redundancy
+
+* Losing files is not an option. We will store multiple copies of each file.
+* Same principle also applies to other components of the system. Have multiple replicas.
+* Run a redundant secondary copy of the service that is not serving any traffic. Take control when primary has a problem.
+* Redundancy can remove single points of failure.
+
+User upload image----------------> |------------------------|-----------> image storage/replica 1/replica 2
+                                   | image upload service   |   ^
+                                   | 1, 2, 3                |   |
+                                   |------------------------|------|
+                                                                |  |
+                                                                |  |
+                                   |------------------------|---|  |
+                                   | image download service |      V
+                                   | 1, 2, 3                |      V
+User view/search image-----------> |------------------------|-----------> image metadata/backup 1
+
+## 4.10 Data Sharding
+
+### 4.10.1 Partition based on UserID
+
+* we can keep all photos of a user on the same shard. Assume we have 10 shards.
+* Find shard number by UserID % 10, store the data. We can append shard number with each PhotoID.
+* Each DB shard can have its own auto-increment sequence for PhotoIDs. And we will append
+  ShardID with each PhotoID, so they are unique.
+
+#### 4.10.1.1 Issues with this partitioning scheme.
+
+1. How to handle hot users? A lot of other people see photos uploaded by the hot users.
+2. Some users have a lot of more photos compared to others, non-uniform distribution of storage.
+3. What if we have to store all pictures of a user onto multiple shards?
+4. Store all photos of a user on one shard, if the shard is down, or higher latency if load is high.
+
+### 4.10.2 Partition based on PhotoID
+
+* If we can generate unique photoIDs first and then find a shard number: `PhotoID%10`.
+* How to generate PhotoIDs?
+    * Dedicate a seperate DB instance to generate auto-incrementing IDs.
+    * PhotoID should be able to fit into 64-bit number, 2^64 ~ 10^18.
+    * We define a table containing only a 64-bit field.
+* The above one is a single point of failure.
+* Workaround 1:
+    * Two servers, one to generate even numbered ID, one to generate odd numbered ID.
+    * Load balancer: round robin between them
+    * We can even extend to generate separate ID tables for Users, Photo-Comments, or
+      other objects.
+
+```
+KeyGeneratingServer1:
+auto-increment-increment = 2
+auto-increment-increment = 1
+
+KeyGeneratingServer2:
+auto-increment-increment = 2
+auto-increment-increment = 2
+```
+
+* Workaround 2:
+    * Use key generation scheme similar to URL shortening service.
+
+### 4.10.3 Future growth of our system
+
+* We can have logical partition at the begining.
+* These partitions can sit in one server at the begining.
+* When one partition is getting a lot of data, we can migrate
+  some logical partitions from it to another server.
+* Have a config file or DB to track the mapping between logical partitions
+  and DB servers.
+
+## 4.11 Ranking and News Feed Generation
+
+* Assume fetching top 100 photos.
+* Get the list of people the user follow.
+* Get the meta data of 100 photos from each user.
+* Submit all these photos to ranking algorithm which will determine top 100 photos
+  (based on recency, likeness)
+* Problem with this approach: higher latency, because we have to query multiple tables
+  and perform sorting/merging/ranking on the results.
+* To improve efficiency, pre-generate the News Feed and store it.
+
+### 4.11.1 Pre-generating the News Feed
+
+* Dedicated servers that are continuously generating users' News Feeds and storing
+  them in a 'UserNewsFeed' table
+* We will just query this table
+* Whenever these servers need to generate the News Feed, first query the UserNewsFeed
+  table to find the last time generated. Then new UserNewsFeed data will be generated from that time.
+
+### 4.11.2 Different approaches for sending News Feed contents to users.
+
+* Pull
+    * Clients pull the News Feed contents from the server on a regular basis or manually when they need it.
+    * Problem 1: New data not shown until clients issue a pull request
+    * Probelm 2: Most of the pull requests will be empty response if there is no new data
+* Push
+    * Servers push new data to the users ASA it is available
+    * Long poll can make it more efficiently
+        * Long poll means server only sends data when new data is available.
+    * Problem 1: Celebrity user who has millions of followers. Server has to push quite frequently
+* Hybrid
+    * Users who have high follows to pull-based model, push data to users who have 100/1000 follows.
+    * push all the users not more than a certain frequency, users with a lot of follows to regularly pull data.
+
+## 4.12 News Feed Creation with Sharded Data
+
+* Important requirement: create news feed to fetch the latest photos from all people the user follows.
+* Need to quickly Sort photos on their time of creation, but how?
+* Make photo creation time part of the photo ID.
+* Make photo ID two parts: `(current epoch, auto-incrementing ID)`.
+    * `auto-incrementing ID` from key-generating DB.
+    * Then with PhotoID, figure out the shard number, e.g. (PhotoID % 10).
+* Estimate the size of PhotoID, assume we will run the service for 50 years:
+    * 86400 sec/day * 365 days * 50 yr => 1.6B sec, so 31-bit to store epoch
+    * ~ 23 photos / sec, so maybe allocate 9-bit to store increment sequence.
+      and reset auto incrementing sequence every second.
+
+## 4.13 Cache and Load balancing
+
+* Push its content closer to the user using geographically distributed photo cache servers
+  and use CDNs.
+* cache hot DB rows. (LRU) can be a reasonable cache eviction policy.
+* 80-20 rule, try caching 20% of daily read volume of photos and metadata.
+
+# 5. Designing Dropbox
+
+## 5.1 Why Cloud Storage
+
+* Simplify the storage and exchange among multiple devices.
+* Availability: data available anywhere, anytime. User access whenever and wherever.
+* Reliability and Durability: 100% Reliability and Durability of data.
+  Keeping multiple copies of the data stored on different geographically located servers.
+* Scalability: Users have unlimited storage.
+
+## 5.2 Requirements and Goals of the System
+
+1. upload/download files/photos from any device.
+2. Share files/folders with other users.
+3. automatic synchronization between devices,
+   i.e. updating a file on one device, all devices get synchronized.
+4. Support large files up to a GB
+5. ACID: atomicity, consistency, isolation and durability.
+6. Offline editing. When back online, all changes should be synced to the remote servers
+   and other online devices.
+7. Extended Requirements: support snapshotting of the data, users can go back to any version.
+
+## 5.3 Some Design Considerations
+
+* Huge read write volumes.
+* Read to write ratio is ~ same.
+* Internally, files can be stored in small parts (e.g. 4MB).
+  Failed operations shall only be retried for smaller parts of a file.
+  Fails to upload a file, only the failing chunk will be retried.
+* Reduce the amount of data exchange by transferring updated chunks only.
+* Removing duplicate chunks, we can save storage space and BW.
+* Keeping a local copy of metadata with client save a lot of round trips to the server.
+* Small changes, client can intelligently upload the diffs instead of the whole chunk.
+
+## 5.4 Capacity Estimation and Constraints
+
+* 500 M total users, 100M daily active users.
+* Average, each user connects from 3 different devices.
+* On average if a user has 200 files/photos, we will have 100M total files.
+* Average file size is 100K, then 100B * 100KB = 10 PB
+* 1M active connections per minute.
+
+## 5.5 High Level Design
+
+* User will specify a folder as the workplace.
+* Any file/photo/folder in this folder will be uploaded to the cloud.
+* modification done on one device will propagated to all other devices
+
+* Store files and metadata info: file name, file size, directory.
+* Some servers that help clients to upload/download files.
+* Some servers that can facilitate updating metadata about files & users.
+* Some mechanism to notify all clients whenever update happens,
+  so they can synchronize their files.
+
+
+                                   |------------------------|-----------> cloud storage
+         |------------------------>| block server           |
+         |                         | 1, 2, 3                |--------------------
+         |                         |------------------------|                   |
+         |                                                                      |
+         |                                                                      |
+         |                                                                      |
+         |                         |------------------------|                   |
+         |                         | metadata server        |                   |
+         |                         | 1, 2, 3                |                   V
+      client---------------------> |------------------------|-----------> metadata storage
+         ^                                      |
+         |                                      |
+         |                                      |
+         |                                      V
+         |                         |------------------------|
+         |                         | synchronization server |
+         |                         | 1, 2, 3                |
+         |-----------------------> |------------------------|
+
+* The diagram shows:
+    * block server for upload/download files to/from cloud storage
+    * meta data servers will keep metadata of files updates in a SQL or NoSQL
+    * synchronization servers will handle the workflow of notifying all clients
+      the difference
+
+## 5.6 Component Design
+
+### 5.6.1 Client
+
+* Client application monitors the workplace folder, syncs all files and folders with Cloud Storage
+* Client application will work with storage servers to upload, download and modify actual
+  files to BE Cloud Storage
+* Client application work with synchronization service to handle file metadata changes.
+* Operations:
+    * Upload and download files
+    * Detect file changes in the workplace folder
+    * Handle conflict due to offline or concurrent updates
+
+#### 5.6.1.1 Transfer efficiently
+
+* break each file into smaller chunks and transfer only those chunks, e.g. 4MB/chunk
+* Calculate the optimal chunk
+    * Storage devices we use in the cloud, input/output operations/second
+    * Network BW
+    * Averge file size in the storage
+* Metadata to keep a record of each file and chunks that constitute it.
+
+#### 5.6.1.2 keep a copy of metadata with Client?
+
+* Yes! It enable us to do offline updates, also saves a lot of round trips to update remote metadata.
+
+#### 5.6.1.3 Clients listen to changes happening with other clients?
+
+
+## 5.12 Security, Permissions and File Sharing
+
 # Q&A
 
 Q: In 2.6.1, Why we don't need store this sequence number?
@@ -639,3 +902,5 @@ A: Assume the not used keys and the used keys are stored in disk, and the disk d
    Then it makes sense. Otherwise, if the disk also died, seems not be able to recover
 
 Q: In 2.7, it doesn't actually cover data replication.
+
+Q: In 4, I am still feel confused about sharding.

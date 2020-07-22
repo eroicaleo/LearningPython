@@ -24,6 +24,7 @@
 
 # Problem discussion
 
+* `336_Palindrome_Pairs.py` fastest solution
 * `472_Concatenated_Words.py` fastest solution
 * `378_Kth_Smallest_Element_in_a_Sorted_Matrix.py` bisect solution
 * Edit Distance fastest solution
@@ -33,7 +34,6 @@
 * `174_Dungeon_Game.py`: fastest solution
 * `368_Largest_Divisible_Subset.py`: fastest solution
 * `787_Cheapest_Flights_Within_K_Stops.py`: fastest solution
-* `336_Palindrome_Pairs.py` solution
 * `279_Perfect_Squares.py` Stefan math solution
 * `332_Reconstruct_Itinerary.py` Stefan's solution
 * `212_Word_Search_II.py` The fastest solution and Stefan's complex number solution
@@ -41,5 +41,7 @@
 * `463_Island_Perimeter.py` Stefan's and fastest solution
 * `15_3Sum.py` fastest solution
 * `491_Increasing_Subsequences.py` Stefan and dp solutions
+* `079_Word_Search.py` fastest solution
+* `135_Candy.py` O(n) solution
 
 # Good articles from leetcode

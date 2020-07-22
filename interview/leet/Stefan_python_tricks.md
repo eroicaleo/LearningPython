@@ -40,6 +40,17 @@ s = re.sub(r'(\d+)\[([a-z]+)\]', lambda m: int(m.group(1)) * m.group(2), s)
 perms = [p[:i]+[n]+p[i:] for p in perms for i in range((p+[n]).index(n)+1)]
 ```
 
+* Here is another example to add a sentinel at the end of list: `436_Find_Right_Interval.py`
+  here we need to use `bisect_left`, if an element is bigger than all elements in the list,
+  `bisect_left` returns the length of the list. However, the question asks to return
+  an -1.
+
+```python
+    def findRightInterval_Stefan(self, intervals):
+        left_list = sorted([(i[0], n) for n, i in enumerate(intervals)]) + [(math.inf, -1)]
+        return [left_list[bisect_left(left_list, (i[1], 0))][1] for i in intervals]
+```
+
 ### slicing
 
 * Let `stack = [1,2,3,4,5]`, `stack[:-1]` gives `[1,2,3,4]` and so on

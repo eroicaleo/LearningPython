@@ -28,7 +28,9 @@
 301_Remove_Invalid_Parentheses.py, need to finish documentation for version 2, and summary
 134_Gas_Station.py, need to do a faster version
 145_Binary_Tree_Postorder_Traversal.py, need to do a reversed pre-order version
-079_Word_Search.py, need to do a cleaner version, without extra 'marked' table.
+079_Word_Search.py
+    * need to do a cleaner version, without extra 'marked' table. (Done)
+    * need to do the fastest version in submission
 083_Remove_Duplicates_from_Sorted_List.py
 137_Single_Number_II.py, need to do a cleaner version
 295_Find_Median_from_Data_Stream.py, need to do a 'heapq' version
@@ -76,7 +78,8 @@
 17_Letter_Combinations_of_a_Phone_Number.py
 139_Word_Break.py, still not finish the v3
 49_Group_Anagrams.py, needs to check discussion
-347_Top_K_Frequent_Elements.py, needs to check bucket sort implementation
+347_Top_K_Frequent_Elements.py
+    * needs to check bucket sort implementation (Done)
 151_Reverse_Words_in_a_String.py, needs to do a non standard lib version
 54_Spiral_Matrix.py, check Stefan's solution
 564_Find_the_Closest_Palindrome.py, has an accepted solution, but it has bug
@@ -260,4 +263,8 @@
 450_Delete_Node_in_a_BST.py (NS)
 473_Matchsticks_to_Square.py (NS)
 491_Increasing_Subsequences.py
+436_Find_Right_Interval.py
+203_Remove_Linked_List_Elements.py
+352_Data_Stream_as_Disjoint_Intervals.py (Hard)
+135_Candy.py (Hard)
 335_Self_Crossing.py (Hard)
