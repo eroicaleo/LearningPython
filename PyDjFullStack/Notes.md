@@ -111,3 +111,39 @@
 * A few more methods:
     * `console.log()`
     * `prompt("enter something:")`
+
+## Part Two Connecting JS
+
+* In header: `<script src="./myscript.js"></script>`
+    * This script gets called before anything
+
+## Part Four Operators
+
+* `"2" == 2`, true. `"2" === 2`, false.
+    * `==` use type coercion.
+    * `===`, `!==`
+
+```javascript
+null == undefined
+true
+null === undefined
+false
+NaN == NaN
+false
+```
+
+## Part Six `while` loop
+
+* `while`/`break`
+
+## Part Seven `for` loop
+
+* `For` - loops through a number of times
+* `For/In` - loops through a JS object
+* `For/of` - used with arrays
+
+```javascript
+for (var i = 0; i < 5; i++) {
+  
+}
+```
