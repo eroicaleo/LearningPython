@@ -36,12 +36,20 @@
 
 # `123_Best_Time_to_Buy_and_Sell_Stock_III.py`
 
+* To solve this problem, it's helpful to consider a simplified problem:
+    * what if we are only allowed to buy/sell at most one time.
+    * Then it's easier to come up with DP solution with one row.
+    * Then in the next step, we extend to 2 row to solve buy/sell at most two times.
 * For better understanding, this problem has buy and sell 2 operations, so we create 2 DP tables, `dpbuy` and `dpsel`
 * what is the row in dpsel: the ith sell
 * what is the row in dpbuy: the ith buy
 * what is the col: the price on each day
 * what is the meaning of dpbuy[i, j]: the max money when finish the ith buy  before or at day j
 * what is the meaning of dpsel[i, j]: the max money when finish the ith sell before or at day j
+* After 2nd round, and after working on some other stock problems
+  I think the better way to understand the `dpbuy[i, j]` and `dpsel[i, j]` would be:
+    * `dpbuy[i, j]`: the max money we can have at ith buy operations when we hold a stock at day j
+    * `dpsel[i, j]`: the max money we can have at ith sell operations when we don't hold a stock at day j
 * what is recurrance relation `dpbuy[i,j] = max(dpbuy[i, j-1], dpsel[i-1, j-1]-price[j])`
     * how to divid dpbuy[i, j] into disjoint categories:
        1. We don't buy on day j, in this case: `dpbuy[i, j] = dpbuy[i, j-1]`

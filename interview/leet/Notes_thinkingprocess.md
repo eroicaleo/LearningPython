@@ -27,6 +27,17 @@
 * My first thinking is from [0,0] to [nr-1,nc-1], but turns out the correct way is
   from [nr-1,nc-1] to [0,0].
 
+## `274_H_Index.py`
+
+* Sort citations from low to high makes the code ugly, why don't sort from high to low.
+
 # Array problem with partial sum, always consider converting to pre-sum
 
 *
+
+# How to Ask questions to myself?
+
+## `714_Best_Time_to_Buy_and_Sell_Stock_with_Transaction_Fee.py`
+* Ask myself, when to start a new transaction? It has to be lower than last sales price `p-fee`
+  Otherwise it's better to hold.
+

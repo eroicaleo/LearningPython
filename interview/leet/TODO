@@ -43,5 +43,16 @@
 * `491_Increasing_Subsequences.py` Stefan and dp solutions
 * `079_Word_Search.py` fastest solution
 * `135_Candy.py` O(n) solution
+* `210_Course_Schedule_II.py` fastest BFS solution
+* `675_Cut_Off_Trees_for_Golf_Event.py` Stefan's Hadlock algorithm and the fastest solution
+* `437_Path_Sum_III.py` pre sum solution
+* `1286_Iterator_for_Combination.py` O(k) on the fly solution
 
 # Good articles from leetcode
+
+* `714_Best_Time_to_Buy_and_Sell_Stock_with_Transaction_Fee.py` Fun4Leetcode
+
+# Algorithms from system design
+
+* LRU, checkout python implementation
+* 9.4.1 Serialize/deserialize trie

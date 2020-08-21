@@ -34,6 +34,13 @@ class Solution:
             buy1, sel1, buy2, sel2 = max(buy1, 0-p), max(sel1, buy1+p), max(buy2, sel1-p), max(sel2, buy2+p)
         return sel2
 
+    def maxProfit4(self, prices):
+        b1 = b2 = float('-inf')
+        s1 = s2 = 0
+        for p in prices:
+            b1, s1, b2, s2 = max(b1, 0-p), max(s1, b1+p), max(b2, s1-p), max(s2, b2+p)
+        return s2
+        
 sol = Solution()
 prices = [7,6,4,3,1]
 prices = [1,2,3,4,5]

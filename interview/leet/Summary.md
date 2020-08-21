@@ -15,6 +15,8 @@
 * Or count from start to current position, or from current position to end
   For example, problem 560, my solution is at position i, count to the end
   Better solution, from discussion form, at position i, count from the beginning
+* `274_H_Index.py` one line solution, for each paper, check if it can be counted as the paper for H-index calculation
+  my thinking always focus on for a paper, find out how many paper's citation is bigger than it.
 
 # Single number problem: general solution:
 https://leetcode.com/problems/single-number-ii/discuss/43296/An-General-Way-to-Handle-All-this-sort-of-questions.
@@ -122,6 +124,7 @@ need -= ' #'.find(val)
 * `BIT` and segment tree
 * Ugly number series
 * `1008` and `105`
+* `714_Best_Time_to_Buy_and_Sell_Stock_with_Transaction_Fee.py`
 
 # Problems I feel the solution is cool
 

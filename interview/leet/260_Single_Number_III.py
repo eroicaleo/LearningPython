@@ -9,8 +9,8 @@ import operator, functools
 class Solution:
     def singleNumber(self, nums):
         a = functools.reduce(operator.xor, nums)
-        b = functools.reduce(operator.xor, filter(lambda n: n & a & -a, nums))
-        return [a ^ b, b]
+        b = functools.reduce(operator.xor, filter(lambda n: n & (a & -a), nums))
+        return [a^b, b]
 
 sol = Solution()
 nums = [1,2,1,3,2,5]

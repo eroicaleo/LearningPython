@@ -147,7 +147,7 @@
 376_Wiggle_Subsequence.py
     * Need to check forum
 210_Course_Schedule_II.py
-    * Need to implement BFS and non-recursive DFS
+    * Need to implement BFS and non-recursive DFS (Done)
 279_Perfect_Squares.py
     * Need to implement a faster version
     * Need to implement a number theory based method
@@ -267,4 +267,26 @@
 203_Remove_Linked_List_Elements.py
 352_Data_Stream_as_Disjoint_Intervals.py (Hard)
 135_Candy.py (Hard)
-335_Self_Crossing.py (Hard)
+714_Best_Time_to_Buy_and_Sell_Stock_with_Transaction_Fee.py
+797_All_Paths_From_Source_to_Target.py
+309_Best_Time_to_Buy_and_Sell_Stock_with_Cooldown.py
+125_Valid_Palindrome.py
+542_01_Matrix.py
+515_Find_largest_Value_in_Each_Tree_Row.py
+442_Find_All_Duplicates_in_an_Array.py
+987_Vertical_Order_Traversal_of_a_Binary_Tree.py
+675_Cut_Off_Trees_for_Golf_Event.py (hard)
+437_Path_Sum_III.py
+171_Excel_Sheet_Column_Number.py
+767_Reorgnize_String.py
+274_H_Index.py
+119_Pascal_Triangle_II.py
+1286_Iterator_for_Combination.py
+409_Longest_Panlindrome.py
+1103_Distribute_Candies_to_People.py
+853_Car_Fleet.py
+967_Numbers_With_Same_Consecutive_Differences.py
+824_Goat_Latin.py
+713_Subarray_Product_Less_Than_K.py
+164_Max_Gap.py (Hard, not started)
+335_Self_Crossing.py (Hard, not started)

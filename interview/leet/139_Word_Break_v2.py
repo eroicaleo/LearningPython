@@ -22,7 +22,6 @@ class Solution:
 
 s, wordDict = 'leetcode', ['leet', 'code']
 s, wordDict = 'applepenapple', ['apple', 'pen']
-s, wordDict = 'catsandog', ['cats', 'dog', 'sand', 'and', 'cat']
 s, wordDict = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaab", ["a","aa","aaa","aaaa","aaaaa","aaaaaa","aaaaaaa","aaaaaaaa","aaaaaaaaa","aaaaaaaaaa"]
 s, wordDict = 'goalspecial', ['go', 'goal', 'goals', 'special']
 
