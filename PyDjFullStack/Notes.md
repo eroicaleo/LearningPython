@@ -144,6 +144,114 @@ false
 
 ```javascript
 for (var i = 0; i < 5; i++) {
-  
+
 }
+```
+
+# Section 10 JS Level Two - Basics
+
+## Part 1 function
+
+* Global variable, first check in the function scope, then if don't find
+  then check the global scope
+
+## Part 3 Arrays
+
+* `var countries = ["USA", "Germany", "China"];`
+* string is immutable, array is mutable.
+* array can have mixed types.
+* Mozilla reference [link](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array)
+* `for of` loop
+* `myArr.forEach(alert)`
+
+## Part 4 Objects
+
+* Like the dictionary in other languages
+* `{key1: "val1", key2: "val2"}`
+* [link](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Working_with_Objects)
+* A little difference with python
+
+```python
+myCar = {"make": "Ford"}
+print(myCar["make"])
+```
+
+```javascript
+myCar = {make: "Ford"};
+console.log(myCar["make"])
+```
+
+* To display an object: `console.dir()`
+* `for in` loop to iterate through dictionary.
+* `this` can be used in function inside Object
+* Reference: [link](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/this)
+
+# Section 11 Document Object Model
+
+## Part 0 Introduction
+
+* DOM allow JS to interact with HTML and CSS.
+* Browsers construct DOM, meaning storing all the HTML tags as JS objects.
+* Go to a website and in the console type: `document`. It returns the HTML text
+  of page
+* To see the actual object, need to use `console.dir(document)`
+* DOM is enormous, most developer just need some.
+* No need to memorize all of them. But need to know where to get help.
+
+## Part 1 74 DOM Iteraction
+
+* Important attributes:
+    * `document.URL`
+    * `document.body`: everything inside the body
+    * `document.head`: everything in the head of the page
+    * `document.links`: all the links on the page
+* Methods for grabbing elements from the DOM:
+    * `document.getElementByID()`: when you define an element which has id
+    * `document.getElementByClassName()`: return a list of element of the class
+    * `document.getElementByTagName()`
+    * `document.querySelector()`: return the first object matching the CSS
+      style selector
+    * `document.querySelectorAll()`: returns all objects matching the CSS
+      style selector
+* example: `Part1_Color_Change.js`
+* `myheader.style.color = 'red';`
+
+## Part2 75 Content Interaction
+
+* `myvariable.textContent`: This returns just the text.
+* `myvariable.innerHTML`: like the inline html code
+* `myvariable.getAttribute()`:
+* `myvariable.setAttribute()`:
+
+* We can call multiple `querySelector` multiple times.
+
+```javascript
+var special = document.querySelector("#special")
+var specialA = special.querySelector("a")
+```
+
+## Part3 76 Events
+
+* Most of the time, we only want to respond to certain event, such as a click
+  or a hover.
+* We can add event listener, JS will listen for an event and then execute a
+  function when it happens.
+* `myvariable.addEventListener(event, func)`
+
+```javascript
+var head = document.querySelector("h1");
+had.addEventListener("click", changeColor);
+```
+
+* Many possible events:
+    * `Clicks, Hovers, Double Clicks, Drags`
+    * refernce [here](https://developer.mozilla.org/en-US/docs/Web/Events)
+
+* Examples:
+
+```javascript
+head1.addEventListener("mouseover", function () {
+  head1.textContent = "Mouse Currently Over";
+  head1.style.color = "red";
+})
 ```

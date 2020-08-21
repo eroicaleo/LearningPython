@@ -1,0 +1,13 @@
+tr {
+  height: 100px;
+}
+
+td {
+  width: 100px;
+}
+
+table {
+  margin-left: auto;
+  margin-right: auto;
+  text-align: center;
+}
