@@ -130,6 +130,7 @@ need -= ' #'.find(val)
 
 * Problem 105 solution by
 * `978_Longest_Turbulent_Subarray` by wangzi
+* `456_132_Patterns.py` by Fun4leetcode
 
 # Problems I cannot solve in the first round
 
@@ -148,6 +149,8 @@ need -= ' #'.find(val)
 * `335_Self_Crossing.py` (Math)
 * `287_Find_the_Duplicate_Number.py`
 * `332_Reconstruct_Itinerary.py` (Eular cycle)
+* `456_132_Patterns.py`
+* `421_Maximum_XOR_of_Two_Numbers_in_an_Array.py` (bit manipulation)
 
 # Graph
 

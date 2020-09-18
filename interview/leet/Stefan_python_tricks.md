@@ -156,6 +156,12 @@ def search_iterative2(self, word):
 
 ## `itertool`
 
+### `zip_longest`: `165_Compare_Version_Numbers_short.py`
+
+```code
+v1, v2 = zip(*itertools.zip_longest(v1, v2, fillvalue = 0))
+```
+
 ### `heap` problems
 
 ## Heap

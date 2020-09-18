@@ -432,7 +432,7 @@ addPaste(api_dev_key, paste_data, custom_url=None, user_name=None, paste_name=No
 
 * Parameters:
     * `api_dev_key` : API developer key of a registered account, throttle users based on their allocated quota
-    * `paste_data` : string 
+    * `paste_data` : string
     * `custom_url` : string, Optional custom key for the URL
     * `user_name` : Optional user name to be used in generate URL
     * `paste_name` : string, optional name of the paste
@@ -513,7 +513,7 @@ client <------------>  application server <------------ Object storage
 Two layers:
 
 1. Metadata DB: relational DB like MySQL or Distributed Key-value store like Dynamo or Cassandra.
-2. Object storage: Object storage like Amazon S3. Whenever hitting the full capacity on  
+2. Object storage: Object storage like Amazon S3. Whenever hitting the full capacity on
    content storage, increasing by adding more servers.
 
 The flowchart: skip for now.
@@ -780,7 +780,7 @@ auto-increment-increment = 2
 * cache hot DB rows. (LRU) can be a reasonable cache eviction policy.
 * 80-20 rule, try caching 20% of daily read volume of photos and metadata.
 
-# 5. Designing Dropbox
+# Unit 5. Designing Dropbox
 
 ## 5.1 Why Cloud Storage
 
@@ -889,8 +889,1727 @@ auto-increment-increment = 2
 
 #### 5.6.1.3 Clients listen to changes happening with other clients?
 
+* Solution 1: clients periodically check server for any changes.
+* Probelm 1: we will have a delay in reflecting changes locally compare to server push.
+    * If client checks too frequently, then waste BW.
+    * Server return empty response most of the time, waste server BW.
+    * Solution to this problem: long polling.
+
+#### 5.6.1.4 The 4 parts of client:
+
+* Internal Metadata DB: keep track of all the files/chunks/their versions/their location
+* Chunker: split files into smaller chunks. reconstruct a file from its chunk
+  detect the chunks that have been modified, and only transer those parts.
+* Watcher: Monitor when users create/delete/update files or folders.
+  also listens to any changes happening on other clients
+* Indexer: process the events from watcher and update internal metadata DB with info about
+  the chunks of the modified files. Once chunks are successfully submitted/download to
+  the cloud, the Indexer commu. with the remote synchronization service to broadcast
+  changes.
+
+#### 5.6.1.5 Other 2 questions:
+
+* How client handle slow servers?
+    * If a server is too slow to respond, clients should delay their retries and this delay should increase
+      exponentially.
+* How should mobile clients sync?
+    * mobile clients sync on demand to save BW and space.
+
+               data flow           |------------------------|-----------> cloud storage
+         |------------------------>| block server           |
+         |                         | 1, 2, 3                |--------------------
+         |                         |------------------------|                   |
+         |                                                                      |
+         |                                                                      |
+         |                                                                      |
+         |                         |------------------------|                   |
+         |                         | metadata server        |                   |
+         |       control flow      | 1, 2, 3                |                   V
+chunker Indexer------------------> |------------------------|-----------> metadata storage
+watcher Internal DB                             |
+         ^                                      |
+         |                                      |
+         |                                      V
+         |                         |------------------------|
+         |                         | synchronization server |
+         |                         | 1, 2, 3                |
+         |-----------------------> |------------------------|
+
+### 5.6.2 Metadata DB
+
+* Maintaining the version and metadata info about files/chunks, users and workplaces.
+* Can be SQL or NoSQL.
+* Relational DB natively support ACID properties.
+* Store info about the following objects.
+    1. Chunks
+    2. Files
+    3. User
+    4. Devices
+    5. Workspace (sync folders)
+
+### 5.6.3 Synchronization Service
+
+* Process file updates made by a client and applies these changes to other clients.
+* Synchronize clients' local DB with the info stored in the remote Metadata DB.
+* Desktop clients commu with the synchronization service to obtain/send updates
+  from/to the Cloud Storage.
+* Poll the system for new updates ASA back online.
+* Receives an update request, checks metadata DB for consistency and Process the update.
+* A notification is sent to all subscribed users or devices to report the file update.
+
+* Synchronization Service just transmit the difference between two versions of a file.
+* Server and clients can calculate SHA-256 to decide whether to update the local chunk copy.
+* Messaging middleware Between clients and the synchronization service.
+    * scalable message queuing + a high number of clients using pull or push strategies.
+    * Multiple synchronization service instances can receive requests from a global request Queue.
+
+### 5.6.4 Message Queuing Service
+
+* Supports asynchronous and loosely coupled message-based commu between distributed components of the system.
+* Efficiently store any number of messages in a highly available, reliable and scalable queue.
+
+* Request Queue is a global queue, all clients share it.
+* Requests to update the metadata DB will be sent to the Request Queue first.
+* Synchronization Service will take the request and update metadata.
+
+* Response Queues that correspond to individual clients.
+
+### 5.6.5 Cloud/Block Storage
+
+* store chunks of files uploaded by the users.
+* clients directly interact with the storage to send/receive objects.
+* We separate the metadata from storage, so we can use any storage.
+
+## 5.7 File Processing Workflow
+
+* Scenario: ClA updates file, ClB & ClC receive update.
+* If ClB & ClC are offline, they will take the Message Queueing Service
+
+1. ClA uploads chunks to cloud storage.
+2. ClA updates metadata and commits changes.
+3. ClA gets confirmation and notifications are sent to ClB & C about the changes.
+4. ClB and C receive metadata changes and DL updated chunks.
+
+## 5.8 Data Deduplication
+
+* Eliminating duplicate copies of data in storage
+* Eliminating network data
+* When there is an incoming chunk, we first get it's hash
+  if we have the same chunk, then we don't need to receive it.
+
+### 5.8.1 method 1 Post-process deduplication
+
+* Receive data first, analyze later.
+* Clients will not need to wait hash calculation or lookup to complete the data.
+* No degradation in storage performance.
+* Draw backs:
+    * Store duplicate data for a short time
+    * Duplicate data consuming BW.
+
+### 5.8.2 In-line deduplication
+
+* Calculate the hash as the clients are receiving.
+* If the chunk already exists, we just need a reference, no need to store the chunk.
+
+## 5.9 Metadata Partitioning
+
+* M of users and B of files/chunks. We need to divide and store our data in multiple DB.
+
+### 5.9.1 Vertical Partitioning
+
+* One particular feature on one server.
+* E.g. user related tables in one DB and files/chunks related tables in another DB.
+* Issues:
+* Scaling, what if we have T of chunks
+* Joining two tables in separate DB can cause performance and consistency issues.
+
+### 5.9.2 Range Based Partitioning
+
+* Range based Partitioning
+* Files start with "A" in one partition and so on
+* Combine less frequently used letters into one DB partition.
+* Main issue: Unbalanced servers.
+
+### 5.9.3 Hash-Based Partitioning
+
+* Take the hash of the "fileID" of the file object we are storing to determine the partition.
+* Map the hash value to a number between [1...256].
+
+## 5.10 Caching
+
+* Cache for block storage: hot files/chunks.
+    * Memcached will work
+    * Check cache first before hitting block storage
+    * A high-end server can have 144 GB of memory, so caching 36K chunks
+* Cache replacement policy? LRU is good enough
+* Similarly, we can have a cache for metadata DB as well.
+
+## 5.11 Load Balancer (LB)
+
+* Between clients and block server
+* Between clients and metadata server
+* Round-robin initially, but it doesn't consider load
+* More intelligent LB periodically queries BE server about the load
 
 ## 5.12 Security, Permissions and File Sharing
+
+* We will store the permissions of each file in metadata DB to reflect what files are visible
+  of modifiable by any user.
+
+# Unit 6. Designing Facebook Messenger
+
+## 6.1 What is Facebook Messenger
+
+* text-based instant messaging services.
+* chat from cell-phones and website.
+
+## 6.2 Requirements and Goals
+
+### 6.2.1 Functional Requirements:
+
+1. 1-to-1 conversations
+2. track online/offline status
+3. persistent storage of chat history
+
+### 6.2.2 Non-Functional Requirements
+
+1. real-time experience with min latency.
+2. highly consistent. same chat history on all devices.
+3. high availability. but can tolerate lower availability. Prefer consistency over availability.
+
+### 6.2.3 Extended Requirements
+
+1. Group chats
+2. Push notifications
+
+## 6.3 Capacity Estimation and Constraints
+
+* 500M daily active users, 40 messages daily, so 20B messages per day.
+
+### 6.3.1 Storage Estimation
+
+* 20B messages * 100B = 2TB/day
+* We store 5 yrs, 2TB * 365days * 5yr = 3.6 PB
+* Also need to store users' info, messages' metadata.
+
+### 6.3.2 BW Estimation
+
+* 2TB/day / 86400sec ~= 25 MB/s
+
+## 6.4 High level Design
+
+* chat server to orchestrate communications between users.
+* User1 connect to the chat server and send message to the server
+* Chat server passes the message to the other user
+* Chat server also stores it in the DB
+
+        msg A                  |------------------------|                          
+User1 ------------------------>|                        |
+      <------------------------|                        |
+        msg B                  |                        |                    
+                               | chat server            |                    
+        msg A                  |                        |                    
+      <------------------------|                        |
+User2  ----------------------> |------------------------|-----------> DB
+        msg B
+ 
+* User-A sends a message to User-B through chat server
+* chat server receives the message and sends an acknowledge to User-A
+* server stores the message in DB and sends the message to User-B
+* User-B receives the message and sends the ack to the server
+* server notifies User-A the message has been delivered successfully to User-B.
+
+## 6.5 Detailed Component Design
+
+* Simplified assumption: everything runs on one server.
+* We need to handle:
+* Receive incoming messages and deliver outgoing messages.
+* Store and retrieve messages from the DB.
+* Keep a record of which user is online or has gone offline, notify all the relevant users
+  about the status changes.
+
+### 6.5.1 Messages handling
+
+* To send messages, user connect to the server and post messages.
+* To get a message from the server, the user has 2 options:
+    * Pull model: periodically ask the server
+    * Push model: keep a connection open, server notify users.
+* Pull model:
+    * server needs to keep track of messages waiting to be delivered.
+    * in order to minimize latency, users have to check server frequently.
+    * Most of the time is empty response. So not efficient.
+* Push model:
+    * server doesn't need to keep track of pending messages.
+    * latency is also minimized.
+* How clients maintain an open connection?
+    * Use HTTP long polling.
+    * Server holds the request when no new data.
+* How can the server keep track of the opened connection to redirect messages to the users?
+    * Maintain a hash table, key is the UserID, "value" is the connection object
+    * serve receives a message, looks up the user and sends the message on the open request.
+* What if the server receives a message for a user who has gone offline?
+    * Server notify the sender about the delivery failure.
+    * If it's temporary disconnect, e.g. long-poll timed out
+    * In this case, sender to retry sending messages.
+    * This retry could be embedded in client's logic so users don't have to retype
+    * Or server can also store the message for a while and retry sending it
+      once the receiver reconnects.
+* How many chat servers we need?
+    * Assume 500M connections, if modern server can handle 50K connection,
+      then we need 10K servers.
+* How to know which server connects to which user?  
+    * SW LB before chat servers, map userID to a server to redirect the request
+* How should the server process a deliver message request?
+    * Store the message in the DB
+    * Send the message to the receiver
+    * Send an ACK to the sender
+    * Find the server that holds receivre connection
+    * Chat server send the ACK to the sender
+    * Message storing can happen in the BG
+* How does the messenger maintain the sequencing of the messages?
+    * Sever records the messages time stamp, but it still has problem:
+    * U1 sends M1 to U2, server receives M1 at T1
+    * U2 sends M2 to U1, server receives M2 at T2, T2 > T1
+    * Server sends M1 to U2 and then sends M2 to U1
+    * U1 sees M1 first, U2 sees M2 first
+    * Keeps a sequence number with every msg for each client     
+    * Although both clients see a different view of msg sequence, but the view
+      will be consistent for them on all devices.
+
+### 6.5.2 Storing and retrieving the messages from the DB.
+
+* Can do storing msg in 2 ways:
+    1. start a seperate thread, which will work with DB to store the msg.
+    2. Send an async request to the DB to store the msg.
+* Questions in mind:
+    1. How to efficiently work with the DB connection pool
+    2. How to retry failed requests
+    3. Where to log those requests that failed even after some retries
+    4. How to retry logged requests (repeatedly failed retries) when all the issues have resolved?
+* Which storage system we should use?
+    * we want to have a DB support high rate of small updates, also fetch a range of records quickly.
+    * we have a huge no of small messages to insert
+    * we want to sequentially access the messages
+    * Cannot use MySQL or MongoDB, cannot afford to read/write every time a user receives/sends a message.
+    * wide-column DB like HBase will work.
+    * Column-oriented key-value NoSQL DB, multiple values against one key into multiple columns.
+    * HBase groups data, store new data in a memory.
+    * Once buffer is full, it dumps the data to the disk.
+    * Store a lot of small data quickly, fetching rows by the key or scanning ranges of rows.
+* How should clients efficiently fetch data from server?
+    * Clients should paginate. Page size could be different for different clients.
+    * cell phones have smaller screens.
+
+### 6.5.3 Managing user's status
+
+* When a user changes online/offline, we want to notify relevant users.
+* But since we have 500M users, we need some optimization.
+    1. client starts the app, it pulls the current status of all users in his friends' list.
+    2. When a user sends a msg to an offline user, we can send a failure to the sender and update the status
+    3. When a user comes online, the server broadcast with a delay in case he go offline immediately
+    4. Users can pull the status from the server, this shouldn't be frequent operations
+    5. When a user starts a new chat with another user, we can pull the status
+
+### 6.5.4 Design Summary
+
+1. Clients will open a connection to the chat server to send a message.
+2. Server pass it to the requested user.
+3. Active users will keep a connection open to receive messages.
+4. Server push the new msg on the long poll request.
+5. Msg can be stored in HBase, good for quick small updates and range based search
+6. Server bcast the status of a user to other relevant users.
+7. Clients can pull status.
+
+## 6.6 Data Partitioning
+
+* 3.6 PB for 5 yrs, has to distribute it.
+
+### 6.6.1 Partitioning based on UserID:
+
+* Then the data for one user is on the same DB.
+* Assume each DB shard is 4TB, then we need 900 shard for 5 yrs.
+* 1000 servers, then `shard No. = hashID%1000`.
+* Since one user's message is on one server, it will be very fast to fetch
+  the history for one user.
+* At begining, we can start with multiple DB on one server.
+* Then we need to know which logical partition on which server.
+* As our data grows, we can add more physical servers.
+
+### 6.6.2 Partitioning based on messageID:
+
+* Then one user's message will be on different servers.
+  It's very slow to fetch them, so do not use them.
+
+## 6.7 Cache
+
+* We can cache a few recent message, e.g. last 15 in a few recent conversations, e.g. 5.
+* Since all the user's messages on one shard, the cache for a user should entirely
+  reside on one machine too.
+* See the system diagram.
+
+## 6.8 Load balacing
+
+* We need a load balancer that map each userID to a server that holds connection.
+* We also need to a load balancer for cache servers.
+* See the system diagram.
+
+## 6.9 Fault tolerance and replication
+
+### 6.9.1 What if chat server fails?
+
+* Have clients automatically reconnect if the connection lost.
+
+### 6.9.2 Should we store multiple copies of user messages?
+
+* Yes, otherwise we have no way to recover when data crashes or server down permanently.
+* We can store multiple copies of the data on different servers or use techniques
+  like Reed-Solomon encoding to distribute and replicate it.
+
+## 6.10 Extended Requirements
+
+### 6.10.1 Group chat
+
+* Group-chat object is identified by groupchatID and will maintain a list of people
+  who are part of that chat.
+* Load balancer can direct each group chat message based on groupchatID.
+* The server can iterate through all the users of the chat and find the server handling
+  the connection of each user to deliver the message.
+* In DB, we store all the group chats in a seperate table, partitioned based on groupchatID.
+
+### 6.10.2 Push notification
+
+* it will enable our system to send messages to offline users.
+* We need a notification server, which will take the messages for offline users.
+* send them to the manufacturer's push notification server
+* Then send them to the user's device.
+
+# Unit 7. Design Twitter
+
+## 7.1 What is Twitter?
+
+* Users post and read short 140-char.
+* Users can access through web/SMS/mobile app.
+
+## 7.2 Requirements and Goals of the System
+
+### 7.2.1 Functional Requirements
+
+* Users should be able to post new tweets
+* Follow other users
+* Mark tweets as favorites
+* Create and display a user's timeline
+* contain photos and videos
+
+### 7.2.2 Non-functional Requirements
+
+* highly available
+* 200ms for timeline generation
+* Consistency can take a hit. User doesn't see a tweet for a while, should be fine.
+
+### 7.2.3 Extended Requirements
+
+* Searching for tweets
+* Replying to a tweet
+* Trending topics
+* Tagging other users
+* Tweet notification
+* who to follow? Suggestions?
+* Moments
+
+## 7.3 Capacity Estimation and Constraints
+
+* 1B users and 200M daily active users (DAU)
+* 100M new tweets everyday
+* Each user follows 200 users
+
+### 7.3.1 How many favorites per day?
+
+* 5 favorites / user
+* 200 M * 5 = 1B favorites
+
+### 7.3.2 How many total tweet-views will our system generate?
+
+* each visits their timeline two times a day
+* visits 5 other people's pages
+* Each page sees 20 tweets
+* 200M DAU * ((2+5) * 20 tweets) >= 28B/day
+
+### 7.3.3 Storage estimates
+
+* (140char * 2B/char + 30B metadata) * 100M = 30GB/day
+* What storage needs be for 5 yrs? 30G * 365 * 5 = 54750 GB ~ 55TB
+* Storage for user's data: 
+* Storage for follows: (8B/UserID) * (200 following) * 1B users ~ 1600 GB ~ 1.6 TB
+* Storage for favorites:
+* 20% has photos and 10% has videos
+* 200 KB photo, 2 MB video: 100M/5 photos * 200 KB + 100M/10 videos * 2MB ~= 24 TB/day
+
+### 7.3.4 BW estimation
+
+* 24TB/day upload (ingress) (audio/video) ~ 290 MB/sec
+* download
+    * 28B tweets * 280 B = 93 MB/s
+    * 28B tweets / 5  tweets has 1 image * 200KB = 13 GB/s
+    * 28B tweets / 10 tweets has 1 image / 3 videos we watch one * 2 MB = 22 GB/s
+* Total ~= 35 GB/s
+
+## 7.4 System APIs
+
+* Post a new tweet:
+
+```python
+tweet(api_dev_key, tweet_data, tweet_location, user_location, media_ids)
+```
+
+* `api_dev_key`: the API developer key of a registered account. Throttle users based on
+  their allocated quota.
+* `tweet_data`: The text of the tweet, 140 chars
+* `tweet_location`: (longitude, latitude) the location this tweet refers to
+* `user_location`: (longitude, latitude) the location of the user
+* `media_ids`: photo ids and video ids with this tweet
+
+* Returns
+    * Success: URL to access this tweet.
+    * Fail: HTTP error
+
+## 7.5 High level design
+
+* Need to support write 100M/86400 = 1150 tweets/s
+* Need to support read 28B/86400 = 325K tweets/s
+* Need multiple application servers to serve all these requests
+* Need load balancer to distribute traffic.
+* On the BE, we need efficient DB that can:
+    * store all the new tweets
+    * support huge no. of reads.
+* File storage to store photos and videos
+
+                                                       |------------------------|   |-----------> file storage
+                             |------------------------>| Application server     |   |
+                             |                         |                        |   |
+                             |                         |------------------------|   |
+                             |                                                      |
+                             |                                                      |
+                             |                                                      |
+                             |                         |------------------------|   |
+                             |                         | application server     |   |
+                             |                         |                        |   |
+                     load    ------------------------> |------------------------|   |-----------> DB storage
+clients------------> balancer                                       |               |
+                             ^                                      |               |
+                             |                                      |               |
+                             |                                      V               |
+                             |                         |------------------------|   |
+                             |                         | application server     |   |
+                             |                         |                        |   |
+                             |-----------------------> |------------------------|   |
+
+
+* 100M write + 28B read ~ 1160 write/sec + 325K read/sec
+* distribute unevenly through the day
+* Peak load a few thousand write + 1M read / sec
+
+## 7.6 DB schema
+
+* Table 1: tweet table
+
+| PK | TweetID: int            |
+|----|-------------------------|
+|    | UserID: int             |
+|    | Content: varchar(140)   |
+|    | TweetLatitude: int      |
+|    | TweetLongitude: int     |
+|    | UserLatitude: int       |
+|    | UserLongitude: int      |
+|    | CreationDate: datetime  |
+|    | NumFavorites: int       |
+
+* Table 2: User table
+
+| PK | UserID: int             |
+|----|-------------------------|
+|    | Name: varchar(20)       |
+|    | Email: varchar(32)      |
+|    | DateOfBirth: datetime   |
+|    | CreationDate: datetime  |
+|    | LastLogin: datetime     |
+
+* Table 3: UserFollow
+
+| PK | UserID1: int |
+|    | UserID2: int |
+|----|--------------|
+
+* Table 4: Favorites
+
+| PK | TweetID: int            |
+|    | UserID: int             |
+|----|-------------------------|
+|    | CreationDate: datetime  |
+
+* SQL or NoSQL, refer to section 4.6
+
+## 7.7 Data Sharding
+
+* huge number of read/write, we need to distribute our data.
+* We have multiple options to shard data.
+
+## 7.7.1 Sharding based on UserID
+
+* all the data of one user on one server
+* Hash function that will map the user to the DB server which store
+  all the tweets, favorites, follows.
+* Query is similar.
+
+* Issues:
+
+* What if one user is too hot, a lot of queries on that server.
+* Some users can have a lot of tweets or follows much more people than others
+  the uniform distribution of growing user data is difficult.
+* We have repartition/redistribute our data or use consistent hashing.
+
+### 7.7.2 Sharding based on TweetID
+
+* Map TweetID to a random server, a little bit tricky to generate timeline
+* App server find all the people a user follows
+* APP server send the query to all DB to find tweets from these people
+* Each DB server find tweets for each user, sort them by recency
+* App server will merge all the results
+* This approach is good for hot user
+* But we have to query all DB partitions, so higher latency
+* One improvement: Cache hot tweets
+
+### 7.7.3 Sharding based on Tweet creation time
+
+* Advantages:
+    * fetching all top tweets quickly, because we only query a very small set.
+* Disadvantages: 
+    * Traffic is not balancing. All writes go to one server. Most read goes to one server
+    * Another, this is mine, suppose there is a user who don't post tweet for a long time
+      does our app needs to go search a lot of servers? No! so this is no problem.
+
+### 7.7.4 Combine TweetID and Tweet creation time?
+
+* Put the timestamp into the tweetID
+* TweetID = (Tweet creation epoch in second, auto increament no)
+* Assume store 50 yrs, then it's 1.6B second, we need 31-bit
+* Every second, we have ~1150, then we need 17-bit.
+* For better performance, we use 2 DB server to generate auto-increament keys, one for even, one for odd.
+* We still need to query all servers, but will be quicker
+    * We don't have any secondary index, this will reduce our write latency.
+    * While reading, we don't need to filter on creation-time as our primary key has epoch
+
+## 7.8 Cache
+
+* We can introduce a cache for DB servers for hot tweets and users.
+* Memcache is a good solution
+
+### 7.8.1 What cache replacement policy ?
+
+* LRU can be a reasonable policy.
+
+### 7.8.2 More intelligent cache?
+
+* 80-20 rule, try to cache 20% of daily read volume
+
+### 7.8.3 What if we cache the latest data?
+
+* Delicate servers to cache all tweets from all the users from the past 3 days.
+* We have 30GB of new data every day, then we need 100 GB to store for 3 days.
+* Can fit into one server, but we need to distribute all the read traffic.
+* When genereating timeline, we first check cache, then we check the DB.
+
+* Hash table where 'key' would be 'OwnerID' and 'Value' would be a
+  double linked list.
+* This way is easy to insert and remove.
+
+### 7.8.4 The new system diagram with LB/Sharding/Cache
+
+|--------|                  |--------|                  |------------|
+| client |----------------->| LB     |----------------->| App Server |
+|--------|                  |--------|                  |------------|
+                                                               |
+                                                               |
+                                                               |
+                                                               v
+|--------------|                                        |-------------------------|
+| File Storage |<---------------------------------------| Aggratator Server 1/2/3 |
+|--------------|                                        |-------------------------|
+   |                                                      |        |
+   |       |--------|                                     |        |
+   |       | LB     |<------------------------------------|        |
+   |       |--------|                                              |
+   |          |                                                    |
+   |          |                                                    |
+   V          V                                                    V
+|--------------------|                                  |-------------------------|
+| Cache Server 1/2/3 |<---------------------------------| DB Server 1/2/3...N     |
+|--------------------|                                  |-------------------------|
+
+## 7.9 Timeline Generation
+
+* Refer to Facebook's Newsfeed.
+
+## 7.10 Replication and Fault Tolerance
+
+* Read-heavy system, we have multiple secondary DB servers for each DB partition.
+* secondary DB servers for read only
+* Writes go to the primary server, then replicated to secondary servers.
+* It gives us fault tolerance. When ever primary server goes down, we can failover to a secondary server.
+
+## 7.11 Load Balancing
+
+* Add load balancing at 3 places in our system:
+
+1. Between Clients and Application servers.
+2. Between Application servers and DB replication servers.
+3. Between Aggregation servers and Cache server.
+
+* Initially the Round Robin is good enough.
+* Still Round Robin doesn't consider load
+* More intelligent LB that queries BE server load.
+
+## 7.12 Monitoring
+
+* We need to collect following metrics/counters
+1. New tweets per day/second, what is daily peak?
+2. Timeline delivery stats, how many tweets per day/second is delivering?
+3. Average latency to refresh timeline?
+
+## 7.13 Extended Requirements
+
+### 7.13.1 How do we serve feeds?
+
+* Only fetch top N tweets
+* Depends client's Viewport, mobile show fewer tweets compare to a Web client.
+* We can also cache next top tweets
+* We can also pre-generate the feed, see 4.11.1
+
+### 7.13.2 Retweet
+
+* If retweet, we just need to store the ID of the original Tweet
+  not the content
+
+### 7.13.3 Trending topics
+
+* Cache most frequently occuring hashtags or search queries in the last N seconds.
+* Ranking based on frequency of tweets or search queries or retweets or likes.
+* We can give more weight to topics that shown to more people.
+
+### 7.13.4 Who to follow? How to give Suggestions?
+
+* Suggest friends of follows
+* We can go two or three levels down to find famous people.
+* Use ML to give score to each user, inputs will be common followers, common location
+  or interests, etc.
+
+### 7.13.5 Moments
+
+* Get top news
+* Figure out related tweets, categorize them, prioritize them.
+* Show these articles.
+
+### 7.13.6 Search
+
+* See section "Design Twitter Search"
+
+# Unit 8 Designing Youtube or Netflix
+
+* Similar service: youtube.com/netflix.com/vimeo.com/dailymotion.com/veoh.com
+
+## 8.2 Requirements and Goals of the System
+
+### 8.2.1 Functional Requirements
+
+* Users should be able to upload videos
+* Users should be able to share and view videos
+* Users should be able to perform and searches based on video titles
+* Our service should be able to record stats, likes/dislikes, total no. of views.
+* Users should be able to add and view Comments on videos.
+
+### 8.2.2 Non-Functional Requirements
+
+* Highly reliable, video should not be lost
+* Highly available, Consistency can take a hit, if user doesn't see a video for a while, should be fine
+* Users should have a real time experience, should not feel any lag.
+
+### 8.2.3 Not in scope
+
+* Video recommendations
+* Most popular videos
+* Channels
+* Subscriptions
+* Watch later
+* Favorites
+
+## 8.3 Capacity Estimation and Constraints
+
+* 1.5B total users, 800M DAU
+* 5 videos per day, total video-view / sec is: 800M * 5 / 86400 = 46K videos/sec
+* upload/download ratio is 1:200, 46K / 200 = 230 videos/sec
+
+### 8.3.1 Storage Estimates
+
+* 500 hours/min videos are uploaded to Youtube. 1 Min video needs 50MB
+* 500 hrs * 60 min * 50 MB ~ 1500 GB/min = 25 GB/sec
+* Video compression and replication would change our estimates
+
+### 8.3.2 BW estimates
+
+* Each video upload takes a BW of 10 MB/min
+* 500 hrs * 60 mins * 10 MB = 300 GB/min
+* Since upload:view ratio is 1:200, we would need 1TB/s outgoing BW.
+
+## 8.4 System APIs
+
+* uploading API
+
+```python
+uploadVideo(api_dev_key, video_title, video_desc, tags[], category_id, default_lang, recording_details, video_contents)
+```
+
+* `api_dev_key`: the API developer key of a registered account. Throttle users based on
+  their allocated quota.
+* `video_title`: title of the video
+* `video_desc`: optional desc of the video
+* `tags`: optional tags for the video
+* `category_id`: Category of the video, e.g. Film/Song/People
+* `default_lang`: En/Ch/Fr
+* `recording_details`: Location where the video was recorded
+* `video_contents`: Video to be uploaded
+
+* Returns
+    * Success, HTTP 202, A link to the video
+    * Or queryable API
+
+```python
+searchVideo(api_dev_key, search_query, user_location, maximum_videos_to_return, page_token)
+```
+
+* `api_dev_key`: the API developer key of a registered account. Throttle users based on
+  their allocated quota.
+* `search_query`: String containing the search terms
+* `user_location`: Location of the user performing the search
+* `maximum_videos_to_return`: Max no of results returned in one request.
+* `page_token`: specify a page in the result set that should be returned
+
+* Returns (JSON): containing info about the list of video resources matching the search query
+  Will have a video title, a thumbnail, video creation date and view count
+
+```python
+streamVideo(api_dev_key, video_id, offset, codec, resolution)
+```
+
+* `api_dev_key`: the API developer key of a registered account. Throttle users based on
+  their allocated quota.
+* `video_id`: A string to identify the video
+* `offset`: a time in seconds from the beginning of the video. 
+  we can support play/pause from multiple devices. User can watch video on any device where they left off. 
+* `codec`: send codec and resolution in the API from client to support multiple devices
+  First watch on the TV, then watch on a phone.
+
+* Returns: A media stream (a video chunk) from the given offset.
+
+## 8.5 High level Design
+
+* High level components are like following
+* Processing Queue: uploaded video will be pushed into it and de-queued later for encodeding/thumbnail generation and storage
+* Encoder: to encode each uploaded video into multiple formats
+* Thunbnails generator: to generate a few thumbnails for each video.
+* Video and thumbnail storage: To store video and thumbnail files in some distributed file storage.
+* User DB: To store user's info, e.g., name, email, address, etc.
+* Video metadata storage: A metadata DB to store all the info about video
+    * title
+    * file path
+    * uploading user
+    * total views
+    * likes
+    * dislikes
+    * Video Comments
+
+|--------|                  |------------|                  |-------------------|                        |------------------|                        |--------|
+| client |<---------------->| Web server |<---------------->| App Server        |----------------------->| Processing Queue |----------------------->| Encode |
+|--------|                  |------------|                  |-------------------|                        |------------------|                        |--------|
+                                                               ^      ^      ^                                                                           |  |
+                                                               |      |      |                          |-------------------------------------------------  |
+                                                               |      |      |------------------------------------------------|                             |                             
+                                                               v      |                                 |                     |                             |                              
+                                                        |---------|   |              |-------------|    |             |---------------------------|         |
+                                                        | User DB |   |------------->| Metadata DB |<---|             | video & thumbnail storage |<--------|
+                                                        |---------|                  |-------------|                  |---------------------------|
+ 
+## 8.6 DB Schema
+
+### 8.6.1 Video meta storage - MySQL
+
+* VideoID
+* Title
+* Description
+* Size
+* Thumbnail
+* Uploader/User
+* Total number of likes
+* Total number of dislikes
+* Total number of views
+
+* For each video Comment
+    * CommentID
+    * VideoID
+    * UserID
+    * Comment
+    * TimeOfCreation
+
+### 8.6.2 User data storage - MySQL
+
+* UserID, Name, email, address, age, registration details etc.
+
+## 8.7 Detailed Component Design
+
+* Read heavy system, 200:1
+
+### 8.7.1 Where would videos be stored?
+
+* Distributed file storage system like HDFS or GlusterFS.
+
+### 8.7.2 How should we efficiently manage read traffic?
+
+* Segregate read traffic from write traffic
+* We have multiple copies of each video, so distribute our read traffic on different servers.
+* Metadata, we can have a master-slave configuration: writes go to master first then applied to slaves.
+* Will cause some staleness, when slaves' metadata is not in sync with the master
+* This staleness is short and acceptable
+
+### 8.7.3 Where to store thumbnails?
+
+* Assume each video has 5 thumbnails.
+* We need to have efficient storage that servers huge read traffic
+* Each thumbnail is small, 5KB each
+* Read traffic for thumbnail will be huge compare to video, since one web page can 20 videos, each of them have 5 thumbnails.
+* If we store them on a disk, we have to perform a lot of seeks to different Location on the disk to read these files, inefficient!
+* Bigtable is an ideal choice
+    * since it combines multiple files into one block to store on the disk.
+    * Very efficient in reading a small amount of data.
+* We can also cache hot thumbnails, since they are small, we can cache a lot of them.
+
+### 8.7.4 video uploads
+
+* We should support resumming from the same point
+
+### 8.7.5 video encoding
+
+* Once video is uploaded, then put them into a queue for encoding
+* Once encoding is completed, the user will be notified and video will be made available for view/sharing.
+
+
+                                                                                                                                                             
+                                                                                                                                                             
+                                                                                                                                                                                          
+                                                                                                                                                                                           
+                                                                                                                                                                                           
+                                                                                                                                                                                           
+                                                                                                                                                                                           
+                                                                                                                                                                                           
+                                                                 |---------|                  |-------------|    
+                                                                 | User DB |  |-------------->| Metadata DB |<-------------------------------------------
+                                                                 |---------|  |               |-------------|                                           |
+                                                                      |       |                                                                         | 
+                                                                      |       |                                                                         | 
+                                                                      |       |                                                                         | 
+                                                                      v       v                                                                         v 
+|--------|                  |------------|                  |-------------------|                        |------------------|                        |--------|
+| client |<---------------->| Web server |<---------------->| App Server        |----------------------->| Processing Queue |----------------------->| Encode |
+|--------|                  |------------|                  |-------------------|                        |------------------|                        |--------|
+    ^                             ^                                          ^                                                                           |  |
+    |                             |                                          |                          |-------------------------------------------------  |
+    |                             |                                          |------------------------------------------------|                             |                             
+    |                             |                                                                     |                     |                             |                              
+    |                             |                                                                     |                     |                             |                              
+    |                             |                                                                     |                     |                             |                              
+    |                             |                                                                     |                     |                             |                              
+    |                             v                                                                     |                     |                             |                              
+|-----------|              |-------------------|                                     |---------------|  |             |----------------------------|        |
+|  CDN      |<-------------| Video Image Cache |<------------------------------------| Video storage |<-|             | Bigtable thumbnail storage |<-------|
+|-----------|              |-------------------|                                     |---------------|                |----------------------------|
+ 
+## 8.8 Metadata Sharding
+
+* We need to distribute our data on multiple machines
+
+### 8.8.1 Based on UserID
+
+* Pass UserID to hash function, map the user to DB server.
+* To search video by titles, we will query all servers and each server will return a set of videos.
+* A centralized server will aggregate the rank and return to user
+
+#### Issues with this approach
+
+* If a user is too hot, then a lot of queries on the server, creating bottlenecks.
+* Some users store much more videos than others, it's hard to maintain uniform distribution.
+* We have repartition/redistribute our data or use consistent hashing.
+
+### 8.8.2 Based on Video ID
+
+* Just map the videoID to a server
+* Search still needs to query all servers
+* Shifts the popular user problem to popular video.
+* Using cache to store hot videos.
+
+## 8.9 Video Deduplication
+
+* Huge no of user, massive amount of video, we need to deal with widespread video duplication.
+* duplication differ in aspect ratio, encoding, contain overlays or additional border, excerpts from a longer video.
+* Wasting data storage, degrade cache efficiency, increase network traffic and energy consumption.
+* Users will also see duplicate search results, longer video startup times
+* We are trying to find duplication when a user is uploading a video.
+* We can run video matching algorithms, e.g. block matching, phase correlation.
+* If we find a video already being uploaded, we can stop upload or use existing copy or user higher quality.
+* If the new uploaded video is a subpart, we can divide the video into smaller chunks.
+
+## 8.10 Load Balancing
+
+* We use consistent Hashing among cache servers, so the load between cache servers will be balanced.
+* If a video becomes popular, it's logical partition will have more traffic.
+* Busy server in one Location can redirect to a client to a less busy server in the same cache location.
+
+* Problems: if the host can't serve the video. Each redirection requires a client to make an additional HTTP
+* Higher delays before video playing back.
+* cross data-center redirections lead a client to a distant cache.
+
+## 8.11 Cache
+
+* Use a large number of geographically distributed video cache
+* We need maximize user performance and evenly distributes the load on cache servers.
+* Cache for metadata servers
+* Using Memcache
+* Use LRU policy
+* Use 80-20 rule
+
+## 8.12 Content Delivery Network (CDN)
+
+* deliver web content based in the geographical locations
+* Check out "CDN" in caching chapter
+* Move popular videos to CDN
+    * CDNs replicate content in multiple places.
+    * CDN make heavy use of caching
+
+## 8.13 Fault Tolerance
+
+* Consistent Hashing: distribution among DB servers.
+* Help replacing dead server, also help in distributing load among servers.
+
+# Unit 9 Designing Typeahead Suggestion
+
+* Similar Services: Auto-Suggestions, Typeahead search
+* Difficulty: Medium
+
+## 9.1 What is Typeahead Suggestion?
+
+* Users search for known and frequently searched terms
+* When user types into the search box, it tries to predict the query based on the characters
+  the user has entered and gives a list of Suggestions
+* It's about guiding the users to construct their search query.
+
+## 9.2 Requirement and Goals of the system
+
+* Functional Requirements: As the user types in their query, our service should suggest top 10 terms starting
+  with whatever the user has typed.
+* Non-functional Requirements: The Suggestions should appear in real-time.
+  The user should be able to see the suggestion within 200ms.
+
+## 9.3 Basic System Design and Algorithm
+
+* We need to store in such a way, users can search with any prefix
+    * E.g. systems contains `[cap, cat, captain, capital]`, the user has typed in
+      `cap`, then the system suggests `[cap, captain, capital]`
+* We need highly efficient data structure, i.e. `Trie`
+    * We can even merge the node with one branch to save storage
+* Case insensitive? For simplicity, assume our data is case insensitive.
+* How to find top suggestion?
+    * We can record the count of seraches, e.g. CAPTAIN 100 times and CAPTION 500 times
+    * When search, we find the top suggestions for a given prefix, we can traverse the sub-tree
+* Given a prefix, how much time will it take to traverse its sub-tree?
+    * We expect huge tree, and strict latency requirements, we do need to improve efficiency.
+* Can we store top suggestions with each node?
+    * Surely will speed up searches but will require a lot extra storage.
+    * We can store 10 suggestions at each node, but just storing references of the terminal nodes.
+    * Why we need to traverse back using the parent reference?
+    * Also store the frequency with each reference to keep track of top suggestions.
+
+### 9.3.1 How to update the trie?
+
+* 5B searches everyday, we would have 60K queries/second, very resource intensive and will hamper our read requests.
+* We need to update our trie offline after a certain interval.
+* When new queries come in, we log them and track their frequencies. We can do this every 1000 query.
+* We can use Map-Reduce (MR) to process all the logging data every hour. These MR jobs
+  will calculate frequencies of all searched terms in the past hour.
+* We need to update the Trie offline, so won't jog the reading requests.
+    * We can make a copy of the trie on each server to update it offline. Once done we can switch 
+      to start using it and discard the old one.
+    * We can have a master-slave configuration, master is serving traffic, slave gets the update.
+      Then switch master and slave.
+
+### 9.3.2 How can we update the frequencies of typehead suggestions?
+
+* We will keeping counting all the terms in last 10 days, and add it with exponential moving average (EMA).
+  We give more weight to the lastest data.
+* After inserting a new term, it's possible this term jumped into the top 10 queries for a few other nodes.
+* We go from root and check if the current query's frequency is high enough to be top 10.
+* If so, we insert this new term and remove the term with the lowest frequency.
+
+### 9.3.3 How can we remove a term from the trie?
+
+* The reason to remove: legal issue/hate/piracy.
+* We can do it when the regular update happens.
+* Or we can add a filtering layer on each server, which will remove any such term before sending them to users.
+
+### 9.3.4 Different ranking criteria?
+
+* Freshness, user location, language, demographics, personal history.
+
+## 9.4 Permanent Storage of the Trie
+
+### 9.4.1 How to store trie in file so we can rebuild easily?
+
+* Take a snapshot periodically and store it in a file.
+* We can store the tree serilized, the node followed by how many children it has, e.g. "C2,A2,R1,T,P,O1,D"
+* There is no easy way to store the top suggestions for each node, how to recalculate it.
+
+## 9.5 Scale Estimation
+
+* Service like Google: 5B searches everyday, ~60K/sec queries.
+* We can assume only 20% will be unique, assume we only want to index the top 50%
+* Then we assume we will have 100M unique terms
+
+### 9.5.1 Storage Estimation:
+
+* On average, each query consists of 3 words and the average length of a word is 5 chars
+* We will have 15 chars of average query size, we will need 30 bytes to store an average query.
+* Total storage we will need is 100M * 30 bytes >= 3 GB.
+* If we expect 2% new queries everyday and maintaining our index for the last year, total storage we should expect: 3 GB + (0.02 * 3GB * 365 days) ~ 25 GB
+
+## 9.6 Data Partition
+
+* Although the data can easily fit in one server, we can still partition them to lower latencies.
+
+### 9.6.1 Range Based Partition
+
+* We can store based on the first letter.
+* Combine less frequently occurring letters into one partition.
+* The problem is still Unbalanced servers. E.g.
+    * Put all terms starting with "E" in one partition
+    * Later we found there are too many terms and we can't fit into one partition.
+
+### 9.6.2 Partition based on the maximum capacity of the server
+
+* Whenever a sub-tree cannot fit into a server, we break our partition there to assign that range to this server, e.g.
+    * Server 1: A-AABC
+    * Server 2: AABD-BXA
+    * Server 3: BXB-CDA
+* When user type "AA", we have to query Server 1 and 2. But when the user typed "AAA", we only need to query server 1.
+* We can have a load balancer in front of trie servers to store this mapping and redirect traffic.
+* Either server side or client side need to merge results.
+* Can still have hot spot problem.
+
+### 9.6.3 partition based on the hash of the term
+
+* The distribution of the term will be more balanced.
+* The disadvantage is we have to query all servers to aggregate results.
+
+## 9.7 Cache
+
+* We should have separate cache servers in front of the trie servers holding most frequently searched terms and their typehead suggestions.
+* Application servers should check these cache servers before hitting the trie servers.
+* ML model based on simple counting, Personalization, or trending data.
+
+## 9.8 Replication and Load balancer
+
+* We should have replicas for trie servers for load balacing and fault tolerance.
+* We need load balancer to track data partitioning scheme.
+
+## 9.9 Fault Tolerance
+
+* What if a trie server goes down? We can have a master-slave configuration.
+* If the master dies, the slave can take over.
+* Server comes back up, can rebuild the trie based on the last snapshot.
+
+## 9.10 Typeahead Client
+
+* The following optimization on the client side to improve user's experience.
+* The client only hit server if User has not pressed any key for 50ms.
+* If the user is constantly typing, the client should cancel the in-progress requests.
+* Initially, the client can wait until the user enters a couple of characters.
+* Clients can pre-fetch some data from the server to save future requests.
+* Clients can store the recent history of suggestions locally. Recent history has a very high rate of being reused.
+* As soon as the user opens the search engine website, the client can open a connection with the server.
+* The server can push some part of their cache to CDN and Internet Service Providers for efficiency.
+
+## 9.11 Personalization
+
+* User will receive suggestions based on historical searches, location, language.
+* We can store personal history of each user separately on the server.
+* Also cache them on the client.
+* The server can add personalized terms and send them to the user.
+
+# Unit 10 Designing an API Rate Limiter
+
+* Design an API Rate Limiter which will throttle users based upon the number the requests they are sending.
+* Difficulty Level: Medium.
+
+## 10.1 What is a Rate Limiter?
+
+* Our service receives a huge number of requests, we cannot serve them all.
+* We need some rate limiting mechanism which only allow certain number of requests.
+* RL can do:
+    * A user can send only one message per second.
+    * A user is only allowed 3 failed transactions per day.
+    * A single IP can only create 20 accounts per day.
+* RL caps how many requests a sender can issue. After caps reached, RL blocks further requests.
+
+## 10.2 Why do we need API RL?
+
+* Protect us against abusive behaviors
+    * like DOS attacks
+    * brute-force password/credit card
+* Hard to detect
+* Easily bring down the server
+
+### 10.2.1 Beneficial Scenario
+
+* Mishehaving clients/scripts
+    * Users can send a log of low-priority requests.
+* Security: They are only allowed to try a certain times of wrong password.
+* Prevent abusive behaviors:
+    * Users requests the same info again and again
+* Keep costs and resource usage under control.
+* Revenue: Premium users and normal user charge differently.
+* Eliminate spikiness in traffic
+
+## 10.3 Requirement and Goals of the system
+
+### 10.3.1 Functional Requirements
+
+* Limit the # of requests an entity can send to an API within a time window, e.g. 15 requests/sec.
+* The user should get an error message when threshold is crossed within single server or across a combination of servers.
+
+### 10.3.2 Non-Functional Requirements
+
+* Highly available, RL should always work since it protects the service.
+* Should not introduce substantial latencies affecting the user experience.
+
+## 10.4 How to do Rate Limiting
+
+* RL is a process to define the rate and speed at which consumers can access APIs.
+* Throttling is to control the usage during a given period.
+* Throttling can be at the application level and/or API level.
+* When limit is crossed, server returns HTTP 429 - Too many requests.
+
+## 10.5 What are different types of throttling?
+
+* Hard Throttling: the no of API requests cannot exceed the throttle limit.
+* Soft Throttling: API request limit to exceed a certain percentage.
+  E.g., we limit to 100 messages and allow 10% exceed-limit, we allow 110 message.
+* Elastic of Dynamic Throttling: can go beyond the threshold if the system has some resources
+
+## 10.6 What are different types of algorithms used for RL?
+
+### 10.6.1 Fixed Window Algorithm
+
+* E.g., if the window is 1 second, the `[0,1]` and `[1,2]` are two windows`
+
+### 10.6.2 Rolling Window Algorithm
+
+* The window starts when the first request is made.
+
+## 10.7 High level design for Rate Limiter
+
+* RL decides which request will be served by the API.
+* Web Server arrives first, then web server asks the RL to decide to server or throttle.
+* If we decide to serve, then request goes to API servers.
+
+|--------|                  |------------|                  |-------------------|
+| client |<---------------->| Web server |<---------------->| App Server 1/2/3  |
+|--------|                  |------------|                  |-------------------|
+                                  ^             
+                                  |             
+                                  |             
+                                  |             
+                                  |             
+                                  |             
+                                  |             
+                                  v             
+|------------|              |-------------------|              |-------------------|
+| BE Storage |<-------------| Rate Limiter      |------------->| Cache server      |
+|------------|              |-------------------|              |-------------------|
+
+## 10.8 Basic System Design and Algorithm
+
+* Limit the number of requests per user.
+* For each unique user, we would keep a count representing how many requests the user
+  has made and a timestamp when we started counting.
+* We can keep the in a hashtable: `{UserID: [Count, EpochTime]}`
+* Assume the RL is 3 requests/min
+* When a new request comes in, we will perform the following steps:
+    * If `UserID` is not present in the hash-table, insert it, set the `Count` to 1
+      set `StartTime` to the current time, round to minute.
+    * Otherwise, find the `UserID`. if `CurrentTime - StartTime >= 1 min`,
+      set the `StartTime` to the CurrentTime, set `Count` to 1, allow request
+    * If `CurrentTime - StartTime <= 1 min` and if `Count < 3`, increament the Count and allow the request.
+      If `Count >= 3`, reject the request.
+
+### 10.8.1 Problems with this algorithm.
+
+1. This is a Fixed Window algorithm. A User can potentially have 6 requests in one min window.
+2. Atomicity: A user's Count is 2, and she sends 2 more requests. Two separate processes served each requests.
+   and they concurrently read the count before they updated it.
+    * If we use Redis to store the key-value, we can use Redis lock
+    * If we are using a simple hash-table, we can have a custom implementation for 'locking'
+3. How much memory would we need to store all of the user data?
+    * `UserID`: 8 bytes, `Count`: 2 bytes, `epoch time`: 2 bytes enough for min+second part.
+    * 20 bytes for each record.
+    * 1M users at any time: (12+20) bytes * 1M => 32 MB.
+    * 4-byte lock for each record, 32 MB + 4MB = 36 MB.
+    * We still want to distribute the data, we will store them in Redis or Memcached.
+    * We store the all the data in the remote Redis servers and all RL will read these servers
+      before serving or throttling any request.
+
+## 10.9 Sliding Window algorithm
+
+* We can maintain a sliding window.
+* Store the timestamp of each request in Redis `Sorted Set` in `value` field of hash-table.
+* Here are the steps:
+    1. Remove all the timestamps from the Sorted Set that are older than "CurrentTime - 1 min"
+    2. Count the total number of elements in the sorted set. Reject if this count is >= 3
+    3. Insert the current time in the sorted set and accept the request.
+* How much memory would we need?
+    * `UserID`: 8 bytes, `epoch time`: 4 bytes.
+    * 20 bytes overhead for each sorted set element in hashtable and 20 bytes for hashtable
+    * 8+(4+20)*500+20 = 12 KB
+    * sorted set element use linklist, one ptr to previous one, one ptr to next one. Each ptr is 8-byte,
+      then plus 4-byte for other overhead. Then we come up with 20 ptr.
+    * If we need to track 1M users, total memory is 12 KB * 1M ~= 12 GB
+
+## 10.10 Sliding Window with Counters
+
+* Assume we have hourly limit, we can keep a count for each min and calculate the sum.
+* Example: 500 requests/hour, 10 requests/min
+* Store the counters in a Redis Hash, because it's very efficient for fewer than 100 keys.
+* When each request increaments a counter, it also sets the hash to expire an hour later.
+* We will normalize each "time" to a minute.
+
+### 10.10.1 How much memory we would need?
+
+* `UserID`: 8 bytes, `epoch time`: 4 bytes, `Counter`: 2 bytes
+* 20 bytes overhead for hash-table and 20 bytes for Redis hash.
+* Since we'll keep a count for each min, we would need at most 60 entries
+* 8 + (4+2+20)*60 + 20 = 1.6 KB, 1M users ~= 1.6 GB, save 86% memory compare to sliding window algorithm.
+
+## 10.11 Data Sharding and Caching
+
+* We can shard based on the "UserID" to distribute the user's data.
+* For fault tolerance and replication we should use consistent Hashing.
+* We can also shard per uer per API, e.g. we have different RL for `createURL()` and `deleteURL()`.
+* We want to limit each user not to create more than 100 short URLs per hour.
+* Assume we are using Hash-Based Partition for `createURL` API, we can rate limit each partition to
+  allow a user to create not more than 3 per minute.
+
+### Cache
+
+* Application servers can quickly check if the cache has the desired record.
+* We can benefit from the Write-back cache by updating all counters and timestamps in cache only.
+* This way latency is minimized.
+* We can use (LRU)
+ 
+## 10.12 Should we rate limit by IP or by user?
+
+### IP
+
+* multiple users share a single public IP in an internet cafe.
+* Bad users can throttle other users.
+* Another Problem: run out of memory tracking IPv6 address.
+
+### User
+
+* After ahthentication, user will be provided with a token which is used in every request.
+* A hacker can perform a denial of service attack by entering wrong credentials up to the limit.
+  Then user can not log in.
+
+### Hybrid
+
+* Do both per-IP and per-user rate limiting
+* More cache entries with more details per entry, more memory and storage.
+
+# Unit 11 Designing Twittr Search
+
+* Design a service that can store and search user tweets.
+* Difficulty Level: Medium
+
+## 11.1 What is Twittr Search?
+
+* Our goal is to design system that allows searching over all the user tweets.
+
+## 11.2 Requirements and Goals of the System?
+
+* 1.5 B total users with 800 M DAU
+* 400 M tweets every day
+* 300 Bytes per tweet
+* 500 M searches every day.
+* multiple words combined with AND/OR.
+* We need to design a system that can efficiently store and query tweets.
+
+## 11.3 Capacity Estimation and Constraints
+
+* Storage Capacity: 400M * 300 >= 120 GB/day ~= 1.38 MB/sec
+
+## 11.4 Systems APIs
+
+```python
+search(api_dev_key, search_terms, maximum_results_to_return, sort, page_token)
+```
+
+* `api_dev_key`: the API developer key of a registered account. Throttle users based on
+  their allocated quota.
+* `search_terms`: A string containing the search terms
+* `maximum_results_to_return`: # of tweets to return.
+* `sort`: sort mode, 0 - latest first, 1 - Best matched, 3 - Most liked.
+* `page_token`: specify a page in the result set that should be returned.
+
+* Returns: A JSON containing info about a list of tweets matching the search query
+    * containing user ID & name
+    * tweet text
+    * tweet ID
+    * creation time
+    * # of likes.
+
+## 11.5 High Level Design
+
+* We need to build an index that can keep track of which word appears in which tweet
+
+|--------|  Update Status   |------------|                  |-------------------|
+| client |<---------------->| App server |<---------------->| Storage Server    |
+|--------|  Search Status   |------------|                  |-------------------|
+                                  ^             
+                                  |             
+                                  |             
+                                  |             
+                                  |             
+                                  |             
+                                  |             
+                                  v             
+                            |-------------------|
+                            | Index Server      |
+                            |-------------------|
+
+## 11.6 Detailed
+
+### 11.6.1 Storage
+
+* We need to store 120G of new data every day.
+* So we need data partitioning scheme 
+* If we plan for next 5 years, we need 120G * 365 days * 5 yrs ~= 200 TB.
+* We only want to 80% full, we need 250 TB.
+* Assume we need an extra copy, then we need 500 TB.
+* Assume modern server can hold 4T, then we need 125 servers.
+* Assume we use MySQL, store 2 columns: TweetID and TweetText.
+* Hash function to map TweetID to a storage server.
+
+#### 11.6.1.1 How to create system-wide unique TweetIDs?
+
+* 400M * 365 days * 5 yrs => 730 B
+* We need 5 bytes and generate a unique TweetID, similar to "Designing Twitter"
+
+#### 11.6.1.2 Index
+
+* Assume we have 300K English words and 200K nouns
+* Assume 5 chars average for each word, then we need 2.5 MB memory
+* Want to keep the index in memory for all tweets from only past 2 years, i.e. 292B tweets.
+* Each TweetID will be 5B, then we need to store 1460 GB.
+* Our index would be a big distributeed hash table
+* key would be the word, value will be a list of TweetIDs of all tweets contain that word.
+* Assume we have 15 words in each tweet to be indexed.
+* So total memroy (1460 * 15) + 2.5MB ~= 21 TB.
+* Assuming a high-end serve has 144 GB of memory, we would need 152 such servers to hold our index.
+
+#### 11.6.1.3 Sharding based on Words
+
+* Iterate through all the words of a tweet and calculate the hash and find the server.
+* To Query, we only need to query only one server.
+* Again, what if a word becomes hot? Server will be hot.
+* Some words can store a lot of TweetIDs than other words, so distribution is not unique.
+
+#### 11.6.1.4 Sharding based on tweet object
+
+* We generate hash for TweetID, and store all the words of the tweet on that server.
+* To query, we have to query all the servers.
+* A centralized server will aggregate the results.
+
+|--------|     |------|     |------------|
+| client |---->| LB   |---->| App server |
+|--------|     |------|     |------------|
+                                  ^             
+                                  |             
+                                  |             
+                                  |             
+                                  |             
+                                  |             
+                                  |             
+                                  v             
+                            |-------------------|                  |-------------------|
+                            | aggregator Server |<---------------->| DB 1/2/3/4/5      |
+                            | 1/2/3             |                  |                   |
+                            |-------------------|                  |-------------------|
+                                   |                                     |
+                                   |                                     |
+                                   |                                     |
+                                   v                                     v
+                            |-------------------|                  |----------------------|
+                            | Index Server      |<---------------->| Index Builder Server |
+                            | 1/2/3             |                  |                      |
+                            |-------------------|                  |----------------------|
+
+## 11.7 Fault Tolerance
+
+* What will happen when a image server die?
+    * We can have a secondary replica of each server.
+    * Primary dies, then secondary takes over.
+* What if both dies? Need to rebuild the same index on it.
+    * Brutal force way is to iterate all DB
+    * Filter tweet based on hash function
+    * inefficient
+    * During rebuild, we can't serve any query.
+* How to retrieve mapping between tweets and the index server?
+    * Build a hash table
+    * Key will be the index server number, value will be a Hashset containing all the TweetIDs.
+    * When a index server crahes, we can quickly get all the tweets
+    * We should also have a replica of the Index-Builder server
+
+## 11.8 Cache
+
+* We can introduce a cache in front of our DB.
+* We can use Memcached.
+* We can use LRU.
+
+## 11.9 LB
+
+* Between Clients and APP servers
+* Between App servers and BE servers
+* A RR in the begining
+* Later might need LB based on load.
+
+## 11.10 Ranking
+
+* Rank by social graph distance, popularity relevance?
+* We store (# of likes) and store it with the index.
+* Each partition do the sorting and sends to aggregator.
+* Aggregator Combines all these results.
+
+# Unit 12 Designing a Web Crawler
+
+* Web Crawler systematically browse and download the WWW.
+
+## 12.1 What is a Web Crawler
+
+* A Program which browses the WWW.
+* It revursively fetching links from a set of starting pages
+* Search engines download all the pages to create an index on them to perform faster searches.
+* To test Web pages and links for valid syntax and structure
+* To monitor sites to see when their structure or contents change
+* Maintain mirror sites for popular Web sites.
+* Search for copyright infringement
+* To build a special-purpose index.
+
+## 12.2 Requirements and Goals of the System
+
+* Scalability: can crawl the entire Web and can be used to fetch hundreds of millions of Web doc.
+* Extensibility: should be designed in a modular way that new functionality will be added to it.
+  Newer doc types that need to be downloaded.
+
+## 12.3 Some Design Considerations
+
+* Is it a crawler for HTML pages only? Should we fetch and store other types of media, sound/images/videos?
+  We want to break parsing module into different sets of modules: HTML/images/videos
+* We will assume HTTP, no FTP, but it should be extended.
+* What is the expected number of pages? How big will the URL database become.
+    * Assume 1B websites
+    * Assume 15B web pages we will reach
+* What is 'RobotExclusion' and how should we deal with it?
+    * Webmasters declare parts of their sites off-limits to crawlers.
+
+## 12.4 Capacity Estimation and Constraints
+
+* We want to crawl 15 B pages in 4 weeks, then ~ 6200 pages/sec
+* What about storage?
+    * Since we only process HTML, we assume the average page size of 100 KB, and store 500 bytes of metadata
+    * 15B * (100KB + 500) ~= 1.5 petabytes
+    * Assume 70% capacity model, and we don't want to go above 70%, so 1.5 petabytes / 0.7 ~= 2.14 petabytes.
+
+## 12.5 High Level design
+
+* Take a list of seed URLs as its input and repeatedly execute the following steps
+    1. Pick a URL from the unvisited URL list
+    2. Determine the IP Address of its host-name
+    3. Establish a connection to the host to download the corresponding document.
+    4. Parse the document contents to look for new URLs.
+    5. Add the new URLs to the list of unvisited URLs.
+    6. Process the downloaded document, e.g., store it or index its contents.
+    7. Go back to step 1
+
+### 12.5.1 How to crawl?
+
+* BFS and DFS? BFS usually used, sometimes DFS
+* Path-ascending crawling: ascend to every path in each URL
+    * e.g. `foo.com/a/b/page.html`, `foo.com/a/b`, `foo.com/a`, `foo.com`
+
+### 12.5.2 Difficulties in implementing efficient web crawler
+
+* Large volume of Web pages: web crawler can only download a fraction of the web pages
+  web crawler should prioritize download
+* Rate of chage on web pages, web page change very frequently.
+* components needed for min crawler
+    * 1. URL frontier: store the list of URLs to download and also prioritize which URLs crawled first.
+    * 2. HTML Fetcher: to retrieve a web page from the server.
+    * 3. Extractor: to extract links from HTML documents.
+    * 4. Duplicate Eliminator: to make sure the same content is not extracted twice
+    * 5. Datastore: To store retrieved pages, URLs, and other metadata.
+
+## 12.6 Detailed Component Design
+
+* Assume our crawler is running on one server
+* crawling is done by multiple working threads
+
+### 12.6.1 step1
+
+* Remove an absolute URL from the shared URL frontier for downloading.
+* An absolute URL begins with a scheme "HTTP/FTP", which identifies the network protocol
+* Based on the protocol, the worker calls the appropriate module to download.
+* After downloading, the document is placed into a Document Input Stream (DIS)
+
+### 12.6.2 step2
+
+* the worker thread invokes the dedupe test to determine
+  if the URL has been seen before.
+* If so, move to next URL.
+
+### 12.6.3 step3
+
+* Process the DL doc.
+* Each can have different MIME type like HTML page, Image/Video.
+* Implement in a modular way, can be extended to future types.
+
+### 12.6.3 step4
+
+* Futhermore, HTML processing module will extract all links.
+* Run through user-supplied URL to filter
+* Checks if the URLs has been seen before, if not download it.
+
+
+                                        |------------------|       |-------------|
+                                        | Queue Files      |       | URL set     |
+                                        |------------------|       |-------------|
+                                                 ^                        ^
+                                                 |                        |
+                                                 |                        |
+                                                 V                        |
+                 |----------------|     |------------------|       |------------|
+    ------------>| DNS Resolver   |     | URL Frontier     |<------| URL De-Dup |
+    |            |----------------|     |------------------|       |------------|
+    |                  ^                      ^                            ^
+    |                  |      |---------------|                            |--------------------|
+    |                  |      |                                                                 |
+    V                  V      V                                                                 V
+|----------|     |----------------|     |------------------|     |------------------|     |------------|
+| Internet |---->| HTML Fetcher   |---->| Doc Input Stream |---->| Extractor        |---->| URL Filter |
+|----------|     |----------------|     |------------------|     |------------------|     |------------|
+                                                 |
+                                                 V
+                                        |------------------|     |-----------|
+                                        | Doc De-dup       |---->| Doc Store |
+                                        |------------------|     |-----------|
+                                                 |
+                                                 V
+                                        |------------------|
+                                        | Doc checksum set |
+                                        |------------------|
+
+#### 12.6.4.1 The URL frontier
+
+* It contains all the URLs that remain to be DL.
+* Perform BFS. Use FIFO to implement.
+* We have a huge list to crawl, we can distribute our URL frontier into multiple servers.
+* Each server we have multiple worker threads performing the crawling tasks.
+* Hash function maps each URL to a server.
+* Politeness requirements:
+    * Crawler should not overload a server.
+    * We should not have multiple machines connecting a web server.
+* Each server and Each worker will have its seperate sub-queue.
+* How big will our URL frontier be?
+    * millions of URLs, so we have to use disks
+    * We can have separate buffers for enqueuing and dequeuing.
+    * Enqueuing buffer once filled will be dumped to the disk.
+    * Dequeuing buffer will periodically read from disk to fill the buffer.
+
+#### 12.6.4.2 The fetcher module
+
+* Download the document using appropriate network protocol
+* Webmasters can make certain parts off-limits for the crawler by creating robot.txt .
+
+#### 12.6.4.3 Document input stream (DIS)
+
+* Same doc can be processed by multiple processing modules.
+* To avoid DL a doc multiple times, we cache the doc using DIS
+* DIS cache the entire contents of the doc, cache the small one in memory and larger doc to a backing file.
+* Worker thread first extract URL from the frontier, passes the URL to relevant protocol module.
+  The protocol module initializes the DIS from a network connection to contain the doc's contents.
+  The worker then passes the DIS to all relevant processing modules.
+
+#### 12.6.4.4 Document Dedupe test:
+
+* Many docs on the web are available under multiple different URLs.
+* docs are also mirrored on various servers.
+* We need to perform a dedupe test on each doc to remove duplication.
+* We can calculate a 64-bit checksum and store it in a DB, use MD5 or SHA.
+
+#### 12.6.4.4.1 How big the checksum store?
+
+* Assume 15B and 8-Bytes, then it's 15B * 8-Bytes => 120 GB.
+* We can use LRU based cache on each server
+* First check cache, then storage, if checksum is found, then ignore the doc. Otherwise
+  add to the cache and back storage.
+
+#### 12.6.4.5 URL filters
+
+* We can blacklist some websites.
+* We can define filters to restrict URLs by domain, prefix, or protocol type.
+
+#### 12.6.4.6 Domain name resolution.
+
+* We need to map URL to IP address.
+* So we need to caching DNS results by building our local DNS server.
+
+#### 12.6.4.7 URL dedupe test
+
+* We will encounter multiple links to the same doc.
+* We need URL dedupe test before adding it to the URL frontier.
+* We store all the URLs seen by our crawler in a DB.
+* We store the checksum.
+* We can use cache to store popular URLs.
+
+#### 12.6.4.7.1 How much storage we would need?
+
+* 15B websites * 4-bytes => 60 GB
+
+#### 12.6.4.7.2 User bloom filters for deduping?
+
+* Use a large bit vector
+* A doc may incorrectly deemed to be in the set, so it will never be downloaded.
+* To reduce the chance, we can make the bit vector larger.
+
+#### 12.6.4.8 Checkpointing
+
+* Regularly write snapshots of its state to the disk. 
+* Aborted crawl can be restarted from the last checkpoint.
+
+## 12.7 Fault tolerance
+
+## 12.9 Crawler Traps
 
 # Q&A
 
@@ -904,3 +2623,32 @@ A: Assume the not used keys and the used keys are stored in disk, and the disk d
 Q: In 2.7, it doesn't actually cover data replication.
 
 Q: In 4, I am still feel confused about sharding.
+
+Q: In 5.6.2 didn't go into Metadata DB deeply
+
+Q: In 5, looks like I am not clear about the flow. I need to use an example to go through the flow
+A: In 5.7, it has a flow.
+
+Q: 5.8.2 In-line deduplication doesn't give any benefits for BW.
+
+Q: 5.8.11 How LB work with data partition?
+
+Q: 6.5.2 when use Hbase, what is the key
+
+Q: 6.10.2 what is manufacturer server?
+
+Q: 8.7.1 what is HDFS and GlusterFS and Bigtable?
+
+Q: 8.9 Don't we have to wait for the video upload finish to know if there is duplication?
+
+Q: 8.12 I don't quite understand CDN
+
+Q: 9.3 Why we need to traverse back using the parent reference?
+
+Q: 9.6.2 Even we partition based on range, what if the query on a server go beyond the range, i.e. AABB, AABBB, AABBBB
+
+Q: 10.8.1 what is Redis?
+
+Q: 12.6.4.2 What is the robot.txt
+
+Q: 12.6.4.5 Although checksum is same, looks like we still have to download all doc?

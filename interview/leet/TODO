@@ -47,6 +47,10 @@
 * `675_Cut_Off_Trees_for_Golf_Event.py` Stefan's Hadlock algorithm and the fastest solution
 * `437_Path_Sum_III.py` pre sum solution
 * `1286_Iterator_for_Combination.py` O(k) on the fly solution
+* `835_Image_Overlap.py` 2nd fastest solution
+* `57_Insert_Interval.py` Stefan's 3rd version.
+* (DONE) `503_Next_Greater_Element_II.py` py 100% solution.
+* (DONE) `456_132_Patterns.py` Fun4Leetcode's final solution
 
 # Good articles from leetcode
 

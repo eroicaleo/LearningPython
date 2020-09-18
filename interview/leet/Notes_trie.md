@@ -51,5 +51,13 @@ def replace(word):
     return word
 ```
 
+* A more fancier approach by Lee215
+
+```
+T = lambda: collections.defaultdict(T)
+self.trie = T()
+for w in words: reduce(dic.__getitem__, w, self.trie)['#'] = True
+```
+
 * Trie problem can add more information to a node, in addition to `_end_`
     * like `336_Palindrome_Pairs.py`, I added `_palindrome_` 
