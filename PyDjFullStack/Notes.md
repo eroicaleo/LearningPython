@@ -26,7 +26,6 @@
 * Copy `<link ...>` and  put it into `<head></head>`
     * Just like we did with `font`
 
-
 * Go over
     * button
     * container
@@ -240,7 +239,7 @@ var specialA = special.querySelector("a")
 
 ```javascript
 var head = document.querySelector("h1");
-had.addEventListener("click", changeColor);
+head.addEventListener("click", changeColor);
 ```
 
 * Many possible events:
@@ -253,5 +252,136 @@ had.addEventListener("click", changeColor);
 head1.addEventListener("mouseover", function () {
   head1.textContent = "Mouse Currently Over";
   head1.style.color = "red";
+})
+```
+
+# Section 12 JQuery
+
+## Part0 Introduction
+
+* jQuery is a javascript library.
+* It's a large single .js file that has pre-built methods and objects
+  that simplify your workflow
+* Interacting with the DOM and making HTTP requests
+* How do we get jQuery?
+    * CDN
+    * Download .js
+* Difference:
+
+```javascript
+var divs = $('div');
+var divs = document.querySelectorAll("div");
+
+$(el).css('border-width', '20px');
+el.style.borderWidth = '20px';
+```
+
+## Part1 Basics
+
+* Go to [here](https://code.jquery.com/) to include jQuery
+* 2 ways to change the css:
+
+```javascript
+var x = $('h1');
+x.css('color', 'red');
+x.css('background', 'blue');
+
+var newCSS = {
+  'color': 'white',
+  'background': 'green',
+  border: '20px solid red',
+};
+
+x.css(newCSS)
+```
+
+* To select one element for a list:
+
+```javascript
+var listItems = $('li');
+
+listItems.css('color', 'blue');
+listItems.eq(0).css('color', 'orange');
+listItems.eq(-1).css('color', 'orange');
+```
+
+* To select/change text, use `text` function.
+
+```javascript
+console.log($('h1').text());
+$('h1').text("Brand New Text")
+$('h1').html("<em>New</em>")
+```
+
+* example with `input`
+
+```javascript
+$('input').eq(1).attr("type", 'checkbox');
+$('input').eq(0).val("new value!");
+```
+
+* with `class`: `addClass, removeClass, toggleClass`.
+
+```javascript
+$('h1').addClass('turnRed');
+$('h1').removeClass('turnRed');
+
+function changeColor() {
+  $('h1').toggleClass('turnBlue');
+}
+
+setInterval(changeColor, 500)
+```
+
+## Part2 Events
+
+* [events doc](https://api.jquery.com/category/events/)
+* `click`:
+
+```javascript
+$('h1').click(function(){
+  console.log('There was a click!');
+})
+
+$('li').click(function(){
+  console.log('any li was clicked!');
+})
+```
+
+* Use of `this` keyword
+
+```javascript
+$('h1').click(function(){
+  $(this).text("I was changed!")
+})
+```
+
+* keypress method:
+
+```javascript
+$('input').eq(0).keypress(function() {
+  $('h3').toggleClass('turnBlue')
+})
+
+// Find which key get pressed.
+$('input').eq(0).keypress(function(event) {
+  console.log(event.which);
+})
+```
+
+* `on` method
+
+```javascript
+$('h1').on('dblclick', function () {
+  $(this).toggleClass('turnBlue')
+})
+```
+
+* Animation
+  * [doc here](https://api.jquery.com/category/effects/)
+
+```javascript
+$('input').eq(1).on('click', function () {
+  $('.container').slideUp()
 })
 ```

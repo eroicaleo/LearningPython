@@ -1,0 +1,24 @@
+h1, h2 {
+  text-align: center;
+}
+
+h3 {
+  text-align: center;
+}
+
+td {
+  height: 100px;
+  width: 100px;
+  text-align: center;
+  border: 0px solid black;
+}
+
+.dot {
+  height: 96px;
+  width: 96px;
+  background-color: #bbb;
+  border: 2px solid black;
+  border-radius: 50%;
+  display: inline-block;
+  vertical-align: middle;
+}
