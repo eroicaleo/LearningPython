@@ -146,6 +146,8 @@ function App() {
     {id: 2, title: 'Installation', content: 'You can install React from npm.'}
   ];
 
+  const words = ['spray', 'limit', 'elite', 'exuberant', 'destruction', 'present'];
+
   return (
     <div>
       <h1>My Hacker Stories</h1>
@@ -176,6 +178,35 @@ function App() {
       <hr />
       <h3>User NumberList3: embed <code>map</code> into JSX</h3>
       <NumberList3 numbers={numbers} />
+
+      <hr />
+      <h3>Review native <code>map</code> in JS</h3>
+      <ul>
+      {numbers.map((number) =>
+        <li key={number.toString()}>{number*2}
+        </li>
+      )}
+      </ul>
+
+      <hr />
+      <h3>Review native <code>filter</code> in JS</h3>
+      <ul>
+      {words.filter(word => word.length>6).map(word =>
+        <li key={word.toString()}>{word}
+        </li>
+      )}
+      </ul>
+
+      <hr />
+      <h3>Review native <code>reduce</code> in JS</h3>
+      <ul>
+        <li>
+          {numbers.reduce((accumulator, currentValue) =>
+            accumulator + currentValue,
+            5
+          )}
+        </li>
+      </ul>
 
     </div>
   );
