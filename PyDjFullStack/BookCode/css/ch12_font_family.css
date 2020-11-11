@@ -1,0 +1,47 @@
+body {
+  font-family: Georgia, Times, serif;}
+h1, h2 {
+font-family: Arial, Verdana, sans-serif;}
+h1 {
+  text-transform: uppercase;
+  text-decoration: blink;
+  text-indent: 100px;
+}
+h2 {
+  text-transform: lowercase;
+}
+.credits {
+  font-family: "Courier New", Courier, monospace;
+  font-weight: bold;
+  font-style: italic;
+  text-transform: capitalize;
+  text-decoration: underline;
+  /* text-align: right; */
+  text-indent: 20px;
+}
+p.intro {
+  font-family: 'GidoleRegular';
+   font-weight: normal;
+   font-style: normal;
+}
+p.intro::first-letter {
+  font-size: 200%;
+}
+p.intro::first-line {
+  font-weight: bold;
+}
+p {
+  text-align: justify;
+}
+input {
+padding: 6px 12px 6px 12px;
+border: 1px solid #665544;
+color: #ffffff;}
+input.submit:hover {
+background-color: #665544;}
+input.submit:active {
+background-color: chocolate;}
+input.text {
+color: #cccccc;}
+input.text:focus {
+color: red;}

@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title>Forms</title>
+  </head>
+  <body>
+    <form action="./ch02.html" method="post">
+      <fieldset>
+        <legend>Your Details:</legend>
+        <label for="name">Name:</label>
+        <input id="name" type="text" name="name"> <br />
+        <label for="email">Email:</label>
+        <input id="email" type="text" name="email">
+      </fieldset>
+
+      <br />
+
+      <fieldset>
+        <legend>Your Review:</legend>
+        <label for="way">How do you hear us?</label>
+        <select id="way" name="hear">
+          <option value="google">Google</option>
+          <option value="wikipedia">Wikipedia</option>
+          <option value="goodreads">Goodreads</option>
+        </select>
+
+        <p>Would you visit us again?</p>
+        <input id="yesvist" type="radio" name="futurevist" value="Yes">
+        <label for="yesvist">Yes</label>
+
+        <input id="novisit" type="radio" name="futurevist" value="No">
+        <label for="novisit">No</label>
+
+        <input id="maybevisit" type="radio" name="futurevist" value="Maybe">
+        <label for="maybevisit">Maybe</label>
+
+        <br /> <br />
+        <label for="comments">Comments:</label> <br />
+        <textarea id="comments" name="comments" rows="8" cols="80"></textarea>
+
+        <br />
+
+        <input id="emailupdates" type="checkbox"
+         name="emailupdates" checked="checked">
+        <label for="emailupdates">Sign me up for email updates</label>
+
+        <br />
+        <input type="submit" name="" value="Submit review" />
+  
+      </fieldset>
+    </form>
+
+  </body>
+</html>

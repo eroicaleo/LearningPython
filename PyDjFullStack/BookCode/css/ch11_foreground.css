@@ -1,0 +1,16 @@
+body {
+  color: white;
+  background-color : rgb(200,200,200);
+}
+h1 {
+  /* color : DarkCyan; */
+  background-color : DarkCyan;
+}
+h2 {
+  /* color : #ee3e80; */
+  background-color: #ee3e80;
+}
+p {
+  color : rgb(100,100,90);
+  background-color: white;
+}

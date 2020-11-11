@@ -1,0 +1,35 @@
+h1, h2, h3, a {
+  color: DeepSkyBlue;
+}
+
+h1 {
+  text-shadow: 2px 2px 2px silver;
+}
+
+h2 {
+  text-transform: uppercase;
+  font-size: 90%;
+  letter-spacing: 0.2em;
+  font-family: Arial, serif;
+}
+
+p {
+  font-family: Arial;
+  line-height: 1.4em;
+}
+
+p.intro {
+  font-weight: bold;
+}
+
+a {
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+p.credits {
+  text-align: right;
+}

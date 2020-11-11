@@ -385,3 +385,38 @@ $('input').eq(1).on('click', function () {
   $('.container').slideUp()
 })
 ```
+
+## Part3 Project
+
+* `<div class='container' align='center'>`
+* Jose uses `<td> <button type="button"></button> </td>`
+* css for button:
+
+```css
+.board button {
+  width: 100px;
+  height: 100px;
+  background-color: gray;
+  margin: 1px;
+  border-radius: 50%;
+  border: 4px solid black;
+}
+```
+
+* To get a table cell:
+
+```javascript
+// https://stackoverflow.com/questions/6139407/getting-td-by-index-with-jquery
+var table = $('table tr');
+table.eq(rowIndex).find('td').eq(colIndex).find('button').css('background-color', color);
+
+// My method
+$('.dot').index(this);
+```
+
+* To get a column
+
+```javascript
+// Part3 3:01
+var col = $(this).closest('td').index();
+```

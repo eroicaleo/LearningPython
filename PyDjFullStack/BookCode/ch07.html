@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title></title>
+  </head>
+  <body>
+    <form action="http://www.example.com/login.php">
+      <p>Username:
+        <input type="text" name="username" size="15" maxlength="30" />
+      </p>
+      <p>Password:
+        <input type="password" name="password" size="15" maxlength="30" />
+      </p>
+      <p>what do you think of this gig?</p>
+      <textarea name="comments" cols="20" rows="4">Enter your comments...
+      </textarea>
+
+      <p>Please select your favorite genre:</p>
+      <br />
+      <input type="radio" name="genre" value="Rock" checked="checked"/> Rock
+      <input type="radio" name="genre" value="Pop" /> Pop
+      <input type="radio" name="genre" value="Jazz" /> Jazz
+
+      <p>Please select your favorite music services:</p>
+      <br />
+      <input type="checkbox" name="service" value="itunes" checked="checked" /> Itunes
+      <input type="checkbox" name="service" value="lastfm" /> Last.fm
+      <input type="checkbox" name="service" value="spotify" /> Spotify
+
+      <p>Which device you listen to music on?</p>
+      <br />
+      <select name="devices">
+        <option value="ipod">iPod</option>
+        <option value="radio" selected="selected">Radio</option>
+        <option value="computer">Computer</option>
+      </select>
+
+      <p>Do you play any of the following instruments?
+        (You can select more than one option by holding
+        down control on a PC or command key on a Mac
+        while selecting different options.)
+      </p>
+
+      <select name="instruments" size="3" multiple="multiple">
+        <option value="guitar">Guitar</option>
+        <option value="drum">Drum</option>
+        <option value="keyboard">Keyboard</option>
+        <option value="bass">Bass</option>
+      </select>
+
+      <p>upload your song in MP3 format:</p>
+      <input type="file" name="user-song" > <br />
+      <input type="submit" value="Upload">
+
+      <p>Subscribe to our email list:</p>
+      <input type="email" name="email" value="">
+      <input type="submit" name="" value="Subscribe">
+
+      <p>Subscribe to our email list:</p>
+      <input type="email" name="email" value="">
+      <input type="image" src="./images/GEB.webp" value="Subscribe"
+            height="20" width="100" align="bottom"
+      />
+
+      <hr />
+      <button><img src="images/GEB.webp" alt="add"
+      width="10" height="10" /> Add</button>
+
+      <h1>Label</h1>
+      <label>Age: <input type="text" name="age"></label>
+      <br />
+      Gender:
+      <input id="female" type="radio" name="gender" value="f">
+      <label for="female">Female</label>
+      <input id="male" type="radio" name="gender" value="m">
+      <label for="male">Male</label>
+
+      <h1>fieldset</h1>
+      <fieldset>
+        <legend>Contact details</legend>
+        <label for="email">Email:</label> <br />
+        <input id="email" type="email" name="email" /> <br />
+        <label for="mobile">Mobile:</label> <br />
+        <input id="mobile" type="text" name="mobile" /> <br />
+        <label for="tele">Telephone:</label> <br />
+        <input id="tele" type="text" name="tele" />
+      </fieldset>
+
+      <h1>HTML5: Form Validation</h1>
+      <label for="username">Username:</label>
+      <input id="username" type="text" name="username" required="required"> <br />
+      <label for="password">Password:</label>
+      <input id="password" type="text" name="password" required="required">
+      <input type="submit" name="" value="Submit">
+
+      <h1>HTML5: Date Input</h1>
+      <label for="date">Departure Date:</label>
+      <input id="date" type="date" name="date" />
+      <input type="submit" name="" value="Submit">
+
+      <h1>HTML5: Email & URL Input</h1>
+      <p>Please enter your email address:</p>
+      <input type="email" name="email">
+      <input type="submit" value="Submit">
+
+      <p>Please enter your url:</p>
+      <input type="url" name="url">
+      <input type="submit" value="Submit">
+
+      <p>Search</p>
+      <input type="search" name="search" placeholder="Entre keywords">
+      <input type="submit" value="Submit">
+    </form>
+
+  </body>
+</html>
