@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title></title>
+    <link rel="stylesheet" href="./css/ch14_list.css" type="text/css">
+  </head>
+  <body>
+
+    <h1>The Complete Poems</h1>
+    <h2>Emily Dickinson</h2>
+    <ol>
+      <li>Life</li>
+      <li>Nature</li>
+      <li>Love</li>
+      <li>Time and Eternity</li>
+      <li>The Single Hound</li>
+    </ol>
+
+    <hr />
+
+    <h1>Index of Translated Poems</h1>
+    <h2>Arthur Rimbaud</h2>
+    <ul class="list-image">
+      <li class="list-image">Ophelia</li>
+      <li class="list-image">To Music</li>
+      <li class="list-image">A Dream for Winter</li>
+      <li class="list-image">Vowels</li>
+      <li class="list-image">The Drunken Boat</li>
+    </ul>
+
+    <hr />
+
+    <ul class="illuminations">
+      <li>That idol, black eyes and ...</li>
+      <li>Gracious son of Pan! ...</li>
+      <li>When the world is reduced ...</li>
+    </ul>
+    <ul class="season">
+      <li>Once, if my memory serves ...</li>
+      <li>Hadn't I once a youth ...</li>
+      <li>Autumn already! ...</li>
+    </ul>
+
+    <hr>
+    <h1>Quotes from Edgar Allan Poe</h1>
+    <ul class="list-short">
+      <li class="list-short"> I have great faith in fools; self-confidence
+      my friends call it.</li>
+      <li class="list-short">All that we see or seem is but a dream within
+      a dream.</li>
+      <li class="list-short">I would define, in brief, the poetry of words
+      as the rhythmical creation of Beauty.</li>
+    </ul>
+
+    <hr>
+
+    <h1>Table Properties</h1>
+
+    <h1>First Edition Auctions</h1>
+    <table>
+      <tr>
+        <th>Author</th>
+        <th>Title</th>
+        <th class="money">Reserve Price</th>
+        <th class="money">Current Bid</th>
+      </tr>
+      <tr>
+        <td>E.E. Cummings</td>
+        <td>Tulips & Chimneys</td>
+        <td class="money">$2,000.00</td>
+        <td class="money">$2,642.50</td>
+      </tr>
+      <tr class="even">
+        <td>Charles d'Orleans</td>
+        <td>Poemes</td>
+        <td class="money"></td>
+        <td class="money">$5,866.00</td>
+      </tr>
+      <tr>
+        <td>T.S. Eliot</td>
+        <td>Poems 1909 - 1925</td>
+        <td class="money">$1,250.00</td>
+        <td class="money">$8,499.35</td>
+      </tr>
+      <tr class="even">
+        <td>Sylvia Plath</td>
+        <td>The Colossus</td>
+        <td class="money"></td>
+        <td class="money">$1031.72</td>
+      </tr>
+    </table>
+
+    <hr />
+
+    <table class="empty-one">
+      <tr>
+        <td>1</td>
+        <td>2</td>
+      </tr>
+      <tr>
+        <td>3</td>
+        <td></td>
+      </tr>
+    </table>
+
+    <table class="empty-two">
+      <tr>
+        <td>1</td>
+        <td>2</td>
+      </tr>
+      <tr>
+        <td>3</td>
+        <td></td>
+      </tr>
+    </table>
+
+    <hr />
+    <h1> border-spacing </h1>
+
+    <table class="border-one">
+      <tr>
+        <td>1</td>
+        <td>2</td>
+      </tr>
+      <tr>
+        <td>3</td>
+        <td>4</td>
+      </tr>
+    </table>
+
+    <table class="border-two">
+      <tr>
+        <td>1</td>
+        <td>2</td>
+      </tr>
+      <tr>
+        <td>3</td>
+        <td>4</td>
+      </tr>
+    </table>
+
+    <hr />
+    <h1>Text input</h1>
+    <input class="text-input" type="email" name="email" id="text-input-email">
+    <input class="text-input" type="text" name="twitter" id="text-input-twitter">
+    <input class="text-input" type="text" name="web" id="text-input-web">
+
+    <hr />
+    <h1>submit</h1>
+    <input id="submit" type="submit" value="Register">
+
+    <hr />
+
+    <h1>fieldset</h1>
+    <fieldset>
+      <legend>Newsletter</legend>
+      <label>Name: <input type="text" name="text"></label>
+      <label>Email: <input type="email" name="email"></label>
+      <input id="fieldset-submit" type="submit" value="submit">
+    </fieldset>
+
+    <hr />
+    <h1>Form with problem</h1>
+    <form id="test-form" action="example.php" method="post">
+      <div class="problem-solution">
+        <label for="name" class="title">Name:</label>
+        <input type="text" id="name" name="name" />
+      </div>
+      <div class="problem-solution">
+        <label for="email" class="title">Email:</label>
+        <input type="email" id="email" name="email" />
+      </div>
+      <div class="problem-solution">
+        <span class="title">Gender:</span>
+        <input type="radio" name="gender" id="male" value="M" />
+        <label for="male">Male</label>
+        <input type="radio" name="gender" id="female" value="F" />
+        <label for="female">Female</label><br />
+      </div>
+      <div id="test-div" class="problem-solution">
+        <input type="submit" value="Register" id="problem-submit" />
+      </div>
+    </form>
+
+    <hr />
+    <h1>Cursor style</h1>
+    <a id="cursor-style" href="http://www.whitmanarchive.org">Walt Whitman</a>
+
+  </body>
+</html>

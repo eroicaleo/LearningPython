@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title></title>
+    <link rel="stylesheet" href="./css/ch14_example.css">
+  </head>
+  <body>
+
+    <h1>Poetry Workshops</h1>
+    <p>We will be conducting a number of poetry workshops
+       and symposiums throughout the year.</p>
+    <p>Please note that the following events are free to
+       members:</p>
+
+       <ul>
+       <li>A Poetic Perspective</li>
+       <li>Walt Whitman at War</li>
+       <li>Found Poems and Outsider Poetry</li>
+       </ul>
+
+       <table>
+         <tr class="head">
+           <th></th>
+           <th>New York</th>
+           <th>Chicago</th>
+           <th>San Francisco</th>
+         </tr>
+         <tr>
+           <th>A Poetic Perspective</th>
+           <td>Sat, 4 Feb 2012<br />11am - 2pm</td>
+           <td>Sat, 3 Mar 2012<br />11am - 2pm</td>
+           <td>Sat, 17 Mar 2012<br />11am - 2pm</td>
+         </tr>
+         <tr class="even">
+           <th>Walt Whitman at War</th>
+           <td>Sat, 7 Apr 2012<br />11am - 1pm</td>
+           <td>Sat, 5 May 2012<br />11am - 1pm</td>
+           <td>Sat, 19 May 2012<br />11am - 1pm</td>
+         </tr>
+         <tr>
+           <th>Found Poems &amp; Outsider Poetry</th>
+           <td>Sat, 9 Jun 2012<br />11am - 2pm</td>
+           <td>Sat, 7 Jul 2012<br />11am - 2pm</td>
+           <td>Sat, 21 Jul 2012<br />11am - 2pm</td>
+         </tr>
+         <tr class="even">
+           <th>Natural Death: An Exploration</th>
+           <td>Sat, 4 Aug 2012<br />11am - 4pm</td>
+           <td>Sat, 8 Sep 2012<br />11am - 4pm</td>
+           <td>Sat, 15 Sep 2012<br />11am - 4pm</td>
+         </tr>
+       </table>
+
+       <form action="index.html" method="post">
+         <fieldset>
+           <legend>Register your interest</legend>
+           <div class="problem-solution">
+             <label for="name" class="title">Your name:</label>
+             <input type="text" id="name" name="name" />
+           </div>
+           <div class="problem-solution">
+             <label for="email" class="title">Your email:</label>
+             <input type="email" id="email" name="email" />
+           </div>
+           <div class="problem-solution" id="select-center">
+             <label for="drop" class="title">Your closest center:</label>
+             <select name="center">
+               <option value="NY">New York</option>
+               <option value="CHI">Chicago</option>
+               <option value="SF">San Francisco</option>
+             </select>
+           </div>
+
+           <div class="problem-solution" id="select-center">
+             <span class="title">Are you a member?</span>
+              <input type="radio" name="member" value="Yes" id="yes-member"/>
+              <label for="yes-member ">Yes</label>
+              <input type="radio" name="member" value="No" id="no-member"/>
+              <label for="no-member">No</label>
+           </div>
+         </fieldset>
+
+         <div class="register">
+           <input type="submit" name="" value="Register">
+         </div>
+
+       </form>
+
+  </body>
+</html>

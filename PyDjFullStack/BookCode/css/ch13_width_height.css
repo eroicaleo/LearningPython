@@ -1,0 +1,133 @@
+div.box {
+height: 300px;
+width: 300px;
+background-color: #bbbbaa;}
+/* p {
+  height: 75%;
+  width: 75%;
+} */
+
+td.description {
+  min-width: 450px;
+  max-width: 600px;
+  text-align: left;
+  padding: 5px;
+  margin: 0px;
+  background-color: pink;
+}
+
+p#fender1 {
+  background-color: red;
+  min-height: 10px;
+  max-height: 30px;
+  overflow: hidden;
+}
+
+h2.fender {
+  color: #0088dd;
+  border-bottom: 1px solid #0088dd;
+}
+
+p#fender2 {
+  background-color: red;
+  min-height: 10px;
+  max-height: 30px;
+  overflow: scroll;
+}
+
+div.no-margin-padding {
+  width: 400px;
+  border: 2px solid orange;
+}
+
+div.with-margin-padding {
+  width: 400px;
+  border: 2px solid orange;
+  padding: 10px;
+  margin: 10px;
+}
+
+p.border-style-one {border-style: solid;}
+p.border-style-two {border-style: dotted;}
+p.border-style-three {border-style: dashed;}
+p.border-style-four {border-style: double;}
+p.border-style-five {border-style: groove;}
+p.border-style-six {border-style: ridge;}
+p.border-style-seven {border-style: inset;}
+p.border-style-eight {border-style: outset;}
+
+p.padding {
+  width: 275px;
+  border: 2px solid #0088dd;
+}
+
+p[class="padding"][id="example"] {
+  padding: 10px;
+}
+
+p.margin {
+  width: 200px;
+border: 2px solid #0088dd;
+padding: 10px;}
+
+p[class="margin"][id="example"] {
+  margin: 20px;
+}
+
+p.center {
+  width: 300px;
+  padding: 50px;
+  border: 20px solid #0088dd;
+  text-align: center;
+}
+p[class="center"][id="example"] {
+  margin: 20px auto 20px auto;
+}
+
+li.inline {
+display: inline;
+margin-right: 10px;}
+li[class="inline coming-soon"] {
+display: none;}
+
+li.visibility {
+display: inline;
+margin-right: 10px;}
+li[class="visibility coming-soon"] {
+  visibility: hidden;
+}
+
+p#radius {
+  border: 5px solid #cccccc;
+  padding: 20px;
+  width: 275px;
+  text-align: center;
+  border-radius: 10px;
+  -moz-border-radius: 10px;
+  -webkit-border-radius: 10px;
+}
+
+p.elli-one {
+  width: 200px;
+  height: 200px;
+  border: 5px solid Pink;
+border-top-left-radius: 80px 50px;
+-moz-border-radius-top-left: 80px 50px;
+-webkit-border-radius-top-left: 80px 50px;}
+p.elli-two {
+  width: 200px;
+  height: 200px;
+  border: 5px solid Pink;
+border-radius: 1em 4em 1em 4em / 2em 1em 2em 1em;
+-moz-border-radius: 1em 4em 1em 4em
+/ 2em 1em 2em 1em;
+-webkit-border-radius: 1em 4em 1em 4em
+/ 2em 1em 2em 1em;}
+p.elli-three {
+  width: 200px;
+  height: 200px;
+  border: 5px solid Pink;
+padding: 0px;
+border-radius: 100px;
+-moz-border-radius: 100px;
+-webkit-border-radius: 100px;}

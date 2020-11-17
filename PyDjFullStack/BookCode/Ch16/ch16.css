@@ -1,0 +1,119 @@
+body {
+    font-family: Georgia, "Times New Roman", serif;
+    color: #665544;
+
+}
+
+img.size-large {
+  width: 500px;
+  height: 500px;
+}
+img.size-medium {
+  width: 250px;
+  height: 250px;
+}
+img.size-small {
+  width: 100px;
+  height: 100px;
+}
+
+div.align {
+  border: 1px solid gainsboro;
+  overflow: auto;
+}
+img.align-left {
+  float: left;
+  margin-right: 10px;
+}
+img.align-right {
+  float: right;
+  margin-left: 10px;
+}
+
+div.center {
+  border: 1px solid indianred;
+}
+img.align-center {
+  display: block;
+  margin: 0px auto;
+}
+
+div.background-images {
+  border: 1px solid crimson;
+}
+p.background-images {
+  color: white;
+  background-image: url("images/pattern.gif");
+}
+
+div.background-repeat {
+  border: 1px solid slateblue;
+}
+h1.background-repeat {
+  padding: 50px 0px;
+  margin: 10px 0px;
+  background-image: url("images/header.gif");
+  background-repeat: repeat-x;
+  border: 1px solid orange;
+}
+
+div.attachment-fix {
+  border: 1px solid yellowgreen;
+  background-image: url("images/tulip.gif");
+  background-repeat: no-repeat;
+  background-attachment: scroll;
+}
+
+div.background-position {
+  border: 1px solid aquamarine;
+  background-image: url("images/tulip.gif");
+  background-repeat: no-repeat;
+  background-position: 50% 50%;
+}
+
+a.button {
+  height: 36px;
+  background-image: url("images/button-sprite.jpg");
+  text-indent: -9999px;
+  display: inline-block;
+}
+a#add-to-basket {
+  width: 174px;
+  background-position: 0px 0px;
+}
+a#framing-options {
+  width: 210px;
+  background-position: -175px 0px;
+}
+a#add-to-basket:hover {
+  background-position: 0px -40px;
+}
+a#framing-options:hover {
+  background-position: -175px -40px;
+}
+a#add-to-basket:active {
+  background-position: 0px -80px;
+}
+a#framing-options:active {
+  background-position: -175px -80px;}
+
+#gradient {
+  /* fallback color */
+  background-color: #66cccc;
+  /* fallback image */
+  background-image: url(images/fallback-image.png);
+  /* Firefox 3.6+ */
+  background-image: -moz-linear-gradient(#336666,
+  #66cccc);
+  /* Safari 4+, Chrome 1+ */
+  background-image: -webkit-gradient(linear, 0% 0%,
+  0% 100%, from(#66cccc), to(#336666));
+  /* Safari 5.1+, Chrome 10+ */
+  background-image: -webkit-linear-gradient(#336666,
+  #66cccc);
+  /* Opera 11.10+ */
+  background-image: -o-linear-gradient(#336666,
+  #66cccc);
+  height: 150px;
+  width: 300px;
+}
