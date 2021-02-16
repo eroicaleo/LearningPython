@@ -302,3 +302,40 @@ its intent more clearly with an explicit return None statement.
     * A way to namespace your methods
     * doesn't have access to the instance state or the class state
 
+# Chapter 5 Common Data Structures in Python
+
+* Going back to the fundamentals always pays off for a
+  programmer, regardless of their skill level or experience.
+* Python favors a simpler and more “human” naming scheme,
+  But the downside is that even to experienced Python developers, it
+  can be unclear whether the built-in list type is implemented as a
+  linked list or a dynamic array.
+
+## 5.1 Dictionaries, Maps, and Hashtables
+
+Pg 157
+
+* key must be hashable type, the hash value will never change in its lifetime. 
+* it can be compared with other objects.
+
+### `OrderedDict`
+
+### `collections.ChainMap`
+
+### `types.MappingProxyType`
+
+* this can be helpful if you’d like to return a dictionary carrying
+internal state from a class or module, while discouraging write
+access to this object.
+
+```python
+from types import MappingProxyType
+writable = {'one':1, 'two':2}
+read_only = MappingProxyType(writable)
+```
+
+## 5.2 Array Data Structures
+
+Pg 164
+
+
