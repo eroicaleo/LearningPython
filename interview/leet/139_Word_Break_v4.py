@@ -19,10 +19,22 @@ class Solution:
             return mem[rest]
         return [' '.join(c) for c in dfs(s, {'': [[]]})]
 
+    # Note in the following approach
+    # This doesn't work, because setdefault always evalude the 
+    # return mem.setdefault(rest, [(w+' '+l).rstrip() for w in wordDict if rest.startswith(w) for l in dfs(rest[len(w):], mem)]) 
     def wordBreak3(self, s, wordDict):
         def dfs(rest, mem):
             return mem[rest] if rest in mem else mem.setdefault(rest, [(w+' '+l).rstrip() for w in wordDict if rest.startswith(w) for l in dfs(rest[len(w):], mem)]) 
         return dfs(s, {'': ['']})
+
+    # Without rstrip()
+    def wordBreak4(self, s, wordDict):
+        mem = {w:[w] for w in wordDict}
+        def dfs(rest):
+            if not rest in mem:
+                mem[rest] = [(w+' '+l) for w in wordDict if rest.startswith(w) for l in dfs(rest[len(w):])]
+            return mem[rest]
+        return dfs(s)
  
 s, wordDict = 'leetcode', ['leet', 'code']
 s, wordDict = 'catsandog', ['cats', 'dog', 'sand', 'and', 'cat']

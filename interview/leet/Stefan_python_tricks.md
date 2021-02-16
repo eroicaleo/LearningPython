@@ -1,4 +1,12 @@
 
+## Stefan recommanded python learning resources
+
+* He mentioned in `22_Generate_Parentheses.py`
+* by reading tutorials/docs.
+* by looking at solutions of others at checkio.org .
+* spending a month on Python topics at stackoverflow .
+* Practice, practice, practice.
+
 ## if-else trick
 
 ### `331_Verify_Preorder_Serialization_of_a_Binary_Tree.py`
@@ -121,6 +129,17 @@ return all(c in t for c in s)
 diff &= -diff
 ```
 
+### How to convert a list of bit-string to match each bit `477_Total_Hamming_Distance.py`
+
+* `zip(*(m))`, `m` is a list of string, `*m` expand `m` to n objects, zip combine each bit
+* [ref](https://stackoverflow.com/questions/40676085/why-cant-i-use-a-starred-expression)
+
+```python
+print(*['100', '011'])
+a, b = (*['100', '011'], )
+print(f'a = {a}, b = {b}')
+```
+
 ## Breadth first implementation
 
 * `211_Add_and_Search_Word.py`
@@ -162,6 +181,7 @@ def search_iterative2(self, word):
 v1, v2 = zip(*itertools.zip_longest(v1, v2, fillvalue = 0))
 ```
 
+## Heap
+
 ### `heap` problems
 
-## Heap

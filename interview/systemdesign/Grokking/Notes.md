@@ -1800,14 +1800,6 @@ streamVideo(api_dev_key, video_id, offset, codec, resolution)
 * Once encoding is completed, the user will be notified and video will be made available for view/sharing.
 
 
-                                                                                                                                                             
-                                                                                                                                                             
-                                                                                                                                                                                          
-                                                                                                                                                                                           
-                                                                                                                                                                                           
-                                                                                                                                                                                           
-                                                                                                                                                                                           
-                                                                                                                                                                                           
                                                                  |---------|                  |-------------|    
                                                                  | User DB |  |-------------->| Metadata DB |<-------------------------------------------
                                                                  |---------|  |               |-------------|                                           |
@@ -2609,7 +2601,257 @@ search(api_dev_key, search_terms, maximum_results_to_return, sort, page_token)
 
 ## 12.7 Fault tolerance
 
+* Consistent hashing for distribution among crawling servers.
+* Replacing a dead host and help in distributing load among crawling servers.
+* All servers perform regular checkpointing and storing their FIFO queues to disks.
+* If a server goes down, we can replace it. And consistent hashing should shift the load to other servers.
+
+## 12.8 Data Partitioning
+
+* We are dealing with 3 kinds of data:
+    1. URLs to visit
+    2. URL checksums for dedupe
+    3. Doc checksums for dedupe
+* We are distributing URLs based on hostnames:
+    1. Store its set of URLs that need to be visited.
+    2. checksums of all the previously visited URLs
+    3. checksums of all the downloaded docs.
+* Consistent hashing will redistribute the URLs from overloaded hosts
+* Each host dump a snapshot of all the data it is holding onto a remote server.
+* If a server dies down, another server can replace it by taking its data from the last snapshot.
+
 ## 12.9 Crawler Traps
+
+* It causes a crawler to crawl indefinitely. Some are unintentionl, create a cycle.
+  Other crawler traps are introduced intentionally.
+
+# Unit 13 Designing Facebook's Newsfeed (NF)
+
+* Facebook's Newsfeed, contain posts, photos, videos and status updates from all the people and pages a user follows.
+* Similar Service: Twitter/Instagram/Quora Newsfeed.
+* Difficulty: Hard
+
+## 13.1 What is Facebook's newsfeed?
+
+* A Newsfeed is the constantly updating list of stories in the middle of FB homepage.
+* Status updates, photos, videos, links, etc.
+
+## 13.2 Requirements and Goals of the System
+
+### 13.2.1 Functional Requirements
+
+* NF will be generated based on the posts from the people, pages, and groups that a user follows.
+* A user may have many friends and a large no. of pages/groups.
+* Feeds may contain images, videos, or just text.
+* Our service should support appending new posts as they arrive to the newsfeed for all active users.
+
+### 13.2.2 Non-Functional Requirements
+
+* Generate user's newsfeed in real-time, max latency would be 2s.
+* A post shouldn't take more than 5s to make it to a user's feed assuming a new newsfeed request comes in.
+
+## 13.3 Capacity Estimation
+
+* Assume a user has 300 friends and follows 200 pages.
+* Traffic estimates:
+    * 300M DAU, each fetch timeline 5 times a day, 1.5B newsfeed requests / day, 17500 requests / sec.
+* Storage estimates:
+    * 500 posts in every user's feed that we want to keep in memory for a quick fetch.
+    * Each post would be 1KB in size.
+    * Store 500 KB of data per user.
+    * 150 TB memory needed, assume 100 GB memory per server, we need 1500 machines.
+
+## 13.4 System APIs
+
+```python
+getUserFeed(api_dev_key, user_id, since_id, count, max_id, exclude_replies)
+```
+
+* `api_dev_key`: the API developer key of a registered account. Throttle users based on their allocated quota
+* `user_id (number)` : Generate the newsfeed for this user.
+* `since_id` (number) : returns results with ID higher than the specified ID, i.e. more recent.
+* `count` (number) : specify the number of feed, up to 200 / distinct request.
+* `max_id` (number) : The inverse of `since_id`
+* `exclude_replies` (boolean) : prevent replies from appearing the returned timeline.
+
+* Return: (JSON) returns a JSON object containing a list of feed items.
+
+## 13.5 DB Design
+
+* Three primary objects: User / Entity (e.g. page, group, etc) / FeedItem (or Post)
+* A user can follow other entities and can become friends with other users.
+* Both users and entities can post feeditems which contain text, images or videos.
+* Each Feeditem will have a UserID pointing to the User who created it.
+  For simplicity, we assume that only users can create feed items.
+  This is not the case in real facebook.
+* Each feeditem can optional have an entityid pointing to the page or the group where that
+  post was created.
+* Relational DB, we would need to model 2 relations:
+    * User-Entity relation, each user can be friends with many people and follow a log of entities.
+    * FeedItem-Media relation
+
+* User Table
+
+| PK | UserID: int             |
+|----|-------------------------|
+|    | Name: varchar(20)       |
+|    | Email: varchar(32)      |
+|    | DateOfBirth: datetime   |
+|    | CreationDate: datetime  |
+|    | LastLogin: datetime     |
+
+* Entity Table
+    * Type is group / page
+
+| PK | EntityID: int           |
+|----|-------------------------|
+|    | Name: varchar(20)       |
+|    | Type: tinyint           |
+|    | Description: varchare(512) |
+|    | CreationDate: datetime  |
+|    | Category: smallint      |
+|    | Phone: varchar(12)      |
+|    | Email: varchar(20)      |
+
+* User Follow
+    * Type is whether it's a user or an entity
+
+| PK | UserID: int             |
+|    | EntityOrFriendID: int   |
+|----|-------------------------|
+|    | Type: tinyint           |
+
+* FeedItem table
+
+| PK | FeedItemID: int         |
+|----|-------------------------|
+|    | UserID: int             |
+|    | Contents: varchar(256)  |
+|    | EntityID: int           |
+|    | LocationLatitude: int   |
+|    | LocationLongitude: int  |
+|    | CreationDate: datetime  |
+|    | NumLikes: int           |
+
+* FeedMedia Table
+
+| PK | FeedItemID: int         |
+|    | MediaID: int            |
+|----|-------------------------|
+|    |                         |
+
+* Media
+
+| PK | MediaID: int            |
+|----|-------------------------|
+|    | Type: tinyint           |
+|    | Description: varchare(512) |
+|    | Path: varchare(512)     |
+|    | LocationLatitude: int   |
+|    | LocationLongitude: int  |
+|    | CreationDate: datetime  |
+
+## 13.6 High Level System Design
+
+* Divide into 2 parts:
+
+### 13.6.1 Feed Generation
+
+* Newsfeed is generated from the posts of users and entities that a user follows.
+* We will perform the following steps:
+* Retrieve IDs of all users and entities that Jane follows.
+* Retrieve latest, most popular and relevant posts for those IDs.
+* Rank these posts based on the relevance.
+* Store this feed in the cache and return top posts (say 20) to render.
+* On the FE, Jane reaches the end and fetch the next 20 posts.
+* If there is new incoming posts from people, we periodically perform above steps to rank
+  and add the newer posts to her feed.
+* Then Jane can be notified so that she can fetch.
+
+### 13.6.2 Feed publishing
+
+* She has to request and pull feed items from the server.
+* When she reaches the end, she can pull more.
+
+### 13.6.3 Components
+
+1. Web servers: maintain a connection with the user.
+    * Transfer data between the user and the server.
+2. Application server
+    * Execute the workflows of storing new posts in the DB servers.
+    * APP servers to retrieve and to push the newsfeed to the end user.
+3. Metadata DB and Cache: store metadata about Users, Pages and Groups.
+4. Posts DB and cache: to store metadata about posts and their contents.
+5. Video and photo storage, and cache: Blob storage, store all the media included in the posts.
+6. Newsfeed generation service: gather and rank all the relevant posts for a user to
+   generate newsfeed and store in the cache. It will also receive live updates and
+   will add these newer feed items to any user's timeline.
+7. Feed notification service: notify the user that there are newer items available for their newsfeed.
+
+#### 13.6.3.1 Diagram
+
+
+                                                                                                                 
+                                                                                                                                                         
+                                                                                                                                                         
+                                                                                                                                                          
+                                                                                                                                                          
+                                                                                                                                                          
+                                                                                                                                                          
+|--------|  Add/Update Post |------------|                  |-------------------|                        |------------------|                        |-------------|
+| User A |<---------------->| Web server |<---------------->| App Server        |----------------------->| Metadata Cache   |<---------------------->| Metadata DB |
+|--------|                  |------------|                  |-------------------|                        |------------------|                        |-------------|
+                                                                                                         |------------------|                        |-------------|
+                                                            |---------------------|                      | Post Cache       |<---------------------->| Post DB     |
+                                                            | Newsfeed Generation |--------------------->|------------------|                        |-------------|
+                                                            |---------------------|                      |------------------|                        |-------------|
+                                                                      |                                  | Media Cache      |<---------------------->| Video/photo |
+                                                                      |                                  |------------------|                        |-------------|
+                                                                      v
+                     |--------------------|                 |-----------------------|
+                     | Feed notification  |---------------->| cache servers holding |
+		     |--------------------|                 | feed                  |
+                                  |                         |-----------------------|
+                                  |                                   ^
+                                  |                                   |
+                                  v                                   v
+|--------|  Feed update     |------------|   get feed       |-------------------|
+| User B |<---------------->| Web server |----------------->| App Server        |
+|--------|                  |------------|                  |-------------------|
+                                   ^
+|--------|  Feed update            |
+| User C |<------------------------|
+|--------|                  
+
+## 13.7 Data Partitioning
+
+### 13.7.1 Feed generation
+
+* Issues:
+1. A user with lots of friends / follows, the service is slow
+2. We generate the timeline when a user loads their page, so this would be quite slow
+3. For live updates, each status update will result in feed updates for all followers.
+   This could result in high backlogs in our Newsfeed Generation Service.
+4. The server pushing newer posts to users could lead to very heavy loads, for people or pages
+   that have a log of followers.
+
+* Offline generation for news feed
+* Dedicated servers that are continuously generating users' newsfeed and storing them in memory.
+* When a user requests for the new posts for their feed, we can simlply serve it from memory.
+* When servers need to generate the feed for a user, they will query to see what was the last time the feed is generated.
+* New feed data would be generated from that time onwards.
+
+```python
+class struct:
+    def __init__(self):
+        self.feedItems = # <FeedItemID, FeedItem>
+```
+
+* When a user want to fetch more feed items, they send the last feeditemID they currently see,
+* Then we jump to that FeedItemID in the hash map and return next batch/page from there.
+
+
+## 13.9 Data Partitioning
 
 # Q&A
 

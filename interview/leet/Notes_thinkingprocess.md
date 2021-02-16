@@ -39,6 +39,11 @@
 
 * Start from first element is hard, but start from the last element is much cleaner.
 
+## `977_Squares_of_a_Sorted_Array.py`
+
+* Wangzi's solution, although it's a easy question, but
+  merging from the beginning is kind of hard, but merging from the back is much easier.
+
 # Array problem with partial sum, always consider converting to pre-sum
 
 *

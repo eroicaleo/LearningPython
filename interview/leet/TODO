@@ -49,12 +49,16 @@
 * `1286_Iterator_for_Combination.py` O(k) on the fly solution
 * `835_Image_Overlap.py` 2nd fastest solution
 * `57_Insert_Interval.py` Stefan's 3rd version.
+* `334_Increasing_Triplet_Subsequences.py` fastest solution
+* `1102_Path_With_Maximum_Minimum_Value.py` other approaches
+* `22_Generate_Parentheses.py` DP approach and Stefan's last solution
 * (DONE) `503_Next_Greater_Element_II.py` py 100% solution.
 * (DONE) `456_132_Patterns.py` Fun4Leetcode's final solution
 
 # Good articles from leetcode
 
 * `714_Best_Time_to_Buy_and_Sell_Stock_with_Transaction_Fee.py` Fun4Leetcode
+* `371_Sum_of_Two_Integers.py` one high vote article
 
 # Algorithms from system design
 

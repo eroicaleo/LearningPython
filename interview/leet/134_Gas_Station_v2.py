@@ -26,4 +26,16 @@ class Solution:
         :type cost: List[int]
         :rtype: int
         """
+        s = start = total = 0
+        for i, item in enumerate(zip(gas, cost)):
+            s, total = s+item[0]-item[1], total+item[0]-item[1]
+            if s < 0:
+                start, s = i+1, 0
+        return start if total >= 0 else -1
  
+gas = [2,3,4]
+cost = [3,4,3]
+gas = [1,2,3,4,5]
+cost = [3,4,5,1,2]
+sol = Solution()
+print(sol.canCompleteCircuit(gas, cost))

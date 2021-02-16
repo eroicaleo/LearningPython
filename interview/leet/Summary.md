@@ -150,7 +150,9 @@ need -= ' #'.find(val)
 * `287_Find_the_Duplicate_Number.py`
 * `332_Reconstruct_Itinerary.py` (Eular cycle)
 * `456_132_Patterns.py`
-* `421_Maximum_XOR_of_Two_Numbers_in_an_Array.py` (bit manipulation)
+* `421_Maximum_XOR_of_Two_Numbers_in_an_Array.py` (bit manipulation and Trie)
+* `229_Majority_Element_II.py` (vote)
+* `371_Sum_of_Two_Integers.py` (bit)
 
 # Graph
 

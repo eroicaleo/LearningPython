@@ -21,6 +21,7 @@
 072_Edit_Distance.py
 095_Unique_Binary_Search_Trees_II.py
 187_Repeated_DNA_Sequences.py
+188_
 124_Binary_Tree_Maximum_Path_Sum.py
 081_Search_in_Rotated_Sorted_Array_II.py
 061_Rotate_List.py
@@ -302,6 +303,42 @@
 198_House_Robber.py
 421_Maximum_XOR_of_Two_Numbers_in_an_Array.py
 1041_Robot_Bounded_In_Circle.py
+121_Best_Time_to_Buy_and_Sell_Stock.py
+306_Additive_Number.py
+1291_Sequential_Digits.py
+980_Unique_Paths_III.py
+1094_Car_Pooling.py
+1219_Path_with_Maximum_Gold.py
+477_Total_Hamming_Distance.py
+371_Sum_of_Two_Integers.py
+495_Teemo_Attacking.py
+743_Network_Delay_Time.py
+432_All_O_one_Data_Structure.py (hard)
+859_Buddy_Strings.py
+189_Rotate_Array.py
+188_Best_Time_to_Buy_and_Sell_Stock_IV.py (Hard)
+1007_Minimum_Domino_Rotations_For_Equal_Row.py
+1510_Stone_Game_IV.py (hard)
+849_Maximize_Distance_to_Closest_Person.py
+1446_Consecutive_Characters.py
+799_Champagne_Tower.py (Checkout the fastest submission)
+1217_Minimum_Cost_to_Move_Chips_to_The_Same_Position.py
+1283_Find_the_Smallest_Divisor_Given_a_Threshold.py
+897_Increasing_Order_Search_Tree.py
+1143_Longest_Common_Subsequence.py
+1492_The_kth_Factor_of_n.py
+131_Palindrome_Partitioning.py
+977_Squares_of_a_Sorted_Array.py
+334_Increasing_Triplet_Subsequences.py
+910_Smallest_Range_II.py
+110_Balanced_Binary_Tree.py
+1062_Find_Nearest_Right_Node_in_Binary_Tree.py
+556_Next_Greater_Element_III.py
+1192_Critical_Connections_in_a_Network.py
+348_Design_Tic_Tac_Toe.py
+642_Design_Search_Autocomplete_System.py
+526_Beautiful_Arrangement.py (seems very interesting, not done yet)
+460_LFU_Cache.py (hard, not submitted yet)
 691_Stickers_to_Spell_Word.py (hard not done yet)
 952_Largest_Component_Size_by_Common_Factor.py (hard not done yet)
 164_Max_Gap.py (Hard, not started)

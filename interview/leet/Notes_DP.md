@@ -23,6 +23,7 @@
     * `123_Best_Time_to_Buy_and_Sell_Stock_III.py`? If we don't go row by row, but go column by column
 
 # Another point of view, the current problem can be divided into disjoint sub-problems
+  按照这样的思路，可以理解成DP像是一种数学归纳法.
 
 * Examples are: 
     * Longest common substring
@@ -76,3 +77,58 @@
         1. house i has been robbed in previous round, so it's dp[i,j-1]
         2. we don't rob house i in round j, i.e. dp[i-1, j]
         3. we rob house i in round j, i.e. dp[i-2, j-1]+nums[i]
+
+# `312_Burst_Balloons.py`
+
+* We construct a 2-d DP, in the DP table, `dp[l][r]` is the max coins we can get when popping [l+1,r-1]
+* The relation is assume j is the last one to pop, then the coin is we get is `nums[j]*border+dp[j][r]+dp[l][j]`
+
+```
+dp[l][r] = max(nums[j]*border+dp[j][r]+dp[l][j] for j in range(l+1,r))
+```
+
+```python
+3 1 5 8
+1 3 1 5 8 1
+```
+
+* Assume 8 is the last popped, then `dp = [x, x, x, 8]`
+* Assume [5,8] is the last popped, then `dp = [x, x, 48, 8]`
+
+* Step 1
+
+   1   3   1   5   8   1
+1          3             
+3              15        
+1                  40    
+5                      40
+8             
+1             
+
+* Step 2
+    * `dp[0][3] = max(dp[1][3]+nums[0]*nums[1]*nums[3], dp[0][2]+nums[0]*nums[2]*nums[3]) = max(15+15, 3+5) = 30`
+    * `dp[1][4] = max(dp[2][4]+nums[1]*nums[2]*nums[4], dp[1][3]+nums[1]*nums[3]*nums[4])`
+    * `dp[2][5] = max(dp[3][5]+nums[2]*nums[3]*nums[5], dp[2][4]+nums[2]*nums[4]*nums[5])`
+
+   1   3   1   5   8   1
+1          3   30        
+3              15        
+1                  40    
+5                      40
+
+
+* Step 3
+
+  1 3 1 5  8 1
+1 
+3   3        
+1   4 1      
+5     6 5    
+8       48 8  
+1            
+
+# Palindromic problems
+
+* `5_Longest_Palindromic_Substring.py`
+
+This problem construct DP table from bottom right corner to the top row.

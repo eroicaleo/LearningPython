@@ -20,8 +20,24 @@ class Solution(object):
                     print(dp[k])
         return dp[1][-2]
 
+    def maxCoins_2ndtry(self, nums):
+        nums = [1] + nums + [1]
+        l0 = len(nums)
+        dp = [[0]*l0 for i in range(l0-1)]
+        for w in range(2, l0):
+            print(f'w = {w}')
+            for i in range(l0-w):
+                l, r = i, i+w
+                print(f'[{l}, {r}]')
+                border = nums[l]*nums[r]
+                dp[l][r] = max(nums[j]*border+dp[j][r]+dp[l][j] for j in range(l+1,r))
+            for row in dp:
+                print(row)
+        return dp[0][-1]
+
 sol = Solution()
 nums = [3,1,5,8]
 nums = [3]
 nums = []
-print(sol.maxCoins(nums))
+# print(sol.maxCoins(nums))
+print(sol.maxCoins_2ndtry(nums))
