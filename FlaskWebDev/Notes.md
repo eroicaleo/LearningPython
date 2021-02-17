@@ -332,3 +332,239 @@ def get_user(id):
 # Chapter 03 Templates
 
 pg 47
+
+* A request also triggers a change in the state of the application, and
+the view function is where this change is generated.
+* User register an account:
+    * Business logic: view function needs to talk to the database to get the new user added.
+    * presentation logic: generate a response to send back to the browser that
+      includes a success or failure message.
+
+## The Jinja2 Template Engine
+
+The function render_template() provided by Flask integrates the Jinja2 template
+engine with the application.
+
+```html
+<!-- user.html -->
+<h1>Hello, {{ name }}!</h1>
+```
+
+```python
+from flask import Flask, render_template
+
+@app.route('/user/<name>')
+def user(name):
+    return render_template('user.html', name=name)
+```
+
+### Variables
+
+* Jinja2 recognizes variables of any type, even complex types such as
+ `lists`, `dictionaries`, and `objects`.
+
+```html
+<p>A value from a dictionary: {{ mydict['key'] }}.</p>
+<p>A value from a list: {{ mylist[3] }}.</p>
+<p>A value from a list, with a variable index: {{ mylist[myintvar] }}.</p>
+<p>A value from an object's method: {{ myobj.somemethod() }}.</p>
+```
+
+* Variables can be modified with filters, table 3-1 page 50
+
+| Filter name    | Desc           |
+| :------------- | :------------- |
+| safe         | Renders the value without applying escaping |
+| capitalize   | Converts the first character of the value to uppercase and the rest to lowercase |
+| lower        | Converts the value to lowercase characters |
+| upper        | Converts the value to uppercase characters |
+| title        | Capitalizes each word in the value |
+| trim Removes | leading and trailing whitespace from the value |
+| striptags    | Removes any HTML tags from the value before rendering |
+
+* Jinja2 Documentation
+
+### Control Structures
+
+```html
+{% if user %}
+  Hello, {{ user }}!
+{% else %}
+  Hello, Stranger!
+{% endif %}
+
+<ul>
+    {% for comment in comments %}
+        <li>{{ comment }}</li>
+    {% endfor %}
+</ul>
+```
+
+* macros, similar to function
+
+```html
+{% macro render_comment(comment) %}
+    <li>{{ comment }}</li>
+{% endmacro %}
+
+<ul>
+    {% for comment in comments %}
+        {{ render_comment(comment) }}
+    {% endfor %}
+</ul>
+
+{% import 'macros.html' as macros %}
+<ul>
+  {% for comment in comments %}
+    {{ macros.render_comment(comment) }}
+  {% endfor %}
+</ul>
+```
+
+* template inheritance
+
+```html
+<!-- base.html -->
+<html>
+<head>
+  {% block head %}
+    <title>{% block title %}{% endblock %} - My Application</title>
+  {% endblock %}
+  </head>
+  <body>
+    {% block body %}
+    {% endblock %}
+  </body>
+</html>
+```
+
+```html
+<!-- derived.html -->
+{% extends "base.html" %}
+{% block title %}Index{% endblock %}
+{% block head %}
+  {{ super() }}
+  <style>
+  </style>
+{% endblock %}
+{% block body %}
+  <h1>Hello, World!</h1>
+{% endblock %}
+```
+
+## Bootstrap Integration with Flask-Bootstrap
+
+```shell
+conda install -c conda-forge flask-bootstrap
+```
+
+* Also check out the The Bootstrap official documentation
+* See my code `ch03/user_bootstrap.html`
+
+* Table 3-2 pg 55
+
+| Header One     | Header Two     |
+| :------------- | :------------- |
+| doc            | The entire HTML document |
+| html_attribs   | Attributes inside the <html> tag |
+| html            | The contents of the <html> tag |
+| head            | The contents of the <head> tag |
+| title            | The contents of the <title> tag |
+| metas            | The list of <meta> tags |
+| styles            | CSS definitions |
+| body_attribs  | Attributes inside the <body> tag |
+| body            | The contents of the <body> tag |
+| navbar            | User-defined navigation bar |
+| content            | User-defined page content |
+| scripts            | JavaScript declarations at the bottom of the document |
+
+* IMPORTANT: has to call `super()` first if want to override any of them.
+
+## Custom Error Pages
+
+```python
+@app.errorhandler(404)
+def page_not_found(e):
+    return render_template('404.html'), 404
+
+@app.errorhandler(500)
+def internal_server_error(e):
+    return render_template('500.html'), 500
+```
+
+* Create separate `404.html` and `505.html` causing too much code, we can
+  use inheritance.
+* Create a `base.html`, see `ch03/base.html`
+* Then in `404.html` and `user.html`, override `{% block page_content %}`
+
+## Links
+
+* `url_for()` helper function
+    * `url_for('index')` -> `/`
+    * `url_for('index', _external=True)` -> `http://localhost:5000/`
+    * `url_for('user', name='john', _external=True)` -> `http://localhost:5000/user/john`
+    * `url_for('user', name='john', page=2, version=1)` ->
+      `/user/john?page=2&version=1`
+
+## Static
+
+* images, JavaScript files, CSS files.
+* `url_for('static', filename='css/styles.css', _external=True)` ->
+  `http://localhost:5000/static/css/styles.css`
+
+```html
+{% block head %}
+    {{ super() }}
+    <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
+    <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
+{% endblock %}
+```
+
+## Localization of Dates and Times with Flask-Moment
+
+* `Flask-Moment` is an extension for Flask applications that makes the integration
+  of `Moment.js` into `Jinja2` templates very easy.
+
+```shell
+conda install -c conda-forge flask-moment
+```
+
+* Then in applicaton:
+
+```python
+from flask_moment import Moment
+moment = Moment(app)
+```
+
+* In the html, we need include `jQuery.js` (included by bootstrap) and `Moment.js`.
+
+```html
+{% block scripts %}
+{{ super() }}
+{{ moment.include_moment() }}
+{% endblock %}
+```
+
+* In `index.html`, add the following:
+    * The `format('LLL')` function renders the date and time according to the
+      time zone and locale settings in the client computer.
+    * The `fromNow()` render style shown in the second line renders a relative timestamp
+      and automatically refreshes it as time passes.
+    * Flask-Moment implements the `format(), fromNow(), fromTime(), calendar(),
+      valueOf(), and unix()` methods from `Moment.js`.
+
+```html
+<p>The local date and time is {{ moment(current_time).format('LLL') }}.</p>
+<p>That was {{ moment(current_time).fromNow(refresh=True) }}</p>
+```
+
+* Also check Moment.js documentation.
+* Also can support foreign languages: the [2 letter code](https://en.wikipedia.org/wiki/ISO_3166-1)
+
+```html
+{% block scripts %}
+    {{ super() }}
+    {{ moment.include_moment() }}
+    {{ moment.locale('fr') }}
+{% endblock %}
+```
