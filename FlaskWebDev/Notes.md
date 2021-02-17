@@ -466,11 +466,11 @@ conda install -c conda-forge flask-bootstrap
 | Header One     | Header Two     |
 | :------------- | :------------- |
 | doc            | The entire HTML document |
-| html_attribs   | Attributes inside the <html> tag |
-| html            | The contents of the <html> tag |
-| head            | The contents of the <head> tag |
-| title            | The contents of the <title> tag |
-| metas            | The list of <meta> tags |
+| html_attribs   | Attributes inside the `<html>` tag |
+| html            | The contents of the `<html>` tag |
+| head            | The contents of the `<head>` tag |
+| title            | The contents of the `<title>` tag |
+| metas            | The list of `<meta>` tags |
 | styles            | CSS definitions |
 | body_attribs  | Attributes inside the <body> tag |
 | body            | The contents of the <body> tag |
@@ -568,3 +568,186 @@ moment = Moment(app)
     {{ moment.locale('fr') }}
 {% endblock %}
 ```
+
+# Chapter 4 Web Forms
+
+Pg 65
+
+* Install
+
+```shell
+conda install -c anaconda flask-wtf
+```
+
+## Configuration
+
+* `flask-wtf` doesn't require to be initialized.
+
+```python
+from flask import Flask, render_template
+
+app = Flask(__name__)
+app.config['SECRET_KEY'] = 'hard to guess string'
+```
+
+* `app.config` dictionary is a general-purpose place to store configuration
+  variables used by Flask.
+
+## Form Classes
+
+* When using `Flask-WTF`, each web form is represented in the server by a class that
+  inherits from the class `FlaskForm`.
+* The class defines the list of fields in the form, each represented by an object.
+* Each field object can have one or more validators attached.
+
+```python
+class NameForm(FlaskForm):
+    name = StringField('What is your name?', validators=[DataRequired()])
+    submit = SubmitField('Submit')
+```
+
+* In the example:
+    * the `NameForm` form has a text field called name
+    * and a `submit` button called submit.
+    * The DataRequired() validator ensures that the field is not submitted empty.
+
+* Table 4-1 pg 67
+
+| Field type | desc     |
+| :------------- | :------------- |
+| Item One       | Item Two       |
+| BooleanField      | Checkbox with True and False values |
+| DateField         | Text field that accepts a datetime.date value in a given format |
+| DateTimeField     | Text field that accepts a datetime.datetime value in a given format |
+| DecimalField      | Text field that accepts a decimal.Decimal value |
+| FileField         | File upload field |
+| HiddenField       | Hidden text field |
+| MultipleFileField | Multiple file upload field |
+| FieldList         | List of fields of a given type |
+| FloatField          | Text field that accepts a floating-point value |
+| FormField           | Form embedded as a field in a container form |
+| IntegerField        | Text field that accepts an integer value |
+| PasswordField       | Password text field |
+| RadioField          | List of radio buttons |
+| SelectField         | Drop-down list of choices |
+| SelectMultipleField | Drop-down list of choices with multiple selection |
+| SubmitField         | Form submission button |
+| StringField         | Text field |
+| TextAreaField       | Multiple-line text field |
+
+* Table 4-2 WTForms validators pg 68
+
+## HTML Rendering of Forms
+
+* Different ways:
+
+```html
+<form method="POST">
+  {{ form.hidden_tag() }}
+  {{ form.name.label }} {{ form.name() }}
+  {{ form.submit() }}
+</form>
+
+<form method="POST">
+  {{ form.hidden_tag() }}
+  {{ form.name.label }} {{ form.name(id='my-text-field') }}
+  {{ form.submit() }}
+</form>
+
+{% import "bootstrap/wtf.html" as wtf %}
+{{ wtf.quick_form(form) }}
+```
+
+* The imported `bootstrap/wtf.html` file defines helper functions that render Flask-WTF forms using Boot‐
+strap.
+* The `wtf.quick_form()` function takes a Flask-WTF form object and renders it
+using default Bootstrap styles.
+
+## Form Handling in View Functions
+
+* I have the following error:
+  `jinja2.exceptions.TemplateNotFound: bootstrap/wtf.html`
+  Needs to add the following:
+
+```python
+from flask_bootstrap import Bootstrap
+bootstrap = Bootstrap(app)
+
+@app.route('/', methods=['GET', 'POST'])
+def index():
+    name = None
+    form = NameForm()
+    if form.validate_on_submit():
+        name = form.name.data
+        form.name.data = ''
+    return render_template('index.html', form=form, name=name)
+```
+
+* We added `GET` and `POST` requests.
+* The `validate_on_submit()` method of the form returns True when the form was
+  submitted and the data was accepted by all the field validators.
+* If the user submits the form with an empty name, the `DataRequired()` validator
+  catches the error.
+
+## Redirects and User Sessions
+
+* When `POST`, refresh page, browser will asks for confirmation from the user.
+  This happens because browsers repeat the last request they sent when they are asked to
+  refresh a page.
+* it is considered good practice for web applications to never leave a POST request as the last
+  request sent by the browser.
+* This is achieved by responding to `POST` requests with a redirect instead of a normal
+response.
+* Applications can “remember” things from one request to the next by storing them in
+the `user session`.
+
+```python
+@app.route('/', methods=['GET', 'POST'])
+def index():
+    form = NameForm()
+    if form.validate_on_submit():
+        session['name'] = form.name.data
+        return redirect(url_for('index'))
+    return render_template('index.html', form=form, name=session.get('name'))
+```
+
+## Message Flashing
+
+* Sometimes it is useful to give the user a status update after a request is completed.
+    * message, warning, error.
+    * Eg, submit wrong info to a website, server response with a warning message.
+* Use `flash`
+
+```python
+app.route('/', methods=['GET', 'POST'])
+def index():
+    form = NameForm()
+    if form.validate_on_submit():
+        old_name = session.get('name')
+        if (old_name is not None) and (old_name != form.name.data):
+            flash('Looks like you have changed your name!')
+        session['name'] = form.name.data
+        return redirect(url_for('index'))
+    return render_template('index.html', form=form, name=session.get('name'))
+```
+
+* Also need to update the `base.html`
+
+```html
+{% block content %}
+<div class="container">
+    {% for message in get_flashed_messages() %}
+    <div class="alert alert-warning">
+        <button type="button" class="close" data-dismiss="alert">&times;</button>
+        {{ message }}
+    </div>
+    {% endfor %}
+
+    {% block page_content %}{% endblock %}
+</div>
+{% endblock %}
+```
+
+# CHAPTER 5 Databases
+
+Pg 79
