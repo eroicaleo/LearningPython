@@ -24,6 +24,9 @@
 
 # Problem discussion
 
+* minimum operations problem to go over DFS/BFS/Union find in JAVA.
+* K closest to origin to review how to use the Heap in JAVA, and a fancy quick selection implementation.
+
 * `336_Palindrome_Pairs.py` fastest solution
 * `472_Concatenated_Words.py` fastest solution
 * `378_Kth_Smallest_Element_in_a_Sorted_Matrix.py` bisect solution
