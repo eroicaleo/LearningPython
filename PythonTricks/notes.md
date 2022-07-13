@@ -304,12 +304,8 @@ its intent more clearly with an explicit return None statement.
 
 # Chapter 5 Common Data Structures in Python
 
-* Going back to the fundamentals always pays off for a
-  programmer, regardless of their skill level or experience.
-* Python favors a simpler and more “human” naming scheme,
-  But the downside is that even to experienced Python developers, it
-  can be unclear whether the built-in list type is implemented as a
-  linked list or a dynamic array.
+* Going back to the fundamentals always pays off for a programmer, regardless of their skill level or experience.
+* Python favors a simpler and more “human” naming scheme, But the downside is that even to experienced Python developers, it can be unclear whether the built-in list type is implemented as a linked list or a dynamic array.
 
 ## 5.1 Dictionaries, Maps, and Hashtables
 
@@ -338,4 +334,9 @@ read_only = MappingProxyType(writable)
 
 Pg 164
 
+* Arrays consist of fixed-size data records that allow each element to be efficiently located based on its index.
+* Because arrays store information in adjoining blocks of memory, they’re considered contiguous data structures (as opposed to linked datas structure like linked lists, for example.)
+* Python includes several array-like data structures in its standard library that each have slightly different characteristics.
+
+### `list` – Mutable Dynamic Arrays
 
