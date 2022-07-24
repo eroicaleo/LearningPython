@@ -385,3 +385,24 @@ except TypeError as e:
 print(arr + (23,))
 ```
 
+### `array.array` – Basic Typed Arrays
+
+* Arrays created with the `array.array` class are mutable and are “typed arrays” constrained to a single data type.
+
+```python
+import array
+arr = array.array('f', (1.0, 1.5, 2.0, 2.5))
+print(arr[1])
+print(arr)
+arr[1] = 23.0
+print(arr)
+del arr[1]
+print(arr)
+arr.append(42.0)
+print(arr)
+try:
+    arr[1] = 'hello'
+except TypeError as e:
+    print(f'Trying to assign a string to a floating array failed: {e}')
+```
+
