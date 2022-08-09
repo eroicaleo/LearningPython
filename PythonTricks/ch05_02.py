@@ -51,3 +51,19 @@ try:
 except TypeError as e:
     print(f'Trying to assign a string to a floating array failed: {e}')
 
+arr = 'abcd'
+print(arr[1])
+try:
+    arr[1] = 'e'
+except TypeError as e:
+    print(f'Trying to assign a new value to an element failed: {e}')
+
+try:
+    del arr[1]
+except TypeError as e:
+    print(f'Trying to delete an element failed: {e}')
+
+print(list(arr))
+print(type('abc'))
+print(type('abc'[0]))
+

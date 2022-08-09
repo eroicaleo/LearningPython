@@ -406,3 +406,35 @@ except TypeError as e:
     print(f'Trying to assign a string to a floating array failed: {e}')
 ```
 
+## `str` – Immutable Arrays of Unicode Characters
+
+* Practically speaking, a `str` is an immutable array of characters.
+* It’s also a recursive data structure—each character in a string is a `str` object of  length 1 itself.
+* Because strings are immutable in Python, modifying a string requires creating a modified copy.
+
+* Strings are immutable:
+
+```python
+try:
+    arr[1] = 'e'
+except TypeError as e:
+    print(f'Trying to assign a new value to an element failed: {e}')
+# Trying to assign a new value to an element failed: 'str' object does not support item assignment
+
+try:
+    del arr[1]
+except TypeError as e:
+    print(f'Trying to delete an element failed: {e}')
+# Trying to delete an element failed: 'str' object doesn't support item deletion
+
+```
+
+* Strings are recursive data structures:
+
+```python
+print(type('abc'))
+print(type('abc'[0]))
+# <class 'str'>
+# <class 'str'>
+```
+
