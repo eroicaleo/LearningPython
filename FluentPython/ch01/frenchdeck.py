@@ -4,6 +4,7 @@ import collections
 
 Card = collections.namedtuple('Card', ['rank', 'suit'])
 
+
 class FrenchDeck:
     ranks = [str(n) for n in range(2, 11)] + list('JQKA')
     suits = 'spades diamonds clubs hearts'.split()
@@ -18,7 +19,11 @@ class FrenchDeck:
     def __getitem__(self, position):
         return self._cards[position]
 
+
 if __name__ == '__main__':
+    import doctest
+    doctest.testmod()
+
     beer_card = Card('7', 'diamonds')
     print(beer_card)
 
@@ -33,3 +38,10 @@ if __name__ == '__main__':
     print(choice(deck))
     print(choice(deck))
     print(choice(deck))
+
+    print(deck[:3])
+    print(deck[12::13])
+
+    for card in deck:  # doctest: +ELLIPSIS
+        print(card)
+
