@@ -82,6 +82,36 @@ Card(rank='Q', suit='hearts')
 python -m doctest -v frenchdeck.doctest
 ```
 
+* Because we defined `__getitem__`, the `FrenchDeck` is an iterable, and we can have
+
+```python
+>>> Card('Q', 'hearts') in deck
+True
+>>> Card('7', 'beasts') in deck
+False
+```
+
+* We can also sort it
+
+```python
+>>> suit_values = dict(spades=3, hearts=2, diamonds=1, clubs=0)
+>>> def spades_high(card):
+...     rank_value = FrenchDeck.ranks.index(card.rank)
+...     return rank_value * len(suit_values) + suit_values[card.suit]
+
+>>> spades_high(Card('2', 'clubs'))
+0
+>>> spades_high(Card('A', 'spades'))
+51
+
+>>> for card in sorted(deck, key=spades_high): # doctest: +ELLIPSIS
+...     print(card)
+```
+
+* Although `FrenchDeck` implicitly inherits from the object class, most of its functionality is not inherited, but comes from leveraging the data model and composition. By implementing the special methods `__len__` and `__getitem__`, our `FrenchDeck` behaves like a standard Python sequence, allowing it to benefit from core language features (e.g., iteration and slicing) and from the standard library, as shown by the examples using `random.choice`, reversed, and `sorted`. Thanks to composition, the `__len__` and `__getitem__` implementations can delegate all the work to a list object, `self._cards`.
+* How About Shuffling?
+  * a `FrenchDeck` cannot be shuffled because it is immutable: In Chapter 13, we will fix that by adding a one-line `__setitem__` method.
+
 ## How special methods are used
 
 * `vector.py`
