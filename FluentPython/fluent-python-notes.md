@@ -82,7 +82,9 @@ Card(rank='Q', suit='hearts')
 python -m doctest -v frenchdeck.doctest
 ```
 
-* Because we defined `__getitem__`, the `FrenchDeck` is an iterable, and we can have
+* Because we defined `__getitem__`, the `FrenchDeck` is an iterable, and we can have the following.
+  * There are 4 ways to make an object iterable, see [here](https://stackoverflow.com/questions/19151/how-to-build-a-basic-iterator).
+
 
 ```python
 >>> Card('Q', 'hearts') in deck
@@ -114,9 +116,19 @@ False
 
 ## How special methods are used
 
+* User should not call special methods, E.g., user do not call `my_object.__len__()`.
+  * User call `len(my_object)`
+  * Then python call `__len__` method you implemented.
+
+* Built-in objects like `list, str, bytearray` has short cuts because they are implemented in C which has `PyVarObject`, which has an `ob_size` to hold size.
+* Usually special method call is implicit, like `for i in x`, in this case, `iter()` is called, then `__iter__()` is called if implemented. Otherwise `x.__getitem__()` gets called.
+* In general, a user should not call special methods directly. The only exception is to call `__init__` to invoke the initializer of the superclass in your own `__init__` implementation.
+* If you need to invoke a special method, use `len, iter, str` etc.
+
+### Emulating Numeric Types
+
 * `vector.py`
-* The string returned by `__repr__` should be unambiguous and, 
-  if possible, match the source code necessary to recreate the object being represented.
+* The string returned by `__repr__` should be unambiguous and if possible, match the source code necessary to recreate the object being represented.
 
 # Chapter 02 An array of sequences
 
