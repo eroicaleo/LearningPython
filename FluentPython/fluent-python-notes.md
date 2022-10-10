@@ -127,7 +127,31 @@ False
 
 ### Emulating Numeric Types
 
-* `vector.py`
+* Here our goal is to further illustrate the use of special methods through another simple example.
+* We will implement a class to represent two-dimensional vectors—that is, Euclidean vectors like those used in math and physics.
+* See `vector.py` and `vector.doctest`.
+
+```python
+class Vector:
+    def __init__(self, x=0, y=0):
+        self.x = x
+        self.y = y
+
+    def __repr__(self):
+        return 'Vector(%r, %r)' % (self.x, self.y)
+
+    def __abs__(self):
+        return hypot(self.x, self.y)
+
+    def __add__(self, other):
+        x = self.x + other.x
+        y = self.y + other.y
+        return Vector(x, y)
+
+    def __mul__(self, scalar):
+        return Vector(self.x * scalar, self.y * scalar)
+```
+
 * The string returned by `__repr__` should be unambiguous and if possible, match the source code necessary to recreate the object being represented.
 
 # Chapter 02 An array of sequences
@@ -178,3 +202,58 @@ False
 # Chapter -1 Other Notes
 
 * [Github link](https://github.com/fluentpython/example-code-2e)
+
+* How to run doctest
+
+  * Example 1:
+
+  ```python
+  """
+  vector2d.py: a simplistic class demonstrating some special methods
+  It is simplistic for didactic reasons. It lacks proper error handling,
+  especially in the ``__add__`` and ``__mul__`` methods.
+  This example is greatly expanded later in the book.
+  
+  Addition::
+  
+      >>> v1 = Vector(2, 4)
+      >>> v2 = Vector(2, 1)
+      >>> v1 + v2
+      Vector(4, 5)
+  
+  """
+  
+  class Vector:
+    	# ...
+  
+  if __name__ == "__main__":
+      import doctest
+      doctest.testmod()
+  ```
+
+  ```shell
+   python vector.py -v
+  ```
+
+  * Example 2
+
+  ```python
+  >>> from vector import Vector
+  >>> v1 = Vector(2, 4)
+  >>> v2 = Vector(2, 1)
+  >>> v1 + v2
+  Vector(4, 5)
+  >>> v = Vector(3, 4)
+  >>> abs(v)
+  5.0
+  >>> v * 3
+  Vector(9, 12)
+  >>> abs(v * 3)
+  15.0
+  ```
+
+  ```shell
+  python -m doctest -v vector.doctest
+  ```
+
+  
