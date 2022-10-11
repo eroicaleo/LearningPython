@@ -154,6 +154,30 @@ class Vector:
 
 * The string returned by `__repr__` should be unambiguous and if possible, match the source code necessary to recreate the object being represented.
 
+### Boolean Value of a Custom Type
+
+* By default, instances of user-defined classes are considered truthy, unless either `__bool__` or `__len__` is implemented.
+  * `bool(x)` calls `x.__bool__()` and uses the result.
+  * `__bool__` is not implemented, Python tries to invoke `x.__len__()`, and if that returns zero, `bool` returns `False`.
+  * Otherwise `bool` returns `True`.
+* So we add the following function and tests:
+
+```python
+class Vector:
+    # ...
+		def __bool__(self):
+        return bool(self.x or self.y)
+```
+
+```
+>>> bool(Vector(1, 1)) is True
+True
+>>> bool(Vector(0, 0)) is False
+True
+```
+
+
+
 # Chapter 02 An array of sequences
 
 ## Overview of built-in sequence

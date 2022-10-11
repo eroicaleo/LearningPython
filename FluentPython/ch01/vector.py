@@ -26,6 +26,13 @@ Scalar multiplication::
     >>> abs(v * 3)
     15.0
 
+Boolean value
+
+    >>> bool(Vector(1, 1)) is True
+    True
+    >>> bool(Vector(0, 0)) is False
+    True
+
 """
 
 from math import hypot
@@ -49,6 +56,9 @@ class Vector:
 
     def __mul__(self, scalar):
         return Vector(self.x * scalar, self.y * scalar)
+
+    def __bool__(self):
+        return bool(self.x or self.y)
 
 
 if __name__ == "__main__":

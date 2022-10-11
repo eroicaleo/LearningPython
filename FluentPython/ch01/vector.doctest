@@ -10,3 +10,7 @@ Vector(4, 5)
 Vector(9, 12)
 >>> abs(v * 3)
 15.0
+>>> bool(Vector(1, 1)) is True
+True
+>>> bool(Vector(0, 0)) is False
+True
