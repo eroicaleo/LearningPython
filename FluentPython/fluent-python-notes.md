@@ -176,7 +176,22 @@ True
 True
 ```
 
+### Collection API
 
+* All the classes in the diagram are ABCs—abstract base classes.
+
+<img src="./images/0102CollectionAPI.png" style="zoom:50%;" />
+
+* Each of the top ABCs has a single special method. The `Collection` ABC (new in Python 3.6) unifies the three essential interfaces that every collection should implement:
+  * `Iterable` to support for, unpacking, and other forms of iteration
+  * `Sized` to support the len built-in function
+  * `Container` to support the in operator
+* Three very important specializations of Collection are:
+  * `Sequence`, formalizing the interface of built-ins like `list` and `str`
+  * `Mapping`, implemented by `dict`, `collections.defaultdict`, etc.
+  * `Set`, the interface of the `set` and `frozenset` built-in types
+* All the special methods in the `Set` ABC implement infix operators.
+  * `a & b` computes the intersection of sets a and b, and is implemented in the `__and__` special method.
 
 # Chapter 02 An array of sequences
 
