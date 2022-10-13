@@ -193,6 +193,16 @@ True
 * All the special methods in the `Set` ABC implement infix operators.
   * `a & b` computes the intersection of sets a and b, and is implemented in the `__and__` special method.
 
+## Overview of Special Methods
+
+* Use 3 tables to list almost all special methods.
+
+## Why len Is Not a Method
+
+* “practicality beats purity.”: The `len(x)` on built-in type needs to run very fast, since it just reads a field.
+* But for custom objects, `len` calls `__len__`, This is a fair compromise between the need for efficient built-in objects and the consistency of the language.
+* You can think of `abs` and `len` as unary operators.
+
 # Chapter 02 An array of sequences
 
 ## Overview of built-in sequence
