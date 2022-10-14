@@ -203,6 +203,13 @@ True
 * But for custom objects, `len` calls `__len__`, This is a fair compromise between the need for efficient built-in objects and the consistency of the language.
 * You can think of `abs` and `len` as unary operators.
 
+## Chapter Summary
+
+* By implementing special methods, your objects can behave like the built-in types
+* A basic requirement for a Python object is to provide usable string representations of itself, one used for debugging and logging.
+* Emulating sequences, as shown with the `FrenchDeck` example, is one of the most common uses of the special methods.
+* Thanks to operator overloading, Python offers a rich selection of numeric types, from the built-ins to `decimal.Decimal` and `fractions.Fraction`, all supporting infix arithmetic operators.
+
 # Chapter 02 An array of sequences
 
 ## Overview of built-in sequence
@@ -305,4 +312,13 @@ True
   python -m doctest -v vector.doctest
   ```
 
-  
+
+# Further Reading
+
+## Chapter 1
+
+* [Data model chapter](https://docs.python.org/3/reference/datamodel.html).
+* [Python in a nutshell](https://www.oreilly.com/library/view/python-in-a/9781491913833/).
+* Python Essential Reference
+* Python Cook‐ book, 3rd ed.
+* The Art of the Metaobject Protocol (Author's favorite)
