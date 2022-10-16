@@ -212,15 +212,32 @@ True
 
 # Chapter 02 An array of sequences
 
+* This chapter will cover:
+  * List comprehensions and the basics of generator expressions
+  * Using tuples as records versus using tuples as immutable lists
+  * Sequence unpacking and sequence patterns
+  * Reading from slices and writing to slices
+  * Specialized sequence types, like arrays and queues
+
 ## Overview of built-in sequence
 
-* `list`, `tuple`, `collections.deque` holds different types
-* `str`, `bytes`, `bytearray`, `memoryview`, `array.array` holds one type
+* Container sequences: e.g.`list`, `tuple`, `collections.deque` holds different types.
+    * holds references to the objects it contains.
 
+* Flat sequences: e.g. `str`, `bytes`, `bytearray`, `memoryview`, `array.array` holds one type.
+    * stores the value of its contents in its own memory space.
+    * More compact, but are limited to holding primitive machine values like `bytes`, `integers`, and `floats`.
+
+* Every Python object in memory has a header with metadata.
+* The simplest one, `float`, has a value field and two metadata fields:
+    * `ob_refcnt`: the object’s reference count, 8-byte in 64-bit python build.
+    * `ob_type`: a pointer to the object’s type, 8-byte in 64-bit python build.
+    * `ob_fval`: a C double holding the value of the `float`, 8-byte in 64-bit python build.
+
+* So, an array of `floats` is much more compact than a tuple of `floats`.
 * From mutable point of view:
     * mutable: `list`, `collections.deque`, `bytearray`, `memoryview`, `array.array`
     * immutable: `tuple`, `str`, `bytes`
-
 * UML diagram:
     * `class Sequence(Container, Iterable, Sized)`
     * `class MutableSequence(Sequence)`
