@@ -274,7 +274,35 @@ True
   ```
 
 * In Python code, line breaks are ignored inside pairs of `[]`, {}, or `()`. So you can build multiline lists, listcomps, tuples, dictionaries, etc., without using the `\` line continuation escape, which doesn’t work if you accidentally type a space after it.
+
 * Also, when those delimiter pairs are used to define a literal with a comma-separated series of items, a trailing comma will be ignored. So, for example, when coding a multiline list literal, it is thoughtful to put a comma after the last item, making it a little easier for the next coder to add one more item to that list, and reducing noise when reading diffs.
+
+### Local Scope Within Comprehensions and Generator Expressions
+
+* Variables assigned with the “Walrus operator” := remain accessible after those comprehensions or expressions return—unlike local variables in a function. PEP 572—Assignment Expressions defines the scope of the target of := as the enclosing function, unless there is a global or nonlocal declaration for that target.
+
+```python
+"""
+>>> x = 'ABC'
+>>> codes = [ord(x) for x in x]
+>>> x # x was not clobbered: it’s still bound to 'ABC'.
+'ABC'
+>>> codes
+[65, 66, 67]
+>>> codes = [last := ord(c) for c in x]
+>>> last # last remains.
+67
+>>> c # doctest: +IGNORE_EXCEPTION_DETAIL
+Traceback (most recent call last):
+NameError: name 'c' is not defined
+
+In the above example c is gone; it existed only inside the listcomp.
+
+"""
+```
+
+## Listcomps Versus map and filter
+
 * `map` and `filter` lost some readablity
 * code: `cartesian.py`
 * listcomp builds list, genexp builds other sequences.
@@ -357,6 +385,53 @@ Vector(9, 12)
 python -m doctest -v vector.doctest
 ```
 
+* How to add `...` if the output is too long:
+
+  * Reference from [stackoverflow](https://stackoverflow.com/questions/17092215/how-enable-ellipsis-when-calling-python-doctest).
+
+  ```python
+  def foo():
+      """
+      >>> foo() # doctest: +ELLIPSIS
+      hello ...
+      """
+      print("hello world")
+  ```
+
+  ```
+  python -m doctest foo.py 
+  ```
+
+  * If we want to use `...` for all the tests
+
+  ```python
+  def foo():
+      """
+      >>> foo()
+      hello ...
+      """
+      print("hello world")
+  
+  if __name__ == "__main__":
+      import doctest
+      doctest.testmod(verbose=True, optionflags=doctest.ELLIPSIS)
+  ```
+
+  ```shell
+  python foo.py -v
+  ```
+
+* How to catch exception?
+
+  * [Stackover anwser](https://stackoverflow.com/questions/12592/can-you-check-that-an-exception-is-thrown-with-doctest-in-python).
+
+  ```python
+  >>> c # doctest: +IGNORE_EXCEPTION_DETAIL
+  Traceback (most recent call last):
+  NameError: name 'c' is not defined
+  ```
+
+  
 
 # Further Reading
 
