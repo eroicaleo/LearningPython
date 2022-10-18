@@ -223,17 +223,14 @@ True
 
 * Container sequences: e.g.`list`, `tuple`, `collections.deque` holds different types.
     * holds references to the objects it contains.
-
 * Flat sequences: e.g. `str`, `bytes`, `bytearray`, `memoryview`, `array.array` holds one type.
     * stores the value of its contents in its own memory space.
     * More compact, but are limited to holding primitive machine values like `bytes`, `integers`, and `floats`.
-
 * Every Python object in memory has a header with metadata.
 * The simplest one, `float`, has a value field and two metadata fields:
     * `ob_refcnt`: the object’s reference count, 8-byte in 64-bit python build.
     * `ob_type`: a pointer to the object’s type, 8-byte in 64-bit python build.
     * `ob_fval`: a C double holding the value of the `float`, 8-byte in 64-bit python build.
-
 * So, an array of `floats` is much more compact than a tuple of `floats`.
 * From mutable point of view:
     * mutable: `list`, `collections.deque`, `bytearray`, `memoryview`, `array.array`
@@ -242,11 +239,42 @@ True
     * `class Sequence(Container, Iterable, Sized)`
     * `class MutableSequence(Sequence)`
 
+<img src="./images/0202SequenceUML.png" style="zoom:50%;" />
+
+```python
+"""
+
+    >>> from collections import abc
+    >>> issubclass(tuple, abc.Sequence)
+    True
+    >>> issubclass(list, abc.MutableSequence)
+    True
+
+"""
+```
+
+* Keep in mind these common traits: mutable versus immutable; container versus flat. They are helpful to extrapolate what you know about one sequence type to others.
+
 ## List Comprehension (list comps) and generator expressions (genexps)
 
-* code: `listcomp.py`
-* more readable
-* line breaks are ignored inside `[], {}, ()`
+* A quick way to build a sequence is using a list comprehension (if the target is a list) or a generator expression (for other kinds of sequences).
+
+  * faster and more readable.
+  * If you are not doing something with the produced list, you should not use that syntax.
+  * Also, try to keep it short. If the list comprehension spans more than two lines, it is probably best to break it apart or rewrite it as a plain old for loop.
+
+  ```python
+  """
+  # listcomp.py
+  >>> symbols = '$¢£¥€¤'
+  >>> codes = [ord(code) for code in symbols]
+  >>> codes
+  [36, 162, 163, 165, 8364, 164]
+  """
+  ```
+
+* In Python code, line breaks are ignored inside pairs of `[]`, {}, or `()`. So you can build multiline lists, listcomps, tuples, dictionaries, etc., without using the `\` line continuation escape, which doesn’t work if you accidentally type a space after it.
+* Also, when those delimiter pairs are used to define a literal with a comma-separated series of items, a trailing comma will be ignored. So, for example, when coding a multiline list literal, it is thoughtful to put a comma after the last item, making it a little easier for the next coder to add one more item to that list, and reducing noise when reading diffs.
 * `map` and `filter` lost some readablity
 * code: `cartesian.py`
 * listcomp builds list, genexp builds other sequences.
@@ -276,58 +304,58 @@ True
 
 * [Github link](https://github.com/fluentpython/example-code-2e)
 
-* How to run doctest
+## How to run doctest
 
-  * Example 1:
+* Example 1:
 
-  ```python
-  """
-  vector2d.py: a simplistic class demonstrating some special methods
-  It is simplistic for didactic reasons. It lacks proper error handling,
-  especially in the ``__add__`` and ``__mul__`` methods.
-  This example is greatly expanded later in the book.
-  
-  Addition::
-  
-      >>> v1 = Vector(2, 4)
-      >>> v2 = Vector(2, 1)
-      >>> v1 + v2
-      Vector(4, 5)
-  
-  """
-  
-  class Vector:
-    	# ...
-  
-  if __name__ == "__main__":
-      import doctest
-      doctest.testmod()
-  ```
+```python
+"""
+vector2d.py: a simplistic class demonstrating some special methods
+It is simplistic for didactic reasons. It lacks proper error handling,
+especially in the ``__add__`` and ``__mul__`` methods.
+This example is greatly expanded later in the book.
 
-  ```shell
-   python vector.py -v
-  ```
+Addition::
 
-  * Example 2
+    >>> v1 = Vector(2, 4)
+    >>> v2 = Vector(2, 1)
+    >>> v1 + v2
+    Vector(4, 5)
 
-  ```python
-  >>> from vector import Vector
-  >>> v1 = Vector(2, 4)
-  >>> v2 = Vector(2, 1)
-  >>> v1 + v2
-  Vector(4, 5)
-  >>> v = Vector(3, 4)
-  >>> abs(v)
-  5.0
-  >>> v * 3
-  Vector(9, 12)
-  >>> abs(v * 3)
-  15.0
-  ```
+"""
 
-  ```shell
-  python -m doctest -v vector.doctest
-  ```
+class Vector:
+  	# ...
+
+if __name__ == "__main__":
+    import doctest
+    doctest.testmod()
+```
+
+```shell
+ python vector.py -v
+```
+
+* Example 2
+
+```python
+>>> from vector import Vector
+>>> v1 = Vector(2, 4)
+>>> v2 = Vector(2, 1)
+>>> v1 + v2
+Vector(4, 5)
+>>> v = Vector(3, 4)
+>>> abs(v)
+5.0
+>>> v * 3
+Vector(9, 12)
+>>> abs(v * 3)
+15.0
+```
+
+```shell
+python -m doctest -v vector.doctest
+```
 
 
 # Further Reading
