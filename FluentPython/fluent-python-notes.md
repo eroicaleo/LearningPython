@@ -303,7 +303,40 @@ In the above example c is gone; it existed only inside the listcomp.
 
 ## Listcomps Versus map and filter
 
-* `map` and `filter` lost some readablity
+* `map` and `filter` lost some readablity. Luciano used to think listcomp is much slower than `map` and `filter`, but this is not the case. See the results below.
+  * To see the difference between `number` and `repeat`, see [here](https://stackoverflow.com/questions/56763416/what-is-diffrence-between-number-and-repeat-in-python-timeit).
+
+
+```python
+# listcomps_speed.py
+import timeit
+
+TIMES = 10000
+SETUP = """
+symbols = '$¢£¥€¤'
+def non_ascii(c):
+    return c > 127
+"""
+
+
+def clock(label, cmd):
+    res = timeit.repeat(cmd, setup=SETUP, number=TIMES, repeat=6)
+    print(label, *(f'{x:.3f}' for x in res))
+
+
+clock('listcomp        :', '[ord(s) for s in symbols if ord(s) > 127]')
+clock('listcomp + func :', '[ord(s) for s in symbols if non_ascii(ord(s))]')
+clock('filter + lambda :', 'list(filter(lambda c: c > 127, map(ord, symbols)))')
+clock('filter + func   :', 'list(filter(non_ascii, map(ord, symbols)))')
+
+listcomp        : 0.007 0.007 0.006 0.007 0.007 0.007
+listcomp + func : 0.011 0.010 0.011 0.010 0.011 0.011
+filter + lambda : 0.009 0.009 0.009 0.009 0.009 0.009
+filter + func   : 0.009 0.008 0.008 0.008 0.009 0.011
+```
+
+## Cartesian Products
+
 * code: `cartesian.py`
 * listcomp builds list, genexp builds other sequences.
 * genexp saves memory
