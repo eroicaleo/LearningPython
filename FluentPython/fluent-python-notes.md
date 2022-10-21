@@ -337,8 +337,30 @@ filter + func   : 0.009 0.008 0.008 0.008 0.009 0.011
 
 ## Cartesian Products
 
+* Listcomps can build lists from the Cartesian product of two or more iterables. The items that make up the Cartesian product are tuples made from items from every input iterable.
 * code: `cartesian.py`
+
+```python
+>>> colors = ['black', 'white']
+>>> sizes = ['S', 'M', 'L']
+
+>>> tshirts = [(color, size) for color in colors
+...                          for size in sizes ]
+>>> tshirts   # doctest: +NORMALIZE_WHITESPACE
+[('black', 'S'), ('black', 'M'), ('black', 'L'), ('white', 'S'),
+('white', 'M'), ('white', 'L')]
+
+>>> tshirts = [(color, size) for size in sizes
+...                          for color in colors ]
+>>> tshirts  # doctest: +NORMALIZE_WHITESPACE
+[('black', 'S'), ('white', 'S'), ('black', 'M'), ('white', 'M'),
+('black', 'L'), ('white', 'L')]
+```
+
 * listcomp builds list, genexp builds other sequences.
+
+## Generator Expressions
+
 * genexp saves memory
 * If genexp is the single argument in a func call, no need to use `()`. Otherwise, `()` is needed, like in `arrary.arrary()` constructor
 
@@ -464,7 +486,15 @@ python -m doctest -v vector.doctest
   NameError: name 'c' is not defined
   ```
 
-  
+* How to do multiline in output when it's too long: adding `+NORMALIZE_WHITESPACE`
+
+```python
+>>> tshirts = [(color, size) for color in colors
+...                          for size in sizes ]
+>>> tshirts   # doctest: +NORMALIZE_WHITESPACE
+[('black', 'S'), ('black', 'M'), ('black', 'L'), ('white', 'S'),
+('white', 'M'), ('white', 'L')]
+```
 
 # Further Reading
 
