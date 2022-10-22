@@ -361,8 +361,35 @@ filter + func   : 0.009 0.008 0.008 0.008 0.009 0.011
 
 ## Generator Expressions
 
-* genexp saves memory
-* If genexp is the single argument in a func call, no need to use `()`. Otherwise, `()` is needed, like in `arrary.arrary()` constructor
+* `genexp` saves memory because it yields items one by one using the iterator protocol instead of building a whole list.
+  * ① If the generator expression is the single argument in a function call, there is no need to duplicate the enclosing parentheses.
+  * ② The `array` constructor takes two arguments, so the parentheses around the gen‐ erator expression are mandatory.
+
+
+```python
+>>> symbols = '$¢£¥€¤'
+>>> tuple(ord(code) for code in symbols)  # ➊
+(36, 162, 163, 165, 8364, 164)
+
+>>> import array
+>>> array.array('I', (ord(code) for code in symbols))  # ➋
+array('I', [36, 162, 163, 165, 8364, 164])
+```
+
+* The next example:
+  * Here the six-item list of T- shirts is never built in memory: the generator expression feeds the `for` loop producing one item at a time.
+  * 
+
+```python
+>>> for tshirt in ('%s %s' % (color, size) for color in colors for size in sizes):
+...     print(tshirt)
+black S
+black M
+black L
+white S
+white M
+white L
+```
 
 ## Tuples are not just immutable lists
 
