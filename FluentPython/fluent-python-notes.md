@@ -393,11 +393,47 @@ white L
 
 ## Tuples are not just immutable lists
 
-* The position in tuple is also important
+* Tuples do double duty:
+  * they can be used as immutable lists
+  * also as records with no field names.
+
+### Tuples as Records
+
+* Tuples hold records: each item in the tuple holds the data for one field, and the position of the item gives its meaning.
+    1. The `%` formatting operator understands tuples and treats each item as a separate field.
+    2. The `for` loop knows how to retrieve the items of a tuple separately—this is called “unpacking.” Here we are not interested in the second item, so we assign it to `_`, a dummy variable.
+
+```python
+>>> lax_coordinates = (33.9425, -118.408056)
+>>> city, year, pop, chg, area = ('Tokyo', 2003, 32450, 0.66, 8014)
+>>> traveler_ids = [('USA', '31195855'), ('BRA', 'CE342567'),
+... ('ESP', 'XDA205856')]
+
+>>> for passport in sorted(traveler_ids):
+...    print('%s/%s' % passport)  // 1
+...
+BRA/CE342567
+ESP/XDA205856
+USA/31195855
+
+>>> for country, _ in traveler_ids:  // 2
+...     print(country)
+...
+USA
+BRA
+ESP
+```
+
+* We have two examples of tuple unpacking here:
+  * we assigned `('Tokyo', 2003, 32_450, 0.66, 8014)` to `city, year, pop, chg, area` in a single statement.
+  * the `%` operator assigned each item in the passport tuple to the corresponding slot in the format string in the `print` argument.
+
+### Tuples as Immutable Lists
+
 * tuple unpacking (`tupleunpacking.py`):
     * works for Iterable object 
     * parallel assignment, can do swapping value elegently, i.e. `a, b = b, a`
-	* When don't care a variable, use `_`
+    * When don't care a variable, use `_`
     * prefix an argument with a star when calling a function.
     * `*` can be used to grab excess items
     * but in parallel assignment, it can appear only once, but can be anywhere
