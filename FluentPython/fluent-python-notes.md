@@ -378,7 +378,6 @@ array('I', [36, 162, 163, 165, 8364, 164])
 
 * The next example:
   * Here the six-item list of T- shirts is never built in memory: the generator expression feeds the `for` loop producing one item at a time.
-  * 
 
 ```python
 >>> for tshirt in ('%s %s' % (color, size) for color in colors for size in sizes):
@@ -612,3 +611,14 @@ python -m doctest -v vector.doctest
 * Python Essential Reference
 * Python Cook‐ book, 3rd ed.
 * The Art of the Metaobject Protocol (Author's favorite)
+
+# Cool Staff I Learned
+
+## Chapter 1
+
+* The use of `doctest`
+
+## Chapter 2
+
+* `timeit` module
+* `hash` built-in
