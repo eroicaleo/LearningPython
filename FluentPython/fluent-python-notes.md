@@ -473,13 +473,55 @@ def fixed(o):
 
 ### Comparing Tuple and List Methods
 
+* `tuple` supports all list methods that do not involve adding or removing items, with one exception—`tuple` lacks the `__reversed__` method.
+* However, that is just for optimization; `reversed(my_tuple)` works without it.
+
+## Unpacking Sequences and Iterables
+
+* Unpacking is important because it avoids unnecessary and error-prone use of indexes to extract elements from sequences.
+* Also, unpacking works with any iterable object as the data source—including iterators, which don’t support index notation (`[]`).
+  * The only requirement is that the iterable yields exactly one item per variable in the receiving end, unless you use a star (`*`) to capture excess items,
+
 * tuple unpacking (`tupleunpacking.py`):
-    * works for Iterable object 
-    * parallel assignment, can do swapping value elegently, i.e. `a, b = b, a`
+    * The most visible form of unpacking is parallel assignment
+    
+    ```python
+    >>> lax_coordinates = (33.9425, -118.408056)
+    >>> latitude, longitude = lax_coordinates
+    >>> latitude
+    33.9425
+    >>> longitude
+    -118.408056
+    ```
+    
+    * Can do swapping value elegently, i.e. `a, b = b, a`
+    * Prefix an argument with a star when calling a function.
+    
+    ```python
+    >>> divmod(20, 8)
+    (2, 4)
+    >>> t = (20, 8)
+    >>> divmod(*t)
+    (2, 4)
+    >>> quotient, remainder = divmod(*t)
+    >>> quotient
+    2
+    >>> remainder
+    4
+    ```
+    
     * When don't care a variable, use `_`
-    * prefix an argument with a star when calling a function.
-    * `*` can be used to grab excess items
-    * but in parallel assignment, it can appear only once, but can be anywhere
+    
+    ```python
+    >>> import os
+    >>> _, filename = os.path.split('/home/luciano/.ssh/id_rsa.pub')
+    >>> filename
+    'id_rsa.pub'
+    ```
+
+### Using * to Grab Excess Items
+
+* but in parallel assignment, it can appear only once, but can be anywhere
 * assignment can have nested tuples.
 * `namedtuple`
     * Accept 2 arguments, 1st is the class name, second can be a list of string or a string with single
