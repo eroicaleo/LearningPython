@@ -519,9 +519,58 @@ def fixed(o):
     'id_rsa.pub'
     ```
 
-### Using * to Grab Excess Items
+### Using `*` to Grab Excess Items
 
-* but in parallel assignment, it can appear only once, but can be anywhere
+* Defining function parameters with *args to grab arbitrary excess arguments is a classic Python feature.
+* In Python 3, this idea was extended to apply to parallel assignment as well:
+
+```python
+>>> a, b, *rest = range(5)
+>>> a, b, rest
+(0, 1, [2, 3, 4])
+>>> a, b, *rest = range(3)
+>>> a, b, rest
+(0, 1, [2])
+>>> a, b, *rest = range(2)
+>>> a, b, rest
+(0, 1, [])
+```
+
+* In the context of parallel assignment, the `*` prefix can be applied to exactly one variable, but it can appear in any position:
+
+```python
+>>> a, *body, c, b = range(5)
+>>> a, body, c, b
+(0, [1, 2], 3, 4)
+>>> *head, b, c, d = range(5)
+>>> head, b, c, d
+([0, 1], 2, 3, 4)
+```
+
+### Unpacking with `*` in Function Calls and Sequence Literals
+
+* In function calls, we can use `*` multiple times:
+
+```python
+>>> def func(a, b, c, d, *rest):
+...     return a, b, c, d, rest
+>>> func(*[1, 2], 3, *range(4, 7))
+(1, 2, 3, 4, (5, 6))
+```
+
+* The `*` can also be used when defining `list`, `tuple`, or `set` literals, as shown in these examples from “What’s New In Python 3.5”:
+
+```python
+>>> *range(4), 4
+(0, 1, 2, 3, 4)
+>>> [*range(4), 4]
+[0, 1, 2, 3, 4]
+>>> {*range(4), 4, *(5, 6, 7)}
+{0, 1, 2, 3, 4, 5, 6, 7}
+```
+
+
+
 * assignment can have nested tuples.
 * `namedtuple`
     * Accept 2 arguments, 1st is the class name, second can be a list of string or a string with single
