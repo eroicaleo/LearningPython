@@ -569,6 +569,47 @@ def fixed(o):
 {0, 1, 2, 3, 4, 5, 6, 7}
 ```
 
+### Nested Unpacking
+
+* The target of an unpacking can use nesting, e.g., `(a, b, (c, d))`.
+  * Each tuple holds a record with four fields, the last of which is a coordinate pair.
+  * By assigning the last field to a nested tuple, we unpack the coordinates.
+  * The `lon <= 0`: test selects only cities in the Western hemisphere.
+
+```python
+>>> metro_areas = [
+...     ('Tokyo','JP',36.933,(35.689722,139.691667)), # 1
+...     ('Delhi NCR', 'IN', 21.935, (28.613889, 77.208889)),
+...     ('Mexico City', 'MX', 20.142, (19.433333, -99.133333)),
+...     ('New York-Newark', 'US', 20.104, (40.808611, -74.020386)),
+...     ('São Paulo', 'BR', 19.649, (-23.547778, -46.635833)),
+... ]
+>>> def main():
+...     print(f'{"":15} | {"latitude":>9} | {"longitude":>9}')
+...     for name, _, _, (lat, lon) in metro_areas: # 2
+...         if lon <= 0: # 3
+...             print(f'{name:15} | {lat:9.4f} | {lon:9.4f}')
+>>> main()
+                |  latitude | longitude
+Mexico City     |   19.4333 |  -99.1333
+New York-Newark |   40.8086 |  -74.0204
+São Paulo       |  -23.5478 |  -46.6358
+```
+
+* The target of an unpacking assignment can also be a list, but good use cases are rare. Here is the only one I know: if you have a database query that returns a single record (e.g., the SQL code has a `LIMIT 1` clause), then you can unpack and at the same time make sure there’s only one result with this code:
+
+```python
+[record] = query_returning_single_row()
+```
+
+* If the record has only one field, you can get it directly, like this:
+
+```python
+[[field]] = query_returning_single_row_with_single_field()
+```
+
+* Both of these could be written with tuples, but don’t forget the syntax quirk that single-item tuples must be written with a trailing comma. So the first target would be `(record,)` and the second `((field,),)`. In both cases you get a silent bug if you forget a comma.
+
 
 
 * assignment can have nested tuples.
