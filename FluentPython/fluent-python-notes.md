@@ -363,7 +363,7 @@ filter + func   : 0.009 0.008 0.008 0.008 0.009 0.011
 
 * `genexp` saves memory because it yields items one by one using the iterator protocol instead of building a whole list.
   * ① If the generator expression is the single argument in a function call, there is no need to duplicate the enclosing parentheses.
-  * ② The `array` constructor takes two arguments, so the parentheses around the gen‐ erator expression are mandatory.
+  * ② The `array` constructor takes two arguments, so the parentheses around the generator expression are mandatory.
 
 
 ```python
@@ -613,11 +613,11 @@ São Paulo       |  -23.5478 |  -46.6358
 ## Pattern Matching with Sequences
 
 * This is a new feature in 3.10
-  * The expression after the `match` keyword is the *subject*. The subject is the data that Python will try to match to the patterns in each case clause.
-  * This pattern matches any subject that is a sequence with three items. The first item must be the string `'BEEPER'`. The second and third item can be anything, and they will be bound to the variables frequency and times, in that order.
-  * This matches any subject with two items, the first being `'NECK'`.
-  * This will match a subject with three items starting with `'LED'`. If the number of items does not match, Python proceeds to the next case.
-  * Another sequence pattern starting with `'LED'`, now with five items—including the `'LED'` constant.
+  * 1 The expression after the `match` keyword is the *subject*. The subject is the data that Python will try to match to the patterns in each case clause.
+  * 2 This pattern matches any subject that is a sequence with three items. The first item must be the string `'BEEPER'`. The second and third item can be anything, and they will be bound to the variables frequency and times, in that order.
+  * 3 This matches any subject with two items, the first being `'NECK'`.
+  * 4 This will match a subject with three items starting with `'LED'`. If the number of items does not match, Python proceeds to the next case.
+  * 5 Another sequence pattern starting with `'LED'`, now with five items—including the `'LED'` constant.
   * This is the `default` case. It will match any subject that did not match a previous pattern. The `_` variable is special, as we’ll soon see.
 
 ```python
@@ -634,6 +634,91 @@ São Paulo       |  -23.5478 |  -46.6358
 ...         case _:  # 6
 ...             raise InvalidCommand(message)
 ```
+
+* One key improvement of `match` over `switch` is destructuring—a more advanced form of unpacking.
+    * 1 The subject of this `match` is `record`— i.e., each of the tuples in `metro_areas`.
+    * A `case` clause has two parts: a pattern and an optional guard with the `if` keyword.
+
+
+```python
+>>> metro_areas = [
+...     ('Tokyo', 'JP', 36.933, (35.689722, 139.691667)),
+...     ('Delhi NCR', 'IN', 21.935, (28.613889, 77.208889)),
+...     ('Mexico City', 'MX', 20.142, (19.433333, -99.133333)),
+...     ('New York-Newark', 'US', 20.104, (40.808611, -74.020386)),
+...     ('São Paulo', 'BR', 19.649, (-23.547778, -46.635833)),
+... ]
+...
+>>> def main():
+...     print(f'{"":15} | {"latitude":>9} | {"longitude":>9}')
+...     for record in metro_areas:  # 1
+...         match record:
+...             case [name, _, _, (lat, lon)] if lon <= 0:  # 2
+...                 print(f'{name:15} | {lat:9.4f} | {lon:9.4f}')
+```
+
+* A sequence pattern can match instances of most actual or virtual subclasses of `collections.abc.Sequence`, with the exception of `str`, `bytes`, and `bytearray`.
+
+  * If you want to treat an object of those types as a sequence subject, convert it in the `match` clause.
+
+  ```python
+  match tuple(phone):
+      case ['1', *rest]: # North America and Caribbean
+      		...
+      case ['2', *rest]: # Africa and some territories
+      		...
+      case ['3' | '4', *rest]:
+  ```
+
+* In the standard library, these types are compatible with sequence patterns:
+
+  * Unlike unpacking, patterns don’t destructure iterables that are not sequences (such as iterators).
+
+```
+list  memoryview array.array
+tuple range      collections.deque
+```
+
+* The `_` symbol:
+
+  * matches any single item in that position
+  * never bound to the value of the matched item
+  * `_` is the only variable that can appear more than once in a pattern.
+
+  ```python
+  case [name, _, _, (lat, lon) as coord]:
+  # subject is ['Shanghai', 'CN', 24.9, (31.1, 121.3)]
+  name  'Shanghai'
+  lat   31.1
+  lon   121.3
+  coord (31.1, 121.3)
+  ```
+
+* We can make patterns more specific by adding type information.
+
+* 1. the first item must be an instance of `str`
+  2. both items in the 2-tuple must be instances of `float`
+
+```python
+case [str(name), _, _, (float(lat), float(lon))]:
+```
+
+* On the other hand, if we want to match any subject sequence starting with a `str`, and ending with a nested sequence of two `floats`, we can write:
+  * The `*_` matches any number of items, without binding them to a variable.
+
+```python
+case [str(name), *_, (float(lat), float(lon))]:
+```
+
+* The optional guard clause starting with `if` is evaluated only if the pattern matches, and can reference variables bound in the pattern:
+
+```python
+match record:
+		case [name, _, _, (lat, lon)] if lon <= 0:
+			print(f'{name:15} | {lat:9.4f} | {lon:9.4f}')
+```
+
+### Pattern Matching Sequences in an Interpreter
 
 * assignment can have nested tuples.
 * `namedtuple`
