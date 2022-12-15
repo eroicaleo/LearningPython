@@ -720,6 +720,113 @@ match record:
 
 ### Pattern Matching Sequences in an Interpreter
 
+* Peter Norvig of Stanford University wrote [lis.py](https://github.com/fluentpython/example-code-2e/tree/master/02-array-seq/lispy/py3.10): an interpreter for a subset of the Scheme dialect of the Lisp programming language in 132 lines of beautiful and readable Python code.
+* This is the original Norvig's code with `if-else`
+
+```python
+def evaluate(exp: Expression, env: Environment) -> Any:
+    "Evaluate an expression in an environment."
+    if isinstance(exp, Symbol): # variable reference
+    		return env[exp]
+    # ... lines omitted
+    elif exp[0] == 'quote': # (quote exp)
+        (_, x) = exp
+        return x
+    elif exp[0] == 'if': # (if test conseq alt)
+        (_, test, consequence, alternative) = exp
+        if evaluate(test, env):
+        		return evaluate(consequence, env)
+        else:
+        		return evaluate(alternative, env)
+    elif exp[0] == 'lambda': # (lambda (parm...) body...)
+        (_, parms, *body) = exp
+        return Procedure(parms, body, env)
+    elif exp[0] == 'define':
+        (_, name, value_exp) = exp
+        env[name] = evaluate(value_exp, env)
+```
+
+* We can use `match/case` in Python ≥ 3.10
+    1. Match if subject is a two-item sequence starting with `'quote'`.
+    2. Match if subject is a four-item sequence starting with `'if'`.
+    3. Match if subject is a sequence of three or more items starting with `'lambda'`. The
+       guard ensures that `body` is not empty.
+    4. Match if subject is a three-item sequence starting with `'define'`, followed by an
+       instance of `Symbol`.
+    5. It is good practice to have a catch-all `case`. In this example, if exp doesn’t match any of the patterns, the expression is malformed, and I raise `SyntaxError`.
+
+```python
+def evaluate(exp: Expression, env: Environment) -> Any:
+    "Evaluate an expression in an environment."
+    match exp:
+    # ... lines omitted
+        case ['quote', x]:  # 1
+        		return x
+        case ['if', test, consequence, alternative]:  # 2
+            if evaluate(test, env):
+            		return evaluate(consequence, env)  
+            else:
+            		return evaluate(alternative, env)
+        case ['lambda', [*parms], *body] if body:  # 3
+        		return Procedure(parms, body, env)
+        case ['define', Symbol() as name, value_exp]:  # 4
+        		env[name] = evaluate(value_exp, env)
+        # ... more lines omitted
+        case _:  # 5
+						raise SyntaxError(lispstr(exp))
+```
+
+* To figure out what doest `#3` work, I did one more experiment
+  * As we can see, the second item after `'lambda'` needs to be a `list` or a `tuple`. Then the `parms` will be a list. 
+  * Note the second item can be an empty `list`. See the section "Alternative patterns for lambda" below.
+
+```python
+>>> def lisp_evaluate_trial(exp):
+...     match exp:
+...         case ['lambda', [*parms], *body] if body:
+...              print(parms, body)
+...         case _:
+...              print('Unknow case!')
+>>> exp = ['lambda', [1, 2, 3], 'haha', 'lala']
+>>> lisp_evaluate_trial(exp)
+[1, 2, 3] ['haha', 'lala']
+>>> exp = ['lambda', 1, 'haha', 'lala']
+>>> lisp_evaluate_trial(exp)
+Unknow case!
+>>> exp = ['lambda', (1,), 'haha', 'lala']
+>>> lisp_evaluate_trial(exp)
+[1] ['haha', 'lala']
+>>> exp = ['lambda', [], 'haha', 'lala']
+>>> lisp_evaluate_trial(exp)
+[] ['haha', 'lala']
+```
+
+* Without a catch-all, the whole match statement does nothing when a subject does not match any case—and this can be a silent failure.
+* With pattern matching, we can add more checks and still keep it readable.
+  * For example, in the `'define'` pattern, the original code does not ensure that name is an instance of `Symbol`—that would require an `if` block, an `isinstance` call, and more code.
+
+#### Alternative patterns for lambda
+
+* This is syntax of `lambda` in Scheme, `(lambda (parms...) body1 body2...)` .
+
+* An simple pattern could be `case ['lambda', parms, *body] if body:`, then we could match the following invalid syntax:
+
+```python
+>>> def simple_lambda_trial(exp):
+...     match exp:
+...         case ['lambda', parms, *body] if body:
+...              print(parms, body)
+...         case _:
+...              print('Unknow case!')
+>>> exp = ['lambda', 'x', ['*', 'x', 2]]
+>>> simple_lambda_trial(exp)
+x [['*', 'x', 2]]
+```
+
+* So we have to use `case ['lambda', [*parms], *body] if body`.
+  * The nested list after the `lambda` keyword in Scheme holds the names of the formal parameters for the function, and it must be a list even if it has only one element. It may also be an empty list.
+  * In a sequence pattern, `*` can appear only once per sequence. Here we have two sequences: the outer and the inner.
+
 * assignment can have nested tuples.
 * `namedtuple`
     * Accept 2 arguments, 1st is the class name, second can be a list of string or a string with single

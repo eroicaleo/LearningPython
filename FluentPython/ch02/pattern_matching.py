@@ -32,6 +32,35 @@
 Mexico City     |   19.4333 |  -99.1333
 New York-Newark |   40.8086 |  -74.0204
 São Paulo       |  -23.5478 |  -46.6358
+
+>>> def lisp_evaluate_trial(exp):
+...     match exp:
+...         case ['lambda', [*parms], *body] if body:
+...              print(parms, body)
+...         case _:
+...              print('Unknow case!')
+>>> exp = ['lambda', [1, 2, 3], 'haha', 'lala']
+>>> lisp_evaluate_trial(exp)
+[1, 2, 3] ['haha', 'lala']
+>>> exp = ['lambda', 1, 'haha', 'lala']
+>>> lisp_evaluate_trial(exp)
+Unknow case!
+>>> exp = ['lambda', (1,), 'haha', 'lala']
+>>> lisp_evaluate_trial(exp)
+[1] ['haha', 'lala']
+>>> exp = ['lambda', [], 'haha', 'lala']
+>>> lisp_evaluate_trial(exp)
+[] ['haha', 'lala']
+
+>>> def simple_lambda_trial(exp):
+...     match exp:
+...         case ['lambda', parms, *body] if body:
+...              print(parms, body)
+...         case _:
+...              print('Unknow case!')
+>>> exp = ['lambda', 'x', ['*', 'x', 2]]
+>>> simple_lambda_trial(exp)
+x [['*', 'x', 2]]
 """
 
 
