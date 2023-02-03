@@ -827,6 +827,57 @@ x [['*', 'x', 2]]
   * The nested list after the `lambda` keyword in Scheme holds the names of the formal parameters for the function, and it must be a list even if it has only one element. It may also be an empty list.
   * In a sequence pattern, `*` can appear only once per sequence. Here we have two sequences: the outer and the inner.
 
+
+#### Shortcut syntax for function definition
+
+* Scheme has an alternative `define` syntax to create a named function without using a nested lambda. This is the syntax:
+
+```scheme
+(define (name parm...) body1 body2...)
+```
+
+* The `define` keyword is followed by a list with the `name` of the new function and zero or more parameter names. After that list comes the function body with one or more expressions.
+* Adding these two lines to the `match` takes care of the implementation:
+
+```python
+case ['define', [Symbol() as name, *parms], *body] if body:
+		env[name] = Procedure(parms, body, env)
+```
+
+* The order between the `define` cases is irrelevant in this example because no subject can match both of these patterns: the second element must be a `Symbol` in the original `define` case, but it must be a sequence starting with a `Symbol` in the `define` shortcut for function definition.
+
+| Schema syntax                             | Sequence pattern                                        |
+| ----------------------------------------- | ------------------------------------------------------- |
+| `(quote exp)`                             | `['quote', exp]`                                        |
+| `(if test conseq alt)`                    | `['if', test, conseq, alt]`                             |
+| `(lambda (parms...) body1 body2...)`      | `['lambda', [*parms], *body] if body`                   |
+| `(define name exp)`                       | `['define', Symbol() as name, exp]`                     |
+| `(define (name parms...) body1 body2...)` | `['define', [Symbol() as name, *parms], *body] if body` |
+
+* `match/case` can make your code more readable and safer.
+
+## Slicing
+
+* Slice operations in Python is more powerful than you think.
+
+#### Why Slices and Ranges Exclude the Last Item
+
+* It's easy to tell the length of the sequence, which is 3, `range(3)` and `my_list[:3]`
+* It’s easy to compute the length of a slice or range when start and stop are given: just subtract `stop - start`.
+* It's easy to split a sequence in two parts at any index `x`, without overlapping: simply get `my_list[:x]` and `my_list[x:]`.
+
+```python
+>>> l = [10, 20, 30, 40, 50, 60]
+>>> l[:2]
+[10, 20]
+>>> l[2:]
+[30, 40, 50, 60]
+>>> l[:3] # split at 3
+[10, 20, 30]
+>>> l[3:]
+[40, 50, 60]
+```
+
 * assignment can have nested tuples.
 * `namedtuple`
     * Accept 2 arguments, 1st is the class name, second can be a list of string or a string with single
