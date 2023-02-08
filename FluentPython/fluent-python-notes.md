@@ -860,7 +860,7 @@ case ['define', [Symbol() as name, *parms], *body] if body:
 
 * Slice operations in Python is more powerful than you think.
 
-#### Why Slices and Ranges Exclude the Last Item
+### Why Slices and Ranges Exclude the Last Item
 
 * It's easy to tell the length of the sequence, which is 3, `range(3)` and `my_list[:3]`
 * It’s easy to compute the length of a slice or range when start and stop are given: just subtract `stop - start`.
@@ -877,6 +877,44 @@ case ['define', [Symbol() as name, *parms], *body] if body:
 >>> l[3:]
 [40, 50, 60]
 ```
+
+## Slice Objects
+
+* `s[a:b:c]` can be used to specify a stride or step `c`, causing the resulting slice to skip items.
+  * The stride can also be negative, returning items in reverse.
+
+```python
+>>> s = 'bicycle'
+>>> s[::3]
+'bye'
+>>> s[::-1]
+'elcycib'
+>>> s[::-2]
+'eccb'
+```
+
+* The notation `a:b:c` is only valid within `[]` when used as the indexing or subscript operator, and it produces a slice object: `slice(a, b, c)`.
+* To evaluate the expression `seq[start:stop:step]`, Python calls `seq.__getitem__(slice(start, stop, step))`.
+
+```python
+>>> invoice = """
+... 0.....6.................................40........52...55........
+... 1909  Pimoroni PiBrella                 $17.50    3    $52.50
+... 1489  6mm Tactile Switch x20            $4.95     2    $9.90
+... 1510  Panavise Jr. - PV-201             $28.00    1    $28.00
+... 1601  PiTFT Mini Kit 320x240            $34.95    1    $34.95
+..."""
+>>> SKU = slice(0, 6)
+>>> DESCRIPTION = slice(6, 40)
+>>> UNIT_PRICE = slice(40, 52)
+>>> QUANTITY = slice(52, 55)
+>>> ITEM_TOTAL = slice(55, None)
+>>> line_items = invoice.split('\n')[2:]
+>>> for item in line_items:
+...    print(item[SKU], item[DESCRIPTION])
+```
+
+
 
 * assignment can have nested tuples.
 * `namedtuple`
