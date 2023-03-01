@@ -878,7 +878,7 @@ case ['define', [Symbol() as name, *parms], *body] if body:
 [40, 50, 60]
 ```
 
-## Slice Objects
+### Slice Objects
 
 * `s[a:b:c]` can be used to specify a stride or step `c`, causing the resulting slice to skip items.
   * The stride can also be negative, returning items in reverse.
@@ -914,7 +914,39 @@ case ['define', [Symbol() as name, *parms], *body] if body:
 ...    print(item[SKU], item[DESCRIPTION])
 ```
 
+### Multidimensional Slicing and Ellipsis
 
+* The `[]` operator can also take multiple indexes or slices separated by commas. In other words, to evaluate `a[i, j]`, Python calls `a.__getitem__((i, j))`.
+* Except for `memoryview`, the built-in sequence types in Python are one-dimensional, so they support only one index or slice, and not a tuple of them.
+* The ellipsis—written with three full stops (`...`) is recognized as a token by the Python parser. It is an alias to the `Ellipsis` object, the single instance of the `ellipsis` class. As such, it can be passed as an argument to functions and as part of a slice specification, as in `f(a, ..., z)`.
+
+### Assigning to Slices
+
+* Mutable sequences can be grafted, excised, and otherwise modified in place using slice notation on the lefthand side of an assignment statement or as the target of a del statement.
+
+```python
+>>> l = list(range(10))
+>>> l
+[0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+>>> l[2:5] = [20, 30]
+>>> l
+[0, 1, 20, 30, 5, 6, 7, 8, 9]
+>>> del l[5:7]
+>>> l
+[0, 1, 20, 30, 5, 8, 9]
+>>> l[3::2] = [11, 22]
+>>> l
+[0, 1, 20, 11, 5, 22, 9]
+>>> l[2:5] = 100
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+TypeError: can only assign an iterable
+>>> l[2:5] = [100]  # 1
+>>> l
+[0, 1, 100, 22, 9]
+```
+
+* `# 1`: When the target of the assignment is a slice, the righthand side must be an iterable object, even if it has just one item.
 
 * assignment can have nested tuples.
 * `namedtuple`
