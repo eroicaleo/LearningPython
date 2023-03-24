@@ -948,6 +948,66 @@ TypeError: can only assign an iterable
 
 * `# 1`: When the target of the assignment is a slice, the righthand side must be an iterable object, even if it has just one item.
 
+## Using + and * with Sequences
+
+* Both `+` and `*` always create a new object, and never change their operands.
+* For `a * n`, when `a` is mutable, e.g. `[[]]* 3`, then results are probably not what you want.
+
+```python
+>>> my_list = [[]] * 3
+>>> my_list[0].append('a')
+>>> my_list
+[['a'], ['a'], ['a']]
+```
+
+### Building Lists of Lists
+
+* See this example:
+
+```python
+>>> board = [['_'] * 3 for i in range(3)]
+>>> board
+[['_', '_', '_'], ['_', '_', '_'], ['_', '_', '_']]
+>>> board[1][2] = 'X'
+>>> board
+[['_', '_', '_'], ['_', '_', 'X'], ['_', '_', '_']]
+```
+
+* The wrong example:
+
+```python
+>>> weird_board = [['_'] * 3] * 3
+>>> weird_board
+[['_', '_', '_'], ['_', '_', '_'], ['_', '_', '_']]
+>>> weird_board[1][2] = 'O'
+>>> weird_board
+[['_', '_', 'O'], ['_', '_', 'O'], ['_', '_', 'O']]
+```
+
+* The wrong example is the same as
+
+```python
+row = ['_'] * 3
+board = []
+for i in range(3):
+		board.append(row)
+```
+
+* The first example is the same as
+
+```python
+>>> board = []
+>>> for i in range(3):
+...     row = ['_'] * 3
+...     board.append(row)
+...
+>>> board
+[['_', '_', '_'], ['_', '_', '_'], ['_', '_', '_']]
+>>> board[1][2] = 'X'
+>>> board
+[['_', '_', '_'], ['_', '_', 'X'], ['_', '_', '_']]
+```
+
 * assignment can have nested tuples.
 * `namedtuple`
     * Accept 2 arguments, 1st is the class name, second can be a list of string or a string with single
