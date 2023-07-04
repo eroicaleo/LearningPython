@@ -1008,14 +1008,23 @@ for i in range(3):
 [['_', '_', '_'], ['_', '_', 'X'], ['_', '_', '_']]
 ```
 
-* assignment can have nested tuples.
-* `namedtuple`
-    * Accept 2 arguments, 1st is the class name, second can be a list of string or a string with single
-      space delimit
-    * The instantiation must take positional arguments not iterables.
-    * The elements can be accessed by name or position
-    * Most useful attribute: '\_fields'
-    * Most useful methods: `_make(iterable)`, `_asdict()`: return `OrderedDict`
+### Augmented Assignment with Sequences
+
+* Run this example:
+```shell
+python augmented-assignment-with-sequences.py -v
+```
+* `+=` and `*=` behave quite differently depending on the first argument.
+* The same concept applies to both `+=` and `*=`.
+* `+=` is using special method (in-place addition) `__iadd__`
+* If `__iadd__` is not implemented, `__add__` will be called.
+* Consider the following code
+    * If `a` is mutable, like `list, bytearray, array.array`, then `a` will be changed in place.
+    * Otherwise `a+b` will be evaluated first, producing a new object, then bound to `a`.
+
+```python
+>>> a + b
+```
 
 # Chapter -1 Other Notes
 
@@ -1130,6 +1139,12 @@ python -m doctest -v vector.doctest
 ('white', 'M'), ('white', 'L')]
 ```
 
+* How to use verbose output
+
+```python
+doctest.testmod(verbose=True)
+```
+
 # Further Reading
 
 ## Chapter 1
@@ -1150,3 +1165,49 @@ python -m doctest -v vector.doctest
 
 * `timeit` module
 * `hash` built-in
+
+# Table of contents
+- [Chapter 01 The Python Data Model](#chapter-01-the-python-data-model)
+  - [A Pythonic Card Deck](#a-pythonic-card-deck)
+  - [How special methods are used](#how-special-methods-are-used)
+    - [Emulating Numeric Types](#emulating-numeric-types)
+    - [Boolean Value of a Custom Type](#boolean-value-of-a-custom-type)
+    - [Collection API](#collection-api)
+  - [Overview of Special Methods](#overview-of-special-methods)
+  - [Why len Is Not a Method](#why-len-is-not-a-method)
+  - [Chapter Summary](#chapter-summary)
+- [Chapter 02 An array of sequences](#chapter-02-an-array-of-sequences)
+  - [Overview of built-in sequence](#overview-of-built-in-sequence)
+  - [List Comprehension (list comps) and generator expressions (genexps)](#list-comprehension-list-comps-and-generator-expressions-genexps)
+    - [Local Scope Within Comprehensions and Generator Expressions](#local-scope-within-comprehensions-and-generator-expressions)
+  - [Listcomps Versus map and filter](#listcomps-versus-map-and-filter)
+  - [Cartesian Products](#cartesian-products)
+  - [Generator Expressions](#generator-expressions)
+  - [Tuples are not just immutable lists](#tuples-are-not-just-immutable-lists)
+    - [Tuples as Records](#tuples-as-records)
+    - [Tuples as Immutable Lists](#tuples-as-immutable-lists)
+    - [Comparing Tuple and List Methods](#comparing-tuple-and-list-methods)
+  - [Unpacking Sequences and Iterables](#unpacking-sequences-and-iterables)
+    - [Using `*` to Grab Excess Items](#using--to-grab-excess-items)
+    - [Unpacking with `*` in Function Calls and Sequence Literals](#unpacking-with--in-function-calls-and-sequence-literals)
+    - [Nested Unpacking](#nested-unpacking)
+  - [Pattern Matching with Sequences](#pattern-matching-with-sequences)
+    - [Pattern Matching Sequences in an Interpreter](#pattern-matching-sequences-in-an-interpreter)
+      - [Alternative patterns for lambda](#alternative-patterns-for-lambda)
+      - [Shortcut syntax for function definition](#shortcut-syntax-for-function-definition)
+  - [Slicing](#slicing)
+    - [Why Slices and Ranges Exclude the Last Item](#why-slices-and-ranges-exclude-the-last-item)
+    - [Slice Objects](#slice-objects)
+    - [Multidimensional Slicing and Ellipsis](#multidimensional-slicing-and-ellipsis)
+    - [Assigning to Slices](#assigning-to-slices)
+  - [Using + and \* with Sequences](#using--and--with-sequences)
+    - [Building Lists of Lists](#building-lists-of-lists)
+    - [Augmented Assignment with Sequences](#augmented-assignment-with-sequences)
+- [Chapter -1 Other Notes](#chapter--1-other-notes)
+  - [How to run doctest](#how-to-run-doctest)
+- [Further Reading](#further-reading)
+  - [Chapter 1](#chapter-1)
+- [Cool Staff I Learned](#cool-staff-i-learned)
+  - [Chapter 1](#chapter-1-1)
+  - [Chapter 2](#chapter-2)
+- [Table of contents](#table-of-contents)
