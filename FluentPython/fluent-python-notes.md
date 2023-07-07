@@ -1026,9 +1026,63 @@ python augmented-assignment-with-sequences.py -v
 >>> a + b
 ```
 
+* Here is the example:
+
+```python
+>>> l = [1, 2, 3]
+>>> id1 = id(l)
+>>> l *= 2
+>>> l
+[1, 2, 3, 1, 2, 3]
+>>> id2 = id(l)
+>>> id1 == id2
+True
+>>> t = (1, 2, 3)
+>>> id1 = id(t)
+>>> t *= 2
+>>> id2 = id(t)
+>>> id1 == id2
+False
+```
+
+### A `+=` Assignment Puzzler
+
+* Run `python assignment-puzzle.py`
+
+```python
+>>> t = (1, 2, [30, 40])
+>>> t[2] += [50, 60] # doctest: +IGNORE_EXCEPTION_DETAIL
+Traceback (most recent call last):
+TypeError: 'tuple' object does not support item assignment
+>>> t
+(1, 2, [30, 40, 50, 60])
+```
+
+* We can look at the byte code of `s[a] = b`
+
+```python
+>>> import dis
+>>> dis.dis('s[a] += b')
+  1           0 LOAD_NAME                0 (s)
+              2 LOAD_NAME                1 (a)
+              4 DUP_TOP_TWO
+              6 BINARY_SUBSCR
+              8 LOAD_NAME                2 (b)
+             10 INPLACE_ADD
+             12 ROT_THREE
+             14 STORE_SUBSCR
+             16 LOAD_CONST               0 (None)
+             18 RETURN_VALUE
+```
+
+* Avoid putting mutable items in tuples.
+* Augmented assignment is not an atomic operation—we just saw it throwing an exception after doing part of its job.
+* Inspecting Python bytecode is not too difficult, and can be helpful to see what is going on under the hood.
+
 # Chapter -1 Other Notes
 
 * [Github link](https://github.com/fluentpython/example-code-2e)
+* [pythontutor](https://pythontutor.com) to visualize the program.
 
 ## How to run doctest
 
@@ -1165,6 +1219,7 @@ doctest.testmod(verbose=True)
 
 * `timeit` module
 * `hash` built-in
+* `dis.dis` to check the byte code
 
 # Table of contents
 - [Chapter 01 The Python Data Model](#chapter-01-the-python-data-model)
@@ -1203,6 +1258,7 @@ doctest.testmod(verbose=True)
   - [Using + and \* with Sequences](#using--and--with-sequences)
     - [Building Lists of Lists](#building-lists-of-lists)
     - [Augmented Assignment with Sequences](#augmented-assignment-with-sequences)
+    - [A `+=` Assignment Puzzler](#a--assignment-puzzler)
 - [Chapter -1 Other Notes](#chapter--1-other-notes)
   - [How to run doctest](#how-to-run-doctest)
 - [Further Reading](#further-reading)

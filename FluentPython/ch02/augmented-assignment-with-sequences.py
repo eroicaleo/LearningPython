@@ -7,6 +7,12 @@
 >>> id2 = id(l)
 >>> id1 == id2
 True
+>>> t = (1, 2, 3)
+>>> id1 = id(t)
+>>> t *= 2
+>>> id2 = id(t)
+>>> id1 == id2
+False
 """
 
 
