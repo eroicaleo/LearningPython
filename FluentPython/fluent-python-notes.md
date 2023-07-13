@@ -1079,6 +1079,20 @@ TypeError: 'tuple' object does not support item assignment
 * Augmented assignment is not an atomic operation—we just saw it throwing an exception after doing part of its job.
 * Inspecting Python bytecode is not too difficult, and can be helpful to see what is going on under the hood.
 
+## `list.sort` Versus the `sorted` Built-In
+
+* Run this example
+
+```
+python3.10 sort.py
+```
+
+* `list.sort` sort the list in place, returns `None` to signify the
+  receiver has been changed and no new objects were created. This is a convection of python, `random.shuffle(s)` has the similar behavior.
+* `sorted` creates a new object, and can accept any iterables.
+* Both of them accecpt two keyword-only arguments: `reverse`, `key`.
+    * `key` is an one argument function.
+
 # Chapter -1 Other Notes
 
 * [Github link](https://github.com/fluentpython/example-code-2e)
@@ -1259,6 +1273,7 @@ doctest.testmod(verbose=True)
     - [Building Lists of Lists](#building-lists-of-lists)
     - [Augmented Assignment with Sequences](#augmented-assignment-with-sequences)
     - [A `+=` Assignment Puzzler](#a--assignment-puzzler)
+  - [`list.sort` Versus the `sorted` Built-In](#listsort-versus-the-sorted-built-in)
 - [Chapter -1 Other Notes](#chapter--1-other-notes)
   - [How to run doctest](#how-to-run-doctest)
 - [Further Reading](#further-reading)
