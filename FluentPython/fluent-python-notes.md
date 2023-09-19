@@ -1092,6 +1092,9 @@ python3.10 sort.py
 * `sorted` creates a new object, and can accept any iterables.
 * Both of them accecpt two keyword-only arguments: `reverse`, `key`.
     * `key` is an one argument function.
+* If you are processing large lists of numbers, you should consider using arrays instead.
+
+## When a List Is Not the Answer
 
 # Chapter -1 Other Notes
 
@@ -1274,6 +1277,7 @@ doctest.testmod(verbose=True)
     - [Augmented Assignment with Sequences](#augmented-assignment-with-sequences)
     - [A `+=` Assignment Puzzler](#a--assignment-puzzler)
   - [`list.sort` Versus the `sorted` Built-In](#listsort-versus-the-sorted-built-in)
+  - [When a List Is Not the Answer](#when-a-list-is-not-the-answer)
 - [Chapter -1 Other Notes](#chapter--1-other-notes)
   - [How to run doctest](#how-to-run-doctest)
 - [Further Reading](#further-reading)
