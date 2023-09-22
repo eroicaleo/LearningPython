@@ -1096,6 +1096,62 @@ python3.10 sort.py
 
 ## When a List Is Not the Answer
 
+* Handle millions of `float`, use `array`
+* Adding and removing items from opposite ends of a list, consider `deque`.
+* Frequent membership checking, consider `set`.
+
+### Arrays
+
+* list with numbers only `array.array` is a more efficient replacement.
+    * Support all mutable sequence operations.
+    * fast loading and saving: `.frombytes` and `.tofile`.
+* Python array is as lean as C array.
+    * When creating an `array`, you provide a typecode.
+    * e.g. `b` stands for signed char, -128 ~ 127.
+* Run this example
+
+```py3
+python array_test.py
+
+from array import array
+from random import random
+floats = array('d', (random() for i in range(10**7)))
+print(floats[-1])
+fp = open('floats.bin', 'wb')
+floats.tofile(fp)
+fp.close()
+floats2 = array('d')
+fp = open('floats.bin', 'rb')
+floats2.fromfile(fp, 10 ** 7)
+fp.close()
+print(floats2[-1])
+print(floats2 == floats)
+
+```
+
+* `array.tofile` and `array.fromfile` are easy to use.
+* It takes about 0.1 seconds for `array.fromfile` to load 10 million double-precision floats from a binary file created with `array.tofile`. Here is the experiment I did:
+
+```python
+import timeit
+cmd = 'floats2.fromfile(fp, 10 ** 7)'
+SETUP = '''
+from array import array
+floats2 = array('d')
+fp = open('floats.bin', 'rb')
+'''
+res = timeit.repeat(cmd, setup=SETUP, number=1, repeat=6)
+print(*(f'{x:.3f}' for x in res))
+0.065 0.038 0.037 0.037 0.037 0.037
+```
+
+* The size of the binary file with 10 million doubles is 80,000,000 bytes (8 bytes per double, zero overhead).
+
+```bash
+ls -l floats.bin 
+-rw-r--r--@ 1 user  staff  80000000 Sep 21 23:33 floats.bin
+```
+
 # Chapter -1 Other Notes
 
 * [Github link](https://github.com/fluentpython/example-code-2e)
@@ -1278,6 +1334,7 @@ doctest.testmod(verbose=True)
     - [A `+=` Assignment Puzzler](#a--assignment-puzzler)
   - [`list.sort` Versus the `sorted` Built-In](#listsort-versus-the-sorted-built-in)
   - [When a List Is Not the Answer](#when-a-list-is-not-the-answer)
+    - [Arrays](#arrays)
 - [Chapter -1 Other Notes](#chapter--1-other-notes)
   - [How to run doctest](#how-to-run-doctest)
 - [Further Reading](#further-reading)
