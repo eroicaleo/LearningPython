@@ -1152,6 +1152,23 @@ ls -l floats.bin
 -rw-r--r--@ 1 user  staff  80000000 Sep 21 23:33 floats.bin
 ```
 
+* Table 2-3 summarize the methods of `list` and `array`.
+* `array` does not support something like `list.sort`. So to sort it, needs to do the following:
+    * Note if use `sorted` on `array`, the returned value is `list`.
+
+```python
+>>> ints = array('b', [9,8,7,6,5,4,3,2,1,0])
+>>> ints
+[0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+>>> sorted_ints = sorted(ints)
+>>> print(sorted_ints, type(sorted_ints))
+[0, 1, 2, 3, 4, 5, 6, 7, 8, 9] <class 'list'>
+>>> sorted_ints = array(ints.typecode, sorted(ints))
+>>> print(sorted_ints, type(sorted_ints))
+array('b', [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]) <class 'array.array'>
+```
+
+* To keep a sorted array sorted while adding items to it, use the `bisect.insort` function.
 # Chapter -1 Other Notes
 
 * [Github link](https://github.com/fluentpython/example-code-2e)
