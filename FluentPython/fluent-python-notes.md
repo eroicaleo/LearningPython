@@ -1169,6 +1169,38 @@ array('b', [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]) <class 'array.array'>
 ```
 
 * To keep a sorted array sorted while adding items to it, use the `bisect.insort` function.
+
+### Memory Views
+
+* The built-in `memoryview` class is a shared-memory sequence type that lets you handle slices of arrays without copying bytes.
+* Using notation similar to the array module, the `memoryview.cast` method lets you change the way multiple bytes are read or written as units without moving bits around. `memoryview.cast` returns yet another memoryview object, always sharing the same memory.
+* Run this example:
+
+```python
+# python memoryview_test.py
+
+"""
+>>> from array import array
+>>> octets = array('B', range(6)) # 6 bytes
+>>> m1 = memoryview(octets)
+>>> m1.tolist()
+[0, 1, 2, 3, 4, 5]
+>>> m2 = m1.cast('B', [2, 3])
+>>> m2.tolist()
+[[0, 1, 2], [3, 4, 5]]
+>>> m3 = m1.cast('B', [3, 2])
+>>> m3.tolist()
+[[0, 1], [2, 3], [4, 5]]
+>>> m2[1,1] = 22
+>>> m3[1,1] = 33
+>>> octets
+array('B', [0, 1, 2, 33, 22, 5])
+"""
+```
+
+* The last 3 lines above show memory was shared among `octets`, `m1`, `m2`, and `m3`.
+
+
 # Chapter -1 Other Notes
 
 * [Github link](https://github.com/fluentpython/example-code-2e)
@@ -1352,6 +1384,7 @@ doctest.testmod(verbose=True)
   - [`list.sort` Versus the `sorted` Built-In](#listsort-versus-the-sorted-built-in)
   - [When a List Is Not the Answer](#when-a-list-is-not-the-answer)
     - [Arrays](#arrays)
+    - [Memory Views](#memory-views)
 - [Chapter -1 Other Notes](#chapter--1-other-notes)
   - [How to run doctest](#how-to-run-doctest)
 - [Further Reading](#further-reading)
