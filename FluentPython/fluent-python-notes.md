@@ -1200,6 +1200,32 @@ array('B', [0, 1, 2, 33, 22, 5])
 
 * The last 3 lines above show memory was shared among `octets`, `m1`, `m2`, and `m3`.
 
+```python
+>>> numbers = array('h', [-2, -1, 0, 1, 2])
+>>> memv = memoryview(numbers)
+>>> len(memv)
+5
+>>> memv[0]
+-2
+>>> memv_oct = memv.cast('B')
+>>> memv_oct.tolist()
+[254, 255, 255, 255, 0, 0, 1, 0, 2, 0]
+>>> memv_oct[5] = 4
+>>> numbers
+array('h', [-2, -1, 1024, 1, 2])
+```
+
+* The above example shows how to change a single byte of an item in an array of 16-bit integers.
+* You’ll find an example of inspecting memoryview with the `struct` package at [fluentpython.com: “Parsing binary records with struct”.](https://www.fluentpython.com/extra/parsing-binary-struct/)
+
+### `NumPy`
+
+* `NumPy` is so awesome that a detour is warranted.
+    * Good for array and matrix operations, thus good for scientific computing.
+* `SciPy` build on top of it.
+    * An interactive prompt and high-level Python APIs.
+    * Industrial-strength number-crunching functions optimized in C and Fortran.
+* 
 
 # Chapter -1 Other Notes
 
@@ -1385,6 +1411,7 @@ doctest.testmod(verbose=True)
   - [When a List Is Not the Answer](#when-a-list-is-not-the-answer)
     - [Arrays](#arrays)
     - [Memory Views](#memory-views)
+    - [`NumPy`](#numpy)
 - [Chapter -1 Other Notes](#chapter--1-other-notes)
   - [How to run doctest](#how-to-run-doctest)
 - [Further Reading](#further-reading)
