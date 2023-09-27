@@ -1225,7 +1225,45 @@ array('h', [-2, -1, 1024, 1, 2])
 * `SciPy` build on top of it.
     * An interactive prompt and high-level Python APIs.
     * Industrial-strength number-crunching functions optimized in C and Fortran.
-* 
+* Run this example
+
+```shell
+python np_tests.py
+```
+
+* Run the 2nd example
+
+```python
+# python np_tests_2.py
+import numpy as np
+import os.path
+
+if not os.path.isfile('floats-10M-lines.txt'):
+    floats = np.random.rand(10 ** 7,)
+    floats.shape
+    np.savetxt('floats-10M-lines.txt', floats)
+else:
+    print(f'Found floats-10M-lines.txt')
+
+
+floats = np.loadtxt('floats-10M-lines.txt')
+print(floats[-3:])
+floats *= .5
+print(floats[-3:])
+
+from time import perf_counter as pc
+
+t0 = pc(); floats /= 3;
+t_dur = pc() - t0
+print(f't_dur = {t_dur}')
+# >>> t_dur = 0.006378470978233963
+np.save('floats-10M', floats)
+floats2 = np.load('floats-10M.npy', 'r+')
+floats2 *= 6
+print(floats2[-3:])
+```
+
+* Divide every element by for 10 million floats is less than 10 milliseconds in my machine.
 
 # Chapter -1 Other Notes
 
