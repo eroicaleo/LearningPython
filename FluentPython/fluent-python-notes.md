@@ -1265,6 +1265,59 @@ print(floats2[-3:])
 
 * Divide every element by for 10 million floats is less than 10 milliseconds in my machine.
 
+### Deques and Other Queues
+
+* The class `collections.deque` is a thread-safe double-ended queue designed for fast inserting and removing from both ends.
+
+```python
+# python deque_test.py
+>>> from collections import deque
+>>> dq = deque(range(10), maxlen=10)
+>>> dq
+deque([0, 1, 2, 3, 4, 5, 6, 7, 8, 9], maxlen=10)
+>>> dq.rotate(3)
+>>> dq
+deque([7, 8, 9, 0, 1, 2, 3, 4, 5, 6], maxlen=10)
+>>> dq.rotate(-4)
+>>> dq
+deque([1, 2, 3, 4, 5, 6, 7, 8, 9, 0], maxlen=10)
+>>> dq.appendleft(-1)
+>>> dq
+deque([-1, 1, 2, 3, 4, 5, 6, 7, 8, 9], maxlen=10)
+>>> dq.extend([11, 22, 33])
+>>> dq
+deque([3, 4, 5, 6, 7, 8, 9, 11, 22, 33], maxlen=10)
+>>> dq.extendleft([10, 20, 30, 40])
+>>> dq
+deque([40, 30, 20, 10, 3, 4, 5, 6, 7, 8], maxlen=10)
+```
+
+* We can specify a `maxlen` for a deque.
+* The `popleft` and `append` of `deque` is atomic, so it is safe to use as a FIFO queue in multithreaded applications without the need for locks.
+
+```python
+>>> from collections import deque
+>>> import dis
+>>> dq = deque([1,2,3])
+>>> dis.dis('dq.append(4)')
+  0           0 RESUME                   0
+
+  1           2 LOAD_NAME                0 (dq)
+              4 LOAD_METHOD              1 (append)
+             26 LOAD_CONST               0 (4)
+             28 PRECALL                  1
+             32 CALL                     1
+             42 RETURN_VALUE
+>>> dis.dis('dq.popleft()')
+  0           0 RESUME                   0
+
+  1           2 LOAD_NAME                0 (dq)
+              4 LOAD_METHOD              1 (popleft)
+             26 PRECALL                  0
+             30 CALL                     0
+             40 RETURN_VALUE
+```
+
 # Chapter -1 Other Notes
 
 * [Github link](https://github.com/fluentpython/example-code-2e)
@@ -1450,6 +1503,7 @@ doctest.testmod(verbose=True)
     - [Arrays](#arrays)
     - [Memory Views](#memory-views)
     - [`NumPy`](#numpy)
+    - [Deques and Other Queues](#deques-and-other-queues)
 - [Chapter -1 Other Notes](#chapter--1-other-notes)
   - [How to run doctest](#how-to-run-doctest)
 - [Further Reading](#further-reading)
