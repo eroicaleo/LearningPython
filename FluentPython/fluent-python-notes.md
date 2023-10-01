@@ -1318,6 +1318,19 @@ deque([40, 30, 20, 10, 3, 4, 5, 6, 7, 8], maxlen=10)
              40 RETURN_VALUE
 ```
 
+## Chapter Summary
+
+* Python sequences can be immutable or mutable.
+* Python sequences can be flat and container.
+    * flat: compact, faster and easier to use. Only store atomic data such as numbers, characters, and bytes.
+    * container: more flexible.
+
+# Chapter 3 Dictionaries and Sets
+
+* Python dicts are highly optimized—and continue to get improvements. Hash tables are the engines behind Python’s high-performance dicts.
+
+## Modern dict Syntax
+
 # Chapter -1 Other Notes
 
 * [Github link](https://github.com/fluentpython/example-code-2e)
@@ -1504,6 +1517,9 @@ doctest.testmod(verbose=True)
     - [Memory Views](#memory-views)
     - [`NumPy`](#numpy)
     - [Deques and Other Queues](#deques-and-other-queues)
+  - [Chapter Summary](#chapter-summary-1)
+- [Chapter 3 Dictionaries and Sets](#chapter-3-dictionaries-and-sets)
+  - [Modern dict Syntax](#modern-dict-syntax)
 - [Chapter -1 Other Notes](#chapter--1-other-notes)
   - [How to run doctest](#how-to-run-doctest)
 - [Further Reading](#further-reading)
