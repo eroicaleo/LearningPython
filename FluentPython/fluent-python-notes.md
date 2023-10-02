@@ -1331,6 +1331,33 @@ deque([40, 30, 20, 10, 3, 4, 5, 6, 7, 8], maxlen=10)
 
 ## Modern dict Syntax
 
+* Run this example:
+
+```
+python dict_comp.py
+```
+
+* A `dictcomp` (dict comprehension) builds a dict instance by taking `key:value` pairs from any iterable.
+
+```python
+>>> dial_codes = [
+...     (880, 'Bangladesh'),
+...     (55, 'Brazil'),
+...     (86, 'China'),
+...     (91, 'India'),
+...     (62, 'Indonesia'),
+...     (81, 'Japan'),
+...     (234, 'Nigeria'),
+...     (92, 'Pakistan'),
+...     (7, 'Russia'),
+...     (1, 'United States'),
+... ]
+>>> country_dial = {country: code for code, country in dial_codes}
+>>> {code: country.upper()
+...     for country, code in sorted(country_dial.items())
+...     if code < 70}
+
+```
 # Chapter -1 Other Notes
 
 * [Github link](https://github.com/fluentpython/example-code-2e)
