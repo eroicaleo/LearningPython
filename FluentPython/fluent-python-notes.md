@@ -1331,6 +1331,8 @@ deque([40, 30, 20, 10, 3, 4, 5, 6, 7, 8], maxlen=10)
 
 ## Modern dict Syntax
 
+### dict Comprehensions
+
 * Run this example:
 
 ```
@@ -1358,6 +1360,55 @@ python dict_comp.py
 ...     if code < 70}
 
 ```
+
+### Unpacking Mappings
+
+* Run this example:
+
+```shell
+python 
+```
+
+* First, we can apply `**` to more than one argument in a function call.
+    * This works when keys are all strings and unique across all arguments (because duplicate keyword arguments are forbidden):
+
+```python
+>>> def dump(**kwargs):
+...     return kwargs
+...
+>>> dump(**{'x': 1}, y=2, **{'z': 3})
+{'x': 1, 'y': 2, 'z': 3}
+```
+
+* Second, `**` can be used inside a dict literal—also multiple times and duplicate keys are allowed. Later occurrences overwrite previous ones.
+
+```python
+>>> {'a': 0, **{'x': 1}, 'y': 2, **{'z': 3, 'x': 4}}
+{'a': 0, 'x': 4, 'y': 2, 'z': 3}
+```
+
+### Merging Mappings with `|`
+
+```
+python merging_mappings.py
+```
+
+* Python 3.9 supports using `|` and `|=` to merge mappings.
+
+```python
+'''
+>>> d1 = {'a': 1, 'b': 3}
+>>> d2 = {'a': 2, 'b': 4, 'c': 6}
+>>> d1|d2
+{'a': 2, 'b': 4, 'c': 6}
+>>> d1
+{'a': 1, 'b': 3}
+>>> d1|=d2
+>>> d1
+{'a': 2, 'b': 4, 'c': 6}
+'''
+```
+
 # Chapter -1 Other Notes
 
 * [Github link](https://github.com/fluentpython/example-code-2e)
@@ -1547,6 +1598,9 @@ doctest.testmod(verbose=True)
   - [Chapter Summary](#chapter-summary-1)
 - [Chapter 3 Dictionaries and Sets](#chapter-3-dictionaries-and-sets)
   - [Modern dict Syntax](#modern-dict-syntax)
+    - [dict Comprehensions](#dict-comprehensions)
+    - [Unpacking Mappings](#unpacking-mappings)
+    - [Merging Mappings with `|`](#merging-mappings-with-)
 - [Chapter -1 Other Notes](#chapter--1-other-notes)
   - [How to run doctest](#how-to-run-doctest)
 - [Further Reading](#further-reading)
