@@ -773,7 +773,7 @@ def evaluate(exp: Expression, env: Environment) -> Any:
         		env[name] = evaluate(value_exp, env)
         # ... more lines omitted
         case _:  # 5
-						raise SyntaxError(lispstr(exp))
+            raise SyntaxError(lispstr(exp))
 ```
 
 * To figure out what doest `#3` work, I did one more experiment
@@ -1366,7 +1366,7 @@ python dict_comp.py
 * Run this example:
 
 ```shell
-python 
+python unpacking_mappings.py
 ```
 
 * First, we can apply `**` to more than one argument in a function call.
@@ -1408,6 +1408,33 @@ python merging_mappings.py
 {'a': 2, 'b': 4, 'c': 6}
 '''
 ```
+
+## Pattern Matching with Mappings
+
+* Run this example:
+```
+python creator.py
+```
+
+```python
+def get_creators(record: dict) -> list:
+    match record:
+        case {'type': 'book', 'api': 2, 'authors': [*names]}: # 1
+            return names
+        case {'type': 'book', 'api': 1, 'author': name}:
+            return name
+        case {'type': 'book'}:
+            raise ValueError(f"Invalid 'book' record: {record!r}")
+        case {'type': 'movie', 'director': name}:
+            return [name]
+        case _:
+            raise ValueError(f'Invalid record: {record!r}')
+```
+* #1 Match any mapping with `'type': 'book'`, `'api': 2`, and an `'authors'` key mapped to a sequence. Return the items in the sequence, as a `new` list.
+* The above shows some useful practices for handling semi-structured data such as JSON records:
+    * Include a field describing the kind of record (e.g., `'type': 'movie'`)
+    * Include a field identifying the schema version (e.g., `'api': 2'`) to allow for future evolution of public APIs.
+    * Have case clauses to handle invalid records of a specific type (e.g., `'book'`), as well as a catch-all
 
 # Chapter -1 Other Notes
 
@@ -1601,6 +1628,7 @@ doctest.testmod(verbose=True)
     - [dict Comprehensions](#dict-comprehensions)
     - [Unpacking Mappings](#unpacking-mappings)
     - [Merging Mappings with `|`](#merging-mappings-with-)
+  - [Pattern Matching with Mappings](#pattern-matching-with-mappings)
 - [Chapter -1 Other Notes](#chapter--1-other-notes)
   - [How to run doctest](#how-to-run-doctest)
 - [Further Reading](#further-reading)
