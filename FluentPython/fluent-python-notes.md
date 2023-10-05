@@ -1436,6 +1436,30 @@ def get_creators(record: dict) -> list:
     * Include a field identifying the schema version (e.g., `'api': 2'`) to allow for future evolution of public APIs.
     * Have case clauses to handle invalid records of a specific type (e.g., `'book'`), as well as a catch-all
 
+* Here are the testing:
+
+```python
+'''
+>>> b1 = dict(api=1, author='Douglas Hofstadter',
+... type='book', title='Gödel, Escher, Bach')
+>>> get_creators(b1)
+'Douglas Hofstadter'
+>>> from collections import OrderedDict
+>>> b2 = OrderedDict(api=2, type='book',
+...         title='Python in a Nutshell',
+...         authors='Martelli Ravenscroft Holden'.split())
+>>> get_creators(b2)
+['Martelli', 'Ravenscroft', 'Holden']
+>>> get_creators({'type': 'book', 'pages': 770}) # doctest: +IGNORE_EXCEPTION_DETAIL
+Traceback (most recent call last):
+ValueError: Invalid 'book' record: {'type': 'book', 'pages': 770}
+>>> get_creators('Spam, spam, spam')
+Traceback (most recent call last):
+ValueError: Invalid record: 'Spam, spam, spam'
+'''
+```
+
+* Note that the order of the keys in the patterns is irrelevant, even if the subject is an `OrderedDict` as `b2`.
 # Chapter -1 Other Notes
 
 * [Github link](https://github.com/fluentpython/example-code-2e)
@@ -1578,6 +1602,12 @@ doctest.testmod(verbose=True)
 * `hash` built-in
 * `dis.dis` to check the byte code
 
+# Typo
+
+## Chapter 3
+
+* pg 82
+
 # Table of contents
 - [Chapter 01 The Python Data Model](#chapter-01-the-python-data-model)
   - [A Pythonic Card Deck](#a-pythonic-card-deck)
@@ -1636,4 +1666,6 @@ doctest.testmod(verbose=True)
 - [Cool Staff I Learned](#cool-staff-i-learned)
   - [Chapter 1](#chapter-1-1)
   - [Chapter 2](#chapter-2)
+- [Typo](#typo)
+  - [Chapter 3](#chapter-3)
 - [Table of contents](#table-of-contents)
