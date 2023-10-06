@@ -1460,6 +1460,32 @@ ValueError: Invalid record: 'Spam, spam, spam'
 ```
 
 * Note that the order of the keys in the patterns is irrelevant, even if the subject is an `OrderedDict` as `b2`.
+* If we want to capture the extra key value pairs, we can use `**extra`. It must be the last in the pattern and `**_` is forbidden.
+
+```python
+>>> food = dict(category='ice cream', flavor='vanilla', cost=199)
+>>> match food:
+...     case {'category': 'ice cream', **details}:
+...         print(f'Ice cream details: {details}')
+Ice cream details: {'flavor': 'vanilla', 'cost': 199}
+```
+
+## Standard API of Mapping Types
+
+* The `collections.abc` module provides the Mapping and MutableMapping ABCs describing the interfaces of `dict` and similar types.
+
+![3-1](./images/0301MappingABC.png)
+
+* See the following example:
+
+```python
+# python mapping-api.py
+>>> my_dict = {}
+>>> isinstance(my_dict, abc.Mapping)
+True
+>>> isinstance(my_dict, abc.MutableMapping)
+True
+```
 # Chapter -1 Other Notes
 
 * [Github link](https://github.com/fluentpython/example-code-2e)
@@ -1659,6 +1685,7 @@ doctest.testmod(verbose=True)
     - [Unpacking Mappings](#unpacking-mappings)
     - [Merging Mappings with `|`](#merging-mappings-with-)
   - [Pattern Matching with Mappings](#pattern-matching-with-mappings)
+  - [Standard API of Mapping Types](#standard-api-of-mapping-types)
 - [Chapter -1 Other Notes](#chapter--1-other-notes)
   - [How to run doctest](#how-to-run-doctest)
 - [Further Reading](#further-reading)

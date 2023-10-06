@@ -15,6 +15,11 @@ ValueError: Invalid 'book' record: {'type': 'book', 'pages': 770}
 >>> get_creators('Spam, spam, spam')
 Traceback (most recent call last):
 ValueError: Invalid record: 'Spam, spam, spam'
+>>> food = dict(category='ice cream', flavor='vanilla', cost=199)
+>>> match food:
+...     case {'category': 'ice cream', **details}:
+...         print(f'Ice cream details: {details}')
+Ice cream details: {'flavor': 'vanilla', 'cost': 199}
 '''
 
 def get_creators(record: dict) -> list:
